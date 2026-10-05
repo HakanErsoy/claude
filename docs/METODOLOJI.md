@@ -4,7 +4,7 @@
 **Çalışma başlığı (taslak):**
 *Definition-Consistent Realization of Variable-Order Fractional Operators with Fixed-Pole Banks: Theory, Discrete-Time Exactness, and Sample-Rate Order Scheduling*
 
-Durum: **Aşama 2 tamamlandı.** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını doğruladı (bkz. §7).
+Durum: **Aşama 3 tamamlandı.** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini doğruladı (bkz. §7).
 
 ---
 
@@ -35,6 +35,7 @@ Kurallar:
 ## 2. Literatür konumu (ön tarama, tamamlanması gerekiyor)
 
 - **VO tanımları:** Lorenzo–Hartley; Sierociuk, Malesza, Macias (A/B/C tipi GL tanımları, D/E özyinelemeli tanımlar, anahtarlama şemaları, domino-merdiven analog gerçeklemesi, iki derece arasında anahtarlama). [arXiv:1304.5072](https://arxiv.org/pdf/1304.5072)
+- **D/E tanımları ve dualite (E4'te kullanılan birincil kaynaklar):** Sierociuk, Macias, Malesza, Wiraszka, *Electronics* 9 (2020) 855, denklem (7)–(8) ([PDF](https://mdpi-res.com/d_attachment/electronics/electronics-09-00855/article_deploy/electronics-09-00855.pdf)); Sierociuk ve ark., *CSSP* 35 (2016) 2055–2082, Remark 2 ([açık erişim](https://d-nb.info/1095394320/34)); Sierociuk, Malesza, Macias, *CSSP* 34 (2015) 1077–1113 (özyinelemeli tanım, dualite, analog model). Son ikisi hedef dergide yayımlanmış; mutlaka atıf alacaklar.
 - **Sabit kutuplu yaklaşım (sabit α için):** Wei ve ark., ISA Trans. 2016 ([link](https://www.sciencedirect.com/science/article/abs/pii/S0019057816000288)), ISA Trans. 2019 ([link](https://www.sciencedirect.com/science/article/abs/pii/S0019057818303707)). Burada VO tanım tutarlılığı ele alınmıyor; α≈0 çevresinde iyileştirme gerekiyor (bizdeki kuyruk düzeltmesi bunu analitik olarak çözüyor).
 - **Zamanla değişen derece için devre:** Arıcıoğlu, Axioms 2025 ([link](https://doi.org/10.3390/axioms14040310)). LTI tabanlı tanım kullanıyor, hangi VO tanımının gerçeklendiği analiz edilmiyor.
 - **Difüzif gösterim kuadratürü:** Diethelm 2023 ([arXiv:2301.11931](https://arxiv.org/pdf/2301.11931)), sadece sabit α.
@@ -98,6 +99,27 @@ Integral ile türev arasındaki alt↔üst simetrisi kendiliğinden çıkıyor. 
 3. Sayısal olarak kırılgan: ‖Φ‖ 1e3–1e10. 24-bit sabit noktada kaskadda hata 20–800'e çıkıyor, paralelde (S ≥ 15) 4e-3 ile 1e-1 arasında kalıyor (float64'te 5e-8).
 4. Sabit kutuplu bankada Φ = I, tanımsal hata **tam 0**, ek maliyet yok, kuantizasyona karşı bir kuvvetlenme yok.
 
+### 3.3 Tek bankadan dört tip: D ve E (E4)
+
+Birincil kaynaktaki tanımlar (Electronics 2020, denklem 7–8):
+
+    D-tipi: z_k = x_k/h^{α_k} − Σ_{j≥1} (−1)^j C(−α_k, j) · z_{k−j}
+    E-tipi: z_k = x_k/h^{α_k} − Σ_{j≥1} (−1)^j C(−α_{k−j}, j) · (h^{α_{k−j}}/h^{α_k}) · z_{k−j}
+
+Matris formuyla gösterilen ilişki **D^α = (A^{−α})⁻¹, E^α = (B^{−α})⁻¹** (iki yönlü ters). Literal özyinelemelerle 1e-13 hassasiyetle doğrulandı. Bankada her örnekte operatör çıkışı g₀(α)·v_k + hist_k biçiminde ve hist yalnızca geçmişe bağlı, çünkü kutuplar dereceden bağımsız. g₀ = Ts^{−α} hiç sıfır olmadığından:
+- **A, B:** ileri yön (çıkış / giriş zamanlaması)
+- **D:** çıkış-zamanlamalı bankanın −α derecesinde cebirsel tersi: v_k = (x_k − hist_k)/g₀
+- **E:** giriş-zamanlamalı bankanın −α derecesinde cebirsel tersi
+
+Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor; dolayısıyla Malesza ve ark.'nın dualiteye dayalı analitik çözüm yöntemleri bankaya doğrudan taşınabiliyor. Aynı yapı T^α y + λy = u (T ∈ {A,B,D,E}) VO gevşeme denklemini de O(K) maliyetle çözüyor.
+
+**Önerme (ters kararlılık):**
+- *İntegral dereceleri:* bütün rezidüler pozitif, dolayısıyla H'nin sıfırları (0,1) içindeki kutupların arasına düşüyor ve ters her zaman kararlı.
+- *Türev dereceleri:* gecikme modu dışında bütün rezidüler negatif ve z ≥ 1 için H(z) ≥ H(1). Ters kararlı ⇔ H(1) = Σ_r g_r > 0.
+- Gerçek GL değeri 0. Büyük α'da DC toplamının kuadratür hatası H(1)'i hafifçe negatife itebiliyor. **DC tabanı**, kuyruğun doğal pozitif DC katkısının %1'i (0.01·|S|·g₀·u_lo^α/(α(1+α))) ve gecikme modu üzerinden uygulanıyor.
+- Taban yalnızca g₁'i, yaklaşık DC kuadratür hatası kadar değiştiriyor. E3 holdout sonuçları byte düzeyinde aynı kaldı.
+- Kararlılık özdeğerle değil H(1)'in işaretiyle test ediliyor, çünkü kutuplar 1'e çok yakın kümelendiğinde özdeğer çözücü güvenilmez.
+
 ---
 
 ## 4. Hipotezler
@@ -109,7 +131,9 @@ Integral ile türev arasındaki alt↔üst simetrisi kendiliğinden çıkıyor. 
 | H3 | Durum korumalı Oustaloup: kaskad hiçbir tanıma yakınsamaz; paralel A'ya yavaş (cebirsel) yakınsar | **Doğrulandı** (E1) |
 | H3b | Optimal durum eşlemesi bile tanımsal hatayı sıfırlayamaz | **Kısmen.** Tam sıfır imkânsız (teorem), ama float64'te 1e-8'e iniyor. Bedeli yoğun S×S eşleme, girdi bağımlılığı ve sabit noktada kırılganlık (E2) |
 | H4 | Gerekli K, bant ve α-aralığı için analitik kural (Poisson ayrıklaştırma + kuyruk sınırları) regresyonsuz verilebilir | **Doğrulandı** (E3: mühürlü holdout 400/400, CP95 alt sınırı %98.5, K − K_min ≤ 3) |
-| H5 | D/E tipleri, OS/IS bankaların geri-besleme ile terslenmesiyle (dualite) gerçeklenebilir | Açık. Önce tanımlar literatürden kesinleştirilecek (E4) |
+| H5 | D/E tipleri, OS/IS bankaların geri-besleme ile terslenmesiyle (dualite) gerçeklenebilir | **Doğrulandı** (E4: literal GL'ye göre ≤6.5e-5, kendi tipine göre ≤3e-13, dualite ≤2e-14) |
+| H5b | Ters her derecede kararlı | **DC tabanıyla doğrulandı.** Tabansız E3 holdout tasarımlarının 99/200'ünde en az bir derecede ters kararsız; tabanla 200/200 kararlı |
+| H5c | Hot-swap edilen Oustaloup tutarlı bir tip gerçekler | **Reddedildi.** Paralel form yaklaşık A, kaskadda en yakın tip girişe göre A/B/D/E arasında değişiyor. Bant > Nyquist iken D/E referansları bile kurulamıyor (ZOH üyeleri minimum-fazlı değil) |
 | H6 | Örnek hızında α güncelleme donanımda ucuzdur: geometrik ızgara sayesinde ağırlıklar m_{k+1} = m_k · q^(±α) özyinelemesiyle üretilir | Açık (E5, RTL + kart) |
 | H7 | Uygulama: gerçek zamanlı multifraksiyonel Brown hareketi (RL-mBm = A-tipi) sentezi, O(K) maliyetle | Açık (E6) |
 
@@ -123,7 +147,7 @@ Integral ile türev arasındaki alt↔üst simetrisi kendiliğinden çıkıyor. 
 | **E1b** (DT) | GL Tanım 2/3 referansları; basamak, beyaz gürültü, çoklu sinüs; 7 profil; *tanımsal hata* metriği | `results/e1b_discrete.json` |
 | **E2** | En küçük kareler optimal Φ (A: durum kestirimi, B: çıkış eşleme); 6 anahtarlama × S = 7…31 × paralel/kaskad; 4 giriş sınıfında eğitim, taze kümede ve basamakta test; ‖Φ‖–hata Pareto; float32, 18/24/32-bit kuantizasyon, 24-bit durum gürültüsü; sürekli α altında zincirleme eşleme | `results/e2_*.json`, `fig_e2_*.png` |
 | **E3** | Hata terimlerinin izole doğrulaması; 72 spesifikasyonluk geliştirme ızgarası; 400 spesifikasyonluk mühürlü holdout (değerlendirmeden önce SHA-256 ile yazıldı) | `results/e3_*.json`, `fig_e3_*.png` |
-| **E4** | D/E tipleri: geri-beslemeli terslemenin doğrulanması | planlı |
+| **E4** | Literal D/E özyinelemeleri ve dualite; bankadan A/B/D/E (5 profil × 3 giriş); E3 holdout tasarımlarında ters kararlılık; hot-swap Oustaloup'un en yakın tipi (own-type referansları); dört tipte VO gevşeme denklemi, O(K) ve O(n²) karşılaştırması | `results/e4_recursive_types.json`, `fig_e4_types.png` |
 | **E5** | Sabit nokta + RTL: ağırlık üretici (sin, exp2 LUT + çarpım zinciri), kelime uzunluğu taraması, xsim paritesi, kartta ölçüm (kaynak, gecikme, α-güncelleme hızı) | planlı |
 | **E6** | mBm sentezi: yerel Hurst tahmini (artış varyansı / dalgacık), A/B farkı, maliyet karşılaştırması (Cholesky, FFT, GL O(n²)) | planlı |
 
@@ -137,7 +161,7 @@ Integral ile türev arasındaki alt↔üst simetrisi kendiliğinden çıkıyor. 
 2. Preliminaries: A/B tipi tanımlar, difüzif gösterim, kapalı-form basamak yanıtları (B-tipi için kısmi integrasyon formülü)
 3. Fixed-pole banks: CT kuadratür, kuyruk düzeltmeleri, α = 0 sürekliliği
 4. Definition by structure: OS → A, IS → B (önermeler), gereklilik teoremi
-5. Discrete-time exactness: Beta-integral gösterimi, ayrık banka, Tanım 2/3'ün kuadratür hatası dışında tam gerçeklenmesi
+5. Discrete-time exactness: Beta-integral gösterimi, ayrık banka, Tanım 2/3'ün kuadratür hatası dışında tam gerçeklenmesi; D/E tiplerinin cebirsel ters ile gerçeklenmesi, dualitenin korunması, ters kararlılık önermesi ve DC tabanı; VO diferansiyel denklem çözücüsü
 6. Design rule: analitik K(ε, bant, α-aralığı)
 7. Hardware: örnek hızında α güncelleme, sabit nokta analizi, FPGA ölçümleri
 8. Application: gerçek zamanlı mBm sentezi
@@ -170,7 +194,7 @@ Anahtarlamadan sonraki bağıl RMS hata (A-tipine / B-tipine göre), S = 15 → 
 ### E1b: DT banka ile GL Tanım 2/3 (Ts = 1 ms, 4001 örnek; DFP: 32 mod + gecikme modu; Oustaloup: N = 15, 31 durum)
 
 **Toplam hata** (GL referansına göre, bağıl RMS), 7 α profili × 3 giriş:
-- DFP-out → Tanım 2: **4.0e-6 … 2.1e-3**. DFP-in → Tanım 3: **1.9e-6 … 1.7e-3**. Yumuşak α ile türev dahil, CT'deki sorun ortadan kalktı.
+- DFP-out → Tanım 2: **2.5e-6 … 2.0e-3**. DFP-in → Tanım 3: **1.9e-6 … 1.6e-3**. Yumuşak α ile türev dahil, CT'deki sorun ortadan kalktı.
 
 **Tanımsal hata** (her gerçeklemenin kendi dondurulmuş-derece LTI eşdeğerine göre; yaklaşım kalitesinden bağımsız), parçalı-sabit profiller:
 
@@ -231,12 +255,47 @@ Holdout spesifikasyonları: ε ∈ [1e-5, 1e-2], R ∈ [1e2, 1e5], bant 0.5–6 
 
 Kaba ölçekleme: K ≈ ln(4/ε)·[ln R + ln(1/ε)/(2+α_min) + …]/π². Bellek uzunluğunun her dekadı ~3 mod, doğruluğun her dekadı ~8 mod ekliyor.
 
+### E4: tek bankadan dört tip (A/B/D/E)
+
+**P1, tanımlar:** Literal D/E özyinelemeleri, inv(W_A(−α)) ve inv(W_B(−α)) ile 1.4e-13 hassasiyetle aynı. Dual bileşimler (A∘D, D∘A, B∘E, E∘B) birim operatörü 1e-12 ile veriyor. Dual olmayanlarda (A∘A, B∘B, A∘B, B∘A, A∘E, B∘D, D∘E, D∘D) fark 1e-2 ile 2.4e3 arasında.
+
+**P2, banka:** E3 kuralıyla tasarlandı (ε = 1e-5, |α| ≤ 0.95, K = 41). 5 profil × 3 giriş:
+
+| Tip | literal GL'ye göre | kendi tipine göre (tanımsal) |
+|---|---|---|
+| A | 9.5e-8 … 6.9e-5 | ≤ 2.6e-14 |
+| B | 3.1e-8 … 1.2e-5 | ≤ 1.0e-14 |
+| D | 2.0e-8 … 6.5e-5 | ≤ 2.3e-14 |
+| E | 2.2e-8 … 5.5e-5 | ≤ 2.8e-13 |
+
+Banka içinde dualite (A∘D, B∘E): ≤ 2.0e-14.
+Not: türevlerde yumuşak girişlerde çıkış düzeyindeki hata ağırlık düzeyindeki ε'u biraz aşabiliyor (en fazla 6.9e-5), çünkü Σg_r ≈ 0 iptali hatayı büyütüyor. Kuralın ölçütü ağırlık düzeyinde; makalede bu ayrım açıkça yazılacak.
+
+**P3, ters kararlılık:** E3 holdout'undaki 200 DT tasarımında tüm derecelerde kararlı ters: tabanla **200/200**, tabansız 101/200. Uzun koşu örneği (ε = 1e-2, R = 1000, 0.95 dereceli D-tipi integral, 2e5 örnek beyaz gürültü): tabansız RMS **1.9e21**, tabanla 0.24.
+
+**P4, hot-swap Oustaloup hangi tipi gerçekliyor?** 2 profil türü × 2 giriş × 4 durum:
+
+| Gerçekleme | en yakın tip (8 vaka) | en yakın tipe uzaklık | own-D/E kurulamadı |
+|---|---|---|---|
+| DFP-out / DFP-in | A 8/8 / B 8/8 | ≤ 2e-14 | 0/8 |
+| Ou-par, ω_h = 1e5 | A 8/8 | 5e-6 … 0.4 | 6/8 (üyeler minimum-fazlı değil) |
+| Ou-par, ω_h = 1e3 | A 8/8 | 7e-4 … 0.3 | 0/8 |
+| Ou-cas, ω_h = 1e5 | A 4, B 4 | 1.5e-2 … **1.3e3** | 6/8 |
+| Ou-cas, ω_h = 1e3 | **A 2, B 2, D 2, E 2** | 9e-4 … 2.8 | 0/8 |
+
+ZOH'lu Oustaloup integral üyelerinde bant Nyquist'i aştığında birim çember dışında, büyüklüğü 3 ile 41 arasında sıfırlar oluşuyor; bu yüzden ters ıraksıyor ve D/E kurulamıyor. ω_h ≤ ~Nyquist/3 olduğunda sorun kayboluyor.
+
+**P5, VO gevşeme denklemi** T^α y + λy = u (Ts = 1 ms, n = 4000, K = 40):
+- λ = 1: bankanın GL'ye göre hatası ≤ 1.7e-5. Tipler arası fark ise 0.40'a kadar (A–B), yani tip seçimi çözümü belirgin biçimde değiştiriyor.
+- λ = 100: hata ≤ 4.9e-7, tipler arası fark ≤ 0.02 (λy baskın, tip etkisi kayboluyor).
+- Süre (24 çözüm): banka 1.2 s (Python döngüsü, O(nK)), GL üçgensel çözümü 9.6 s (O(n²), C). Fark n ile büyüyor.
+
 ---
 
 ## 8. Sonraki adımlar
 
-1. Teoremin tam ispatı (A ve B tipi; minimallik koşulları) ve DT hata modelinin küçük-r terimi için kapalı form (şu an temsilden sayısal hesaplanıyor)
-2. E4: D/E tipleri (önce tanımlar literatürden kesinleştirilecek)
-3. Sistematik literatür taraması (§2)
+1. Teoremin ve ters-kararlılık önermesinin tam ispatı; DT hata modelinin küçük-r terimi için kapalı form (şu an temsilden sayısal hesaplanıyor)
+2. Sistematik literatür taraması (§2)
+3. E5 sabit-nokta analizi: DC tabanı ve gecikme modu dahil, D/E terslemesinin kelime uzunluğuna duyarlılığı
 4. E5: RTL ağırlık üretici, TCAS-I'deki W48 altyapısı yeniden kullanılarak ama yeni çekirdekle
 5. E6 uygulaması (mBm). Alternatif: VO kesirli PID veya zamanla değişen spektral eğimli filtre

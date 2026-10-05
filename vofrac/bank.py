@@ -148,13 +148,15 @@ class DiscreteFixedPoleBank:
     on theta_lo. The r = 0 weight Ts^(-a) is an exact feedthrough.
     """
 
-    def __init__(self, Ts, xi_lo, xi_hi, K, tails="geometric"):
+    def __init__(self, Ts, xi_lo, xi_hi, K, tails="geometric", dc_floor=True):
         if K < 2:
             raise ValueError("K must be at least 2")
         self.Ts = Ts
         self.K = K
         self.xi = np.geomspace(xi_lo, xi_hi, K)
         self.theta = np.exp(-self.xi * Ts)
+        self.one_minus_theta = -np.expm1(-self.xi * Ts)
+        self.dc_floor = dc_floor
         self.h = np.log(xi_hi / xi_lo) / (K - 1)
         self.closure = _closure(tails)
         c = _trapezoid_weights(K, self.h, self.closure)
@@ -204,7 +206,26 @@ class DiscreteFixedPoleBank:
             upper, lower = self._virtual_sums(alpha)
             c[0] += scale * lower
             c_delay = scale * upper
+        if self.dc_floor and alpha > 0.0:
+            # Inverse stability. For a derivative bank all residues are
+            # negative, so H(z) increases on z > 1 and its only zero there
+            # (the inverse's slowest pole) lies inside the unit circle iff
+            # H(1) = sum_r g_r > 0. The exact GL value is 0; the truncated
+            # memory adds a positive tail ~ S g0 u_lo^a / (a (1 + a)), which
+            # for large orders is smaller than the quadrature error of the DC
+            # sum, so H(1) can come out negative. The floor (1% of that tail)
+            # is reached through the delay mode: H(z) rises by d/z on all of
+            # z >= 1 and only g_1 changes, by about the DC quadrature error.
+            H1 = g0 + c_delay + np.sum(c / self.one_minus_theta)
+            H_min = 0.01 * abs(scale) * (self.xi[0] * Ts) ** alpha / (alpha * (1.0 + alpha))
+            if H1 < H_min:
+                c_delay += H_min - H1
         return g0, c_delay, c
+
+    def dc_gain(self, alpha):
+        """Realized sum of all weights, H(z = 1)."""
+        g0, cd, c = self.coeffs(alpha)
+        return float(g0 + cd + np.sum(c / self.one_minus_theta))
 
     def weights(self, alpha, R):
         """Realized GL weights g_0..g_{R-1} (for checking the quadrature)."""
@@ -217,28 +238,107 @@ class DiscreteFixedPoleBank:
             g[1] += cd
         return g
 
-    def simulate(self, u, alpha, schedule="output"):
-        """schedule="output" realizes Def. 2 (A-type), "input" Def. 3 (B-type)."""
-        u = np.asarray(u, dtype=float)
+    def _run(self, alpha, schedule, step, n):
+        """Core loop shared by all operator types.
+
+        At sample n the bank operator of order alpha[n] maps its input v[n]
+        to g0 v[n] + hist[n], where hist depends only on past inputs (the
+        poles are order-independent). ``step(n, g0, hist)`` returns
+        (v[n], y[n]); this covers forward operators, their algebraic
+        inverses and implicit equations with one code path.
+        """
         alpha = np.asarray(alpha, dtype=float)
         th = self.theta
         cache = {}
-        s = np.zeros(self.K)   # output: sum_{r>=1} theta^(r-1) u[n-r]; input: pre-weighted
+        s = np.zeros(self.K)   # output: sum_{r>=1} theta^(r-1) v[n-r]; input: pre-weighted
         dl = 0.0               # delay-mode state
-        y = np.empty(len(u))
-        for n in range(len(u)):
-            a = float(alpha[n])
+        y = np.empty(n)
+        for k in range(n):
+            a = float(alpha[k])
             if a not in cache:
                 cache[a] = self.coeffs(a)
             g0, cd, c = cache[a]
             if schedule == "output":
-                y[n] = g0 * u[n] + cd * dl + c @ s
-                s = th * s + u[n]
-                dl = u[n]
+                v, y[k] = step(k, g0, cd * dl + c @ s)
+                s = th * s + v
+                dl = v
             elif schedule == "input":
-                y[n] = g0 * u[n] + dl + s.sum()
-                s = th * s + c * u[n]
-                dl = cd * u[n]
+                v, y[k] = step(k, g0, dl + s.sum())
+                s = th * s + c * v
+                dl = cd * v
             else:
                 raise ValueError(schedule)
         return y
+
+    def simulate(self, u, alpha, schedule="output"):
+        """schedule="output" realizes Def. 2 (A-type), "input" Def. 3 (B-type)."""
+        return self.simulate_type(u, alpha, "A" if schedule == "output" else "B")
+
+    def simulate_type(self, x, alpha, vo_type="A"):
+        """VO difference of type A, B (forward) or D, E (recursive).
+
+        D^a = (A^-a)^-1 and E^a = (B^-a)^-1 (Sierociuk et al. duality), so the
+        recursive types are the exact algebraic inverses of the output- and
+        input-scheduled banks of the opposite order; g0 = Ts^(-a) never
+        vanishes, so the inverse is always well posed.
+        """
+        x = np.asarray(x, dtype=float)
+        alpha = np.asarray(alpha, dtype=float)
+        schedule = "output" if vo_type in ("A", "D") else "input"
+        if vo_type in ("A", "B"):
+            return self._run(alpha, schedule, lambda k, g0, hist: (x[k], g0 * x[k] + hist), len(x))
+        if vo_type in ("D", "E"):
+            def step(k, g0, hist):
+                v = (x[k] - hist) / g0
+                return v, v
+            return self._run(-alpha, schedule, step, len(x))
+        raise ValueError(vo_type)
+
+    def solve_relaxation(self, u, alpha, lam, vo_type="A"):
+        """Solve T^alpha y + lam y = u, T in {A, B, D, E}, at O(K) per sample.
+
+        A, B: the operator acts on y, so y = (u - hist) / (g0 + lam).
+        D, E: y = T'^-alpha z with z = u - lam y (dual form), so
+              y = (g0 u + hist) / (1 + lam g0) and the bank is driven by z.
+        """
+        u = np.asarray(u, dtype=float)
+        alpha = np.asarray(alpha, dtype=float)
+        schedule = "output" if vo_type in ("A", "D") else "input"
+        if vo_type in ("A", "B"):
+            def step(k, g0, hist):
+                y = (u[k] - hist) / (g0 + lam)
+                return y, y
+            return self._run(alpha, schedule, step, len(u))
+        if vo_type in ("D", "E"):
+            def step(k, g0, hist):
+                y = (g0 * u[k] + hist) / (1.0 + lam * g0)
+                return u[k] - lam * y, y
+            return self._run(-alpha, schedule, step, len(u))
+        raise ValueError(vo_type)
+
+    def inverse_is_stable(self, alpha):
+        """Exact-sign stability test of the frozen-order inverse (D/E types).
+
+        Integral orders: all residues are positive, so the zeros of H
+        interlace its poles in (0, 1) and the inverse is always stable.
+        Derivative orders: all residues except possibly the delay mode are
+        negative and H(z) >= H(1) on z >= 1, so the inverse is stable iff
+        H(1) > 0. Unlike eigenvalues near z = 1, the sign of H(1) is
+        computed to full relative precision.
+        """
+        g0, cd, c = self.coeffs(alpha)
+        if alpha <= 0.0:
+            return bool(np.all(c >= 0.0) and cd >= 0.0)
+        return bool(np.all(c <= 0.0) and self.dc_gain(alpha) > 0.0)
+
+    def inverse_spectral_radius(self, alpha):
+        """Spectral radius of the inverse dynamics A - B C / D at frozen order.
+
+        The same value holds for the input-scheduled (transposed) bank, so it
+        decides the stability of both recursive types at that order.
+        """
+        g0, cd, c = self.coeffs(alpha)
+        A = np.diag(np.append(self.theta, 0.0))
+        B = np.ones(self.K + 1)
+        C = np.append(c, cd)
+        return float(np.max(np.abs(np.linalg.eigvals(A - np.outer(B, C) / g0))))

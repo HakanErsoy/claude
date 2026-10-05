@@ -127,3 +127,74 @@ def gl_B(u, alpha, h):
         w = _gl_weights(alpha[j], n - j)
         y[j:] += h ** (-alpha[j]) * w * u[j]
     return y
+
+
+# --------------------------------------------------------- recursive types
+# Sierociuk, Macias, Malesza, Wiraszka, Electronics 9 (2020) 855, eqs. (7)-(8);
+# Sierociuk et al., Circuits Syst. Signal Process. 35 (2016), Remark 2.
+#
+#   D-type:  z_k = x_k / h^a_k - sum_{j>=1} (-1)^j C(-a_k, j) z_{k-j}
+#   E-type:  z_k = x_k / h^a_k - sum_{j>=1} (-1)^j C(-a_{k-j}, j) h^a_{k-j} / h^a_k z_{k-j}
+#
+# Duality: D^a = (A^-a)^-1 and E^a = (B^-a)^-1 (two-sided inverses).
+
+def gl_D(x, alpha, h):
+    """Recursive D-type VO difference, literal form of the definition."""
+    x = np.asarray(x, dtype=float)
+    alpha = np.asarray(alpha, dtype=float)
+    n = len(x)
+    z = np.empty(n)
+    for k in range(n):
+        acc = 0.0
+        if k > 0:
+            wbar = _gl_weights(-alpha[k], k + 1)[1:]       # (-1)^j C(-a_k, j), j = 1..k
+            acc = np.dot(wbar, z[k - 1::-1])
+        z[k] = x[k] * h ** (-alpha[k]) - acc
+    return z
+
+
+def gl_E(x, alpha, h):
+    """Recursive E-type VO difference, literal form of the definition."""
+    x = np.asarray(x, dtype=float)
+    alpha = np.asarray(alpha, dtype=float)
+    n = len(x)
+    z = np.empty(n)
+    acc = np.zeros(n)            # acc[k] = sum_j (-1)^j C(-a_{k-j}, j) h^a_{k-j} z_{k-j}
+    for k in range(n):
+        z[k] = (x[k] - acc[k]) * h ** (-alpha[k])
+        if k + 1 < n:
+            wbar = _gl_weights(-alpha[k], n - k)[1:]
+            acc[k + 1:] += wbar * h ** alpha[k] * z[k]
+    return z
+
+
+def gl_matrix(alpha, h, vo_type):
+    """Dense lower-triangular operator matrix of the A- or B-type difference."""
+    alpha = np.asarray(alpha, dtype=float)
+    n = len(alpha)
+    W = np.zeros((n, n))
+    if vo_type == "A":
+        for k in range(n):
+            W[k, :k + 1] = (h ** (-alpha[k]) * _gl_weights(alpha[k], k + 1))[::-1]
+    elif vo_type == "B":
+        for j in range(n):
+            W[j:, j] = h ** (-alpha[j]) * _gl_weights(alpha[j], n - j)
+    else:
+        raise ValueError(vo_type)
+    return W
+
+
+def gl_relaxation(u, alpha, lam, h, vo_type):
+    """Solve T^alpha y + lam y = u for T in A, B, D, E by triangular solves.
+
+    D and E use their dual form: with M = W_A(-alpha) (resp. W_B(-alpha)),
+    D^alpha y = M^-1 y, so (I + lam M) y = M u.
+    """
+    from scipy.linalg import solve_triangular
+    u = np.asarray(u, dtype=float)
+    n = len(u)
+    if vo_type in ("A", "B"):
+        W = gl_matrix(alpha, h, vo_type)
+        return solve_triangular(W + lam * np.eye(n), u, lower=True)
+    M = gl_matrix(-np.asarray(alpha, dtype=float), h, {"D": "A", "E": "B"}[vo_type])
+    return solve_triangular(np.eye(n) + lam * M, M @ u, lower=True)

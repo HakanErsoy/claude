@@ -1,0 +1,118 @@
+P1 switch +0.3->+0.8  literal D/E vs inverses 2.3e-15/1.2e-15 | dual max 9.1e-15 | non-dual min 2.7e-01
+P1 switch -0.3->-0.8  literal D/E vs inverses 8.6e-16/9.8e-16 | dual max 2.5e-15 | non-dual min 9.9e-03
+P1 switch -0.5->+0.5  literal D/E vs inverses 1.3e-15/1.4e-15 | dual max 1.7e-14 | non-dual min 2.0e-01
+P1 random piecewise   literal D/E vs inverses 1.4e-13/1.6e-15 | dual max 1.0e-12 | non-dual min 6.5e+00
+P1 smooth crossing    literal D/E vs inverses 9.3e-16/6.7e-16 | dual max 8.2e-16 | non-dual min 1.3e-02
+P2 switch +0.3->+0.8  step      A:6.9e-05 B:1.2e-05 D:1.9e-07 E:6.4e-08 | duality 4e-15/5e-15
+P2 switch +0.3->+0.8  noise     A:1.5e-07 B:1.5e-07 D:6.0e-08 E:6.0e-08 | duality 6e-16/2e-16
+P2 switch +0.3->+0.8  multisine A:1.1e-06 B:1.1e-06 D:2.0e-08 E:2.2e-08 | duality 2e-15/2e-15
+P2 switch -0.3->-0.8  step      A:1.1e-07 B:3.1e-08 D:6.5e-05 E:5.5e-05 | duality 0e+00/0e+00
+P2 switch -0.3->-0.8  noise     A:9.5e-08 B:7.9e-08 D:3.4e-06 E:1.4e-05 | duality 6e-17/7e-17
+P2 switch -0.3->-0.8  multisine A:9.6e-08 B:5.9e-08 D:3.0e-05 E:3.1e-05 | duality 1e-17/1e-17
+P2 switch -0.5->+0.5  step      A:8.6e-06 B:4.3e-06 D:1.7e-05 E:1.3e-05 | duality 3e-16/3e-16
+P2 switch -0.5->+0.5  noise     A:2.3e-07 B:2.3e-07 D:1.1e-07 E:1.6e-07 | duality 9e-16/7e-17
+P2 switch -0.5->+0.5  multisine A:9.0e-07 B:9.0e-07 D:4.1e-07 E:3.0e-07 | duality 2e-15/4e-16
+P2 random piecewise   step      A:5.7e-05 B:4.4e-06 D:1.0e-06 E:2.6e-06 | duality 8e-15/4e-16
+P2 random piecewise   noise     A:1.9e-07 B:1.9e-07 D:7.5e-08 E:4.9e-08 | duality 2e-14/3e-16
+P2 random piecewise   multisine A:1.5e-06 B:1.5e-06 D:2.6e-07 E:1.4e-06 | duality 2e-14/1e-15
+P2 smooth crossing    step      A:4.4e-06 B:6.1e-06 D:3.2e-06 E:1.4e-06 | duality 1e-15/1e-15
+P2 smooth crossing    noise     A:2.3e-07 B:2.3e-07 D:1.3e-07 E:1.3e-07 | duality 9e-17/1e-16
+P2 smooth crossing    multisine A:6.6e-07 B:6.6e-07 D:1.2e-07 E:2.1e-07 | duality 7e-16/4e-16
+P3 stable inverse at all orders: with floor 200/200, without 101/200
+P3 long run rms (no floor) 1.9e+21 vs (floor) 2.4e-01
+P4 DFP-out                switch +0.3->+0.8  step   A:2.1e-14 B:9.9e-01 D:9.7e-01 E:6.3e-01 -> A
+P4 DFP-out                switch +0.3->+0.8  noise  A:1.2e-16 B:1.1e-02 D:1.1e-02 E:6.9e-03 -> A
+P4 DFP-out                switch -0.3->-0.8  step   A:3.0e-16 B:5.5e-01 D:1.4e-01 E:4.9e-01 -> A
+P4 DFP-out                switch -0.3->-0.8  noise  A:2.8e-16 B:1.8e-01 D:3.3e-01 E:1.7e-01 -> A
+P4 DFP-out                switch -0.5->+0.5  step   A:6.9e-15 B:7.6e-01 D:6.7e-01 E:1.0e+00 -> A
+P4 DFP-out                switch -0.5->+0.5  noise  A:1.1e-16 B:9.5e-03 D:1.1e-02 E:3.3e-03 -> A
+P4 DFP-out                random piecewise   step   A:5.4e-15 B:1.0e+00 D:6.9e-01 E:1.0e+00 -> A
+P4 DFP-out                random piecewise   noise  A:1.1e-16 B:5.6e-02 D:4.8e-02 E:3.4e-01 -> A
+P4 DFP-in                 switch +0.3->+0.8  step   A:6.4e+00 B:5.0e-15 D:2.5e+00 E:4.3e+00 -> B
+P4 DFP-in                 switch +0.3->+0.8  noise  A:1.1e-02 B:1.4e-16 D:2.2e-04 E:4.9e-03 -> B
+P4 DFP-in                 switch -0.3->-0.8  step   A:3.7e-01 B:6.7e-15 D:2.8e-01 E:1.4e-01 -> B
+P4 DFP-in                 switch -0.3->-0.8  noise  A:1.7e-01 B:1.6e-16 D:1.5e-01 E:2.5e-02 -> B
+P4 DFP-in                 switch -0.5->+0.5  step   A:1.5e+00 B:1.1e-14 D:1.8e+00 E:9.8e-01 -> B
+P4 DFP-in                 switch -0.5->+0.5  noise  A:9.5e-03 B:1.1e-16 D:1.7e-03 E:6.4e-03 -> B
+P4 DFP-in                 random piecewise   step   A:2.8e+00 B:1.3e-15 D:2.8e+00 E:9.9e-01 -> B
+P4 DFP-in                 random piecewise   noise  A:5.6e-02 B:1.2e-16 D:4.1e-02 E:3.2e-01 -> B
+P4 Ou-par N=7 wh=1e+05    switch +0.3->+0.8  step   A:2.1e-02 B:1.0e+00 D:diverges E:diverges -> A
+P4 Ou-par N=7 wh=1e+05    switch +0.3->+0.8  noise  A:1.0e-05 B:1.1e-02 D:diverges E:diverges -> A
+P4 Ou-par N=7 wh=1e+05    switch -0.3->-0.8  step   A:1.7e-01 B:8.1e-01 D:9.3e-01 E:2.7e+00 -> A
+P4 Ou-par N=7 wh=1e+05    switch -0.3->-0.8  noise  A:7.3e-02 B:2.7e-01 D:1.6e+00 E:1.5e+00 -> A
+P4 Ou-par N=7 wh=1e+05    switch -0.5->+0.5  step   A:6.7e-02 B:9.8e-01 D:diverges E:diverges -> A
+P4 Ou-par N=7 wh=1e+05    switch -0.5->+0.5  noise  A:2.0e-04 B:1.1e-02 D:diverges E:diverges -> A
+P4 Ou-par N=7 wh=1e+05    random piecewise   step   A:4.2e-01 B:1.0e+00 D:diverges E:diverges -> A
+P4 Ou-par N=7 wh=1e+05    random piecewise   noise  A:5.0e-04 B:6.3e-02 D:diverges E:diverges -> A
+P4 Ou-cas N=7 wh=1e+05    switch +0.3->+0.8  step   A:4.4e+02 B:2.7e+00 D:diverges E:diverges -> B
+P4 Ou-cas N=7 wh=1e+05    switch +0.3->+0.8  noise  A:1.5e-02 B:2.7e-02 D:diverges E:diverges -> A
+P4 Ou-cas N=7 wh=1e+05    switch -0.3->-0.8  step   A:2.0e-01 B:3.4e-01 D:5.0e-01 E:1.9e+00 -> A
+P4 Ou-cas N=7 wh=1e+05    switch -0.3->-0.8  noise  A:1.2e-01 B:9.3e-02 D:1.4e+00 E:1.3e+00 -> B
+P4 Ou-cas N=7 wh=1e+05    switch -0.5->+0.5  step   A:3.0e+03 B:4.8e+02 D:diverges E:diverges -> B
+P4 Ou-cas N=7 wh=1e+05    switch -0.5->+0.5  noise  A:1.6e-02 B:2.7e-02 D:diverges E:diverges -> A
+P4 Ou-cas N=7 wh=1e+05    random piecewise   step   A:3.7e+04 B:1.3e+03 D:diverges E:diverges -> B
+P4 Ou-cas N=7 wh=1e+05    random piecewise   noise  A:6.8e+00 B:6.9e+00 D:diverges E:diverges -> A
+P4 Ou-par N=15 wh=1e+05   switch +0.3->+0.8  step   A:9.9e-03 B:1.0e+00 D:diverges E:diverges -> A
+P4 Ou-par N=15 wh=1e+05   switch +0.3->+0.8  noise  A:4.7e-06 B:1.1e-02 D:diverges E:diverges -> A
+P4 Ou-par N=15 wh=1e+05   switch -0.3->-0.8  step   A:7.8e-02 B:6.7e-01 D:7.8e-01 E:2.5e+00 -> A
+P4 Ou-par N=15 wh=1e+05   switch -0.3->-0.8  noise  A:3.3e-02 B:2.3e-01 D:1.5e+00 E:1.5e+00 -> A
+P4 Ou-par N=15 wh=1e+05   switch -0.5->+0.5  step   A:3.2e-02 B:9.8e-01 D:diverges E:diverges -> A
+P4 Ou-par N=15 wh=1e+05   switch -0.5->+0.5  noise  A:9.1e-05 B:1.1e-02 D:diverges E:diverges -> A
+P4 Ou-par N=15 wh=1e+05   random piecewise   step   A:1.7e-01 B:1.0e+00 D:diverges E:diverges -> A
+P4 Ou-par N=15 wh=1e+05   random piecewise   noise  A:2.3e-04 B:6.3e-02 D:diverges E:diverges -> A
+P4 Ou-cas N=15 wh=1e+05   switch +0.3->+0.8  step   A:4.2e+02 B:2.6e+00 D:diverges E:diverges -> B
+P4 Ou-cas N=15 wh=1e+05   switch +0.3->+0.8  noise  A:1.5e-02 B:2.6e-02 D:diverges E:diverges -> A
+P4 Ou-cas N=15 wh=1e+05   switch -0.3->-0.8  step   A:2.0e-01 B:3.4e-01 D:5.0e-01 E:1.9e+00 -> A
+P4 Ou-cas N=15 wh=1e+05   switch -0.3->-0.8  noise  A:1.2e-01 B:9.3e-02 D:1.4e+00 E:1.3e+00 -> B
+P4 Ou-cas N=15 wh=1e+05   switch -0.5->+0.5  step   A:3.0e+03 B:4.8e+02 D:diverges E:diverges -> B
+P4 Ou-cas N=15 wh=1e+05   switch -0.5->+0.5  noise  A:1.6e-02 B:2.7e-02 D:diverges E:diverges -> A
+P4 Ou-cas N=15 wh=1e+05   random piecewise   step   A:3.8e+04 B:1.3e+03 D:diverges E:diverges -> B
+P4 Ou-cas N=15 wh=1e+05   random piecewise   noise  A:6.9e+00 B:7.0e+00 D:diverges E:diverges -> A
+P4 Ou-par N=7 wh=1e+03    switch +0.3->+0.8  step   A:1.6e-02 B:9.9e-01 D:9.7e-01 E:6.2e-01 -> A
+P4 Ou-par N=7 wh=1e+03    switch +0.3->+0.8  noise  A:1.5e-03 B:1.1e-02 D:2.1e-01 E:2.1e-01 -> A
+P4 Ou-par N=7 wh=1e+03    switch -0.3->-0.8  step   A:1.2e-01 B:7.4e-01 D:3.4e-01 E:8.2e-01 -> A
+P4 Ou-par N=7 wh=1e+03    switch -0.3->-0.8  noise  A:4.9e-02 B:2.3e-01 D:3.9e-01 E:2.6e-01 -> A
+P4 Ou-par N=7 wh=1e+03    switch -0.5->+0.5  step   A:4.9e-02 B:7.5e-01 D:6.9e-01 E:1.0e+00 -> A
+P4 Ou-par N=7 wh=1e+03    switch -0.5->+0.5  noise  A:2.9e-03 B:6.5e-03 D:8.7e-02 E:8.6e-02 -> A
+P4 Ou-par N=7 wh=1e+03    random piecewise   step   A:2.9e-01 B:1.0e+00 D:8.5e-01 E:1.0e+00 -> A
+P4 Ou-par N=7 wh=1e+03    random piecewise   noise  A:7.3e-03 B:5.1e-02 D:1.2e-01 E:2.8e-01 -> A
+P4 Ou-cas N=7 wh=1e+03    switch +0.3->+0.8  step   A:1.1e+01 B:2.5e+00 D:1.8e+00 E:8.7e+00 -> D
+P4 Ou-cas N=7 wh=1e+03    switch +0.3->+0.8  noise  A:1.1e-03 B:1.4e-02 D:2.1e-01 E:2.1e-01 -> A
+P4 Ou-cas N=7 wh=1e+03    switch -0.3->-0.8  step   A:2.0e-01 B:3.4e-01 D:1.2e-01 E:3.6e-01 -> D
+P4 Ou-cas N=7 wh=1e+03    switch -0.3->-0.8  noise  A:1.1e-01 B:8.4e-02 D:2.3e-01 E:1.0e-01 -> B
+P4 Ou-cas N=7 wh=1e+03    switch -0.5->+0.5  step   A:3.6e+01 B:1.8e+01 D:2.8e+01 E:2.1e+00 -> E
+P4 Ou-cas N=7 wh=1e+03    switch -0.5->+0.5  noise  A:1.9e-02 B:9.7e-03 D:8.7e-02 E:8.8e-02 -> B
+P4 Ou-cas N=7 wh=1e+03    random piecewise   step   A:9.5e+01 B:3.2e+01 D:9.1e+01 E:2.8e+00 -> E
+P4 Ou-cas N=7 wh=1e+03    random piecewise   noise  A:2.3e-01 B:2.7e-01 D:2.9e-01 E:4.7e-01 -> A
+P4 Ou-par N=15 wh=1e+03   switch +0.3->+0.8  step   A:7.4e-03 B:9.9e-01 D:9.7e-01 E:6.3e-01 -> A
+P4 Ou-par N=15 wh=1e+03   switch +0.3->+0.8  noise  A:6.7e-04 B:1.2e-02 D:2.1e-01 E:2.1e-01 -> A
+P4 Ou-par N=15 wh=1e+03   switch -0.3->-0.8  step   A:5.7e-02 B:6.4e-01 D:2.6e-01 E:7.2e-01 -> A
+P4 Ou-par N=15 wh=1e+03   switch -0.3->-0.8  noise  A:2.2e-02 B:2.0e-01 D:3.6e-01 E:2.3e-01 -> A
+P4 Ou-par N=15 wh=1e+03   switch -0.5->+0.5  step   A:2.4e-02 B:7.6e-01 D:6.8e-01 E:1.0e+00 -> A
+P4 Ou-par N=15 wh=1e+03   switch -0.5->+0.5  noise  A:1.4e-03 B:8.0e-03 D:8.9e-02 E:8.8e-02 -> A
+P4 Ou-par N=15 wh=1e+03   random piecewise   step   A:1.2e-01 B:1.0e+00 D:7.5e-01 E:1.0e+00 -> A
+P4 Ou-par N=15 wh=1e+03   random piecewise   noise  A:3.6e-03 B:5.3e-02 D:1.2e-01 E:2.9e-01 -> A
+P4 Ou-cas N=15 wh=1e+03   switch +0.3->+0.8  step   A:1.1e+01 B:2.5e+00 D:1.7e+00 E:8.5e+00 -> D
+P4 Ou-cas N=15 wh=1e+03   switch +0.3->+0.8  noise  A:9.0e-04 B:1.3e-02 D:2.1e-01 E:2.1e-01 -> A
+P4 Ou-cas N=15 wh=1e+03   switch -0.3->-0.8  step   A:2.0e-01 B:3.4e-01 D:1.2e-01 E:3.6e-01 -> D
+P4 Ou-cas N=15 wh=1e+03   switch -0.3->-0.8  noise  A:1.1e-01 B:8.4e-02 D:2.3e-01 E:1.0e-01 -> B
+P4 Ou-cas N=15 wh=1e+03   switch -0.5->+0.5  step   A:3.6e+01 B:1.8e+01 D:2.8e+01 E:2.1e+00 -> E
+P4 Ou-cas N=15 wh=1e+03   switch -0.5->+0.5  noise  A:1.9e-02 B:9.6e-03 D:8.9e-02 E:9.0e-02 -> B
+P4 Ou-cas N=15 wh=1e+03   random piecewise   step   A:9.5e+01 B:3.2e+01 D:9.2e+01 E:2.8e+00 -> E
+P4 Ou-cas N=15 wh=1e+03   random piecewise   noise  A:2.4e-01 B:2.8e-01 D:2.9e-01 E:4.7e-01 -> A
+P5 lam=    1 switch +0.3->+0.8  step  err A:5.3e-06 B:4.9e-06 D:1.2e-07 E:3.4e-08 | gaps A-B:0.18 A-D:0.10 B-E:0.12 D-E:0.29
+P5 lam=    1 switch +0.3->+0.8  noise err A:1.0e-06 B:9.9e-07 D:9.0e-08 E:9.0e-08 | gaps A-B:0.26 A-D:0.27 B-E:0.04 D-E:0.04
+P5 lam=    1 smooth             step  err A:1.7e-05 B:1.7e-05 D:7.4e-08 E:1.6e-07 | gaps A-B:0.20 A-D:0.09 B-E:0.22 D-E:0.24
+P5 lam=    1 smooth             noise err A:7.1e-07 B:7.7e-07 D:4.2e-08 E:4.5e-08 | gaps A-B:0.02 A-D:0.01 B-E:0.02 D-E:0.02
+P5 lam=    1 switch -0.3->-0.8  step  err A:2.5e-07 B:4.7e-08 D:9.4e-06 E:7.1e-06 | gaps A-B:0.40 A-D:0.20 B-E:0.17 D-E:0.25
+P5 lam=    1 switch -0.3->-0.8  noise err A:8.7e-09 B:8.7e-09 D:9.8e-08 E:9.6e-08 | gaps A-B:0.00 A-D:0.03 B-E:0.00 D-E:0.02
+P5 lam=  100 switch +0.3->+0.8  step  err A:7.7e-08 B:7.7e-08 D:5.1e-09 E:6.8e-10 | gaps A-B:0.02 A-D:0.01 B-E:0.02 D-E:0.02
+P5 lam=  100 switch +0.3->+0.8  noise err A:3.5e-08 B:3.5e-08 D:1.5e-08 E:1.5e-08 | gaps A-B:0.02 A-D:0.02 B-E:0.01 D-E:0.01
+P5 lam=  100 smooth             step  err A:4.9e-07 B:4.9e-07 D:3.1e-09 E:2.1e-09 | gaps A-B:0.00 A-D:0.00 B-E:0.00 D-E:0.00
+P5 lam=  100 smooth             noise err A:1.5e-07 B:1.6e-07 D:1.7e-08 E:1.7e-08 | gaps A-B:0.00 A-D:0.00 B-E:0.00 D-E:0.00
+P5 lam=  100 switch -0.3->-0.8  step  err A:4.2e-09 B:7.8e-10 D:1.9e-07 E:1.3e-07 | gaps A-B:0.01 A-D:0.00 B-E:0.00 D-E:0.00
+P5 lam=  100 switch -0.3->-0.8  noise err A:1.2e-10 B:1.1e-10 D:4.4e-09 E:2.7e-09 | gaps A-B:0.00 A-D:0.00 B-E:0.00 D-E:0.00
+
+real	0m51.307s
+user	1m18.028s
+sys	0m9.309s
