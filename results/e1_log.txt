@@ -1,0 +1,63 @@
+-0.3->-0.7 S= 7 FP-out:A=7.0e-03/B=5.3e-01 FP-in:A=3.3e-01/B=2.5e-02 Ou-par:A=3.1e-01/B=1.0e+00 Ou-cas:A=1.5e-01/B=3.5e-01
+-0.3->-0.7 S=11 FP-out:A=4.6e-03/B=5.2e-01 FP-in:A=3.5e-01/B=4.6e-03 Ou-par:A=1.8e-01/B=7.9e-01 Ou-cas:A=1.6e-01/B=3.3e-01
+-0.3->-0.7 S=15 FP-out:A=1.9e-03/B=5.2e-01 FP-in:A=3.5e-01/B=1.2e-03 Ou-par:A=1.2e-01/B=7.1e-01 Ou-cas:A=1.6e-01/B=3.3e-01
+-0.3->-0.7 S=21 FP-out:A=1.0e-03/B=5.2e-01 FP-in:A=3.5e-01/B=6.7e-04 Ou-par:A=8.6e-02/B=6.5e-01 Ou-cas:A=1.6e-01/B=3.3e-01
+-0.3->-0.7 S=25 FP-out:A=7.8e-04/B=5.2e-01 FP-in:A=3.5e-01/B=4.8e-04 Ou-par:A=7.1e-02/B=6.3e-01 Ou-cas:A=1.6e-01/B=3.3e-01
+-0.3->-0.7 S=31 FP-out:A=5.6e-04/B=5.2e-01 FP-in:A=3.5e-01/B=3.3e-04 Ou-par:A=5.6e-02/B=6.1e-01 Ou-cas:A=1.6e-01/B=3.3e-01
+-0.3->-0.7 S=41 FP-out:A=3.9e-04/B=5.2e-01 FP-in:A=3.5e-01/B=2.1e-04 Ou-par:A=4.2e-02/B=5.9e-01 Ou-cas:A=1.6e-01/B=3.3e-01
+-0.7->-0.3 S= 7 FP-out:A=1.9e-02/B=3.4e-01 FP-in:A=5.4e-01/B=6.0e-03 Ou-par:A=9.4e-02/B=4.1e-01 Ou-cas:A=2.0e-01/B=2.8e-01
+-0.7->-0.3 S=11 FP-out:A=2.9e-03/B=3.5e-01 FP-in:A=5.3e-01/B=3.7e-03 Ou-par:A=6.4e-02/B=3.9e-01 Ou-cas:A=2.0e-01/B=2.8e-01
+-0.7->-0.3 S=15 FP-out:A=5.5e-04/B=3.5e-01 FP-in:A=5.3e-01/B=1.5e-03 Ou-par:A=4.8e-02/B=3.8e-01 Ou-cas:A=2.0e-01/B=2.8e-01
+-0.7->-0.3 S=21 FP-out:A=3.2e-04/B=3.5e-01 FP-in:A=5.3e-01/B=8.3e-04 Ou-par:A=3.5e-02/B=3.7e-01 Ou-cas:A=2.0e-01/B=2.8e-01
+-0.7->-0.3 S=25 FP-out:A=2.2e-04/B=3.5e-01 FP-in:A=5.3e-01/B=6.2e-04 Ou-par:A=3.0e-02/B=3.7e-01 Ou-cas:A=2.0e-01/B=2.8e-01
+-0.7->-0.3 S=31 FP-out:A=1.4e-04/B=3.5e-01 FP-in:A=5.3e-01/B=4.5e-04 Ou-par:A=2.4e-02/B=3.6e-01 Ou-cas:A=2.0e-01/B=2.8e-01
+-0.7->-0.3 S=41 FP-out:A=8.3e-05/B=3.5e-01 FP-in:A=5.3e-01/B=3.2e-04 Ou-par:A=1.9e-02/B=3.6e-01 Ou-cas:A=2.0e-01/B=2.8e-01
++0.3->+0.7 S= 7 FP-out:A=1.2e-01/B=6.2e-01 FP-in:A=1.4e+00/B=2.3e-01 Ou-par:A=2.0e-01/B=5.9e-01 Ou-cas:A=2.3e+00/B=2.1e+00
++0.3->+0.7 S=11 FP-out:A=1.8e-02/B=6.5e-01 FP-in:A=1.0e+00/B=3.3e-02 Ou-par:A=2.0e-01/B=6.2e-01 Ou-cas:A=1.8e+00/B=1.8e+00
++0.3->+0.7 S=15 FP-out:A=1.4e-03/B=6.5e-01 FP-in:A=1.0e+00/B=4.2e-03 Ou-par:A=1.4e-01/B=6.2e-01 Ou-cas:A=1.7e+00/B=1.7e+00
++0.3->+0.7 S=21 FP-out:A=6.4e-04/B=6.5e-01 FP-in:A=1.0e+00/B=2.5e-04 Ou-par:A=9.9e-02/B=6.3e-01 Ou-cas:A=1.7e+00/B=1.7e+00
++0.3->+0.7 S=25 FP-out:A=4.1e-04/B=6.5e-01 FP-in:A=1.0e+00/B=6.0e-05 Ou-par:A=8.4e-02/B=6.3e-01 Ou-cas:A=1.7e+00/B=1.7e+00
++0.3->+0.7 S=31 FP-out:A=2.6e-04/B=6.5e-01 FP-in:A=1.0e+00/B=3.6e-05 Ou-par:A=6.8e-02/B=6.3e-01 Ou-cas:A=1.6e+00/B=1.7e+00
++0.3->+0.7 S=41 FP-out:A=1.4e-04/B=6.5e-01 FP-in:A=1.0e+00/B=1.1e-04 Ou-par:A=5.3e-02/B=6.4e-01 Ou-cas:A=1.6e+00/B=1.7e+00
++0.7->+0.3 S= 7 FP-out:A=2.4e-02/B=3.1e-01 FP-in:A=3.6e-01/B=1.0e-01 Ou-par:A=1.2e-01/B=2.8e-01 Ou-cas:A=2.4e-01/B=5.0e-01
++0.7->+0.3 S=11 FP-out:A=5.6e-03/B=2.9e-01 FP-in:A=2.9e-01/B=1.7e-02 Ou-par:A=6.9e-02/B=2.8e-01 Ou-cas:A=2.2e-01/B=4.9e-01
++0.7->+0.3 S=15 FP-out:A=2.2e-03/B=2.9e-01 FP-in:A=2.9e-01/B=2.6e-03 Ou-par:A=5.2e-02/B=2.8e-01 Ou-cas:A=2.1e-01/B=4.8e-01
++0.7->+0.3 S=21 FP-out:A=1.1e-03/B=2.9e-01 FP-in:A=2.9e-01/B=1.2e-03 Ou-par:A=3.6e-02/B=2.9e-01 Ou-cas:A=2.0e-01/B=4.7e-01
++0.7->+0.3 S=25 FP-out:A=7.1e-04/B=2.9e-01 FP-in:A=2.9e-01/B=8.1e-04 Ou-par:A=3.0e-02/B=2.9e-01 Ou-cas:A=2.0e-01/B=4.7e-01
++0.7->+0.3 S=31 FP-out:A=4.1e-04/B=2.9e-01 FP-in:A=2.9e-01/B=5.0e-04 Ou-par:A=2.4e-02/B=2.9e-01 Ou-cas:A=2.0e-01/B=4.7e-01
++0.7->+0.3 S=41 FP-out:A=1.7e-04/B=2.9e-01 FP-in:A=2.9e-01/B=2.6e-04 Ou-par:A=1.8e-02/B=2.9e-01 Ou-cas:A=2.0e-01/B=4.7e-01
+-0.5->+0.5 S= 7 FP-out:A=5.2e-02/B=8.0e-01 FP-in:A=4.2e+00/B=5.3e-02 Ou-par:A=5.2e-01/B=7.0e-01 Ou-cas:A=5.7e+00/B=1.8e+00
+-0.5->+0.5 S=11 FP-out:A=1.0e-02/B=8.1e-01 FP-in:A=4.0e+00/B=6.7e-03 Ou-par:A=3.2e-01/B=7.4e-01 Ou-cas:A=4.7e+00/B=1.6e+00
+-0.5->+0.5 S=15 FP-out:A=1.7e-03/B=8.1e-01 FP-in:A=4.0e+00/B=1.4e-03 Ou-par:A=2.3e-01/B=7.6e-01 Ou-cas:A=4.6e+00/B=1.6e+00
+-0.5->+0.5 S=21 FP-out:A=1.0e-03/B=8.1e-01 FP-in:A=4.0e+00/B=6.7e-04 Ou-par:A=1.7e-01/B=7.7e-01 Ou-cas:A=4.6e+00/B=1.6e+00
+-0.5->+0.5 S=25 FP-out:A=6.8e-04/B=8.1e-01 FP-in:A=4.0e+00/B=4.8e-04 Ou-par:A=1.4e-01/B=7.8e-01 Ou-cas:A=4.6e+00/B=1.6e+00
+-0.5->+0.5 S=31 FP-out:A=4.1e-04/B=8.1e-01 FP-in:A=4.0e+00/B=3.2e-04 Ou-par:A=1.1e-01/B=7.8e-01 Ou-cas:A=4.6e+00/B=1.6e+00
+-0.5->+0.5 S=41 FP-out:A=2.1e-04/B=8.1e-01 FP-in:A=4.0e+00/B=1.9e-04 Ou-par:A=8.5e-02/B=7.9e-01 Ou-cas:A=4.6e+00/B=1.6e+00
++0.5->-0.5 S= 7 FP-out:A=1.9e-02/B=1.4e+00 FP-in:A=6.8e-01/B=7.1e-02 Ou-par:A=6.7e-01/B=2.7e+00 Ou-cas:A=2.6e-01/B=8.3e-01
++0.5->-0.5 S=11 FP-out:A=3.9e-03/B=1.3e+00 FP-in:A=6.7e-01/B=8.3e-03 Ou-par:A=3.7e-01/B=2.1e+00 Ou-cas:A=2.5e-01/B=8.5e-01
++0.5->-0.5 S=15 FP-out:A=1.1e-03/B=1.3e+00 FP-in:A=6.7e-01/B=1.2e-03 Ou-par:A=2.5e-01/B=1.8e+00 Ou-cas:A=2.5e-01/B=8.6e-01
++0.5->-0.5 S=21 FP-out:A=6.1e-04/B=1.3e+00 FP-in:A=6.7e-01/B=4.5e-04 Ou-par:A=1.7e-01/B=1.7e+00 Ou-cas:A=2.4e-01/B=8.6e-01
++0.5->-0.5 S=25 FP-out:A=4.3e-04/B=1.3e+00 FP-in:A=6.7e-01/B=3.1e-04 Ou-par:A=1.4e-01/B=1.6e+00 Ou-cas:A=2.4e-01/B=8.7e-01
++0.5->-0.5 S=31 FP-out:A=2.9e-04/B=1.3e+00 FP-in:A=6.7e-01/B=2.0e-04 Ou-par:A=1.1e-01/B=1.6e+00 Ou-cas:A=2.4e-01/B=8.7e-01
++0.5->-0.5 S=41 FP-out:A=1.8e-04/B=1.3e+00 FP-in:A=6.7e-01/B=1.1e-04 Ou-par:A=8.0e-02/B=1.5e+00 Ou-cas:A=2.4e-01/B=8.7e-01
+smooth integral   S= 7 FP-out:A=9.8e-03/B=4.5e-01 FP-in:A=3.2e-01/B=2.2e-02 Ou-par:A=3.4e-01/B=9.0e-01 Ou-cas:A=2.1e-01/B=3.7e-01
+smooth integral   S=11 FP-out:A=3.9e-03/B=4.4e-01 FP-in:A=3.3e-01/B=3.8e-03 Ou-par:A=1.9e-01/B=7.0e-01 Ou-cas:A=2.2e-01/B=3.5e-01
+smooth integral   S=15 FP-out:A=1.6e-03/B=4.4e-01 FP-in:A=3.3e-01/B=1.1e-03 Ou-par:A=1.3e-01/B=6.2e-01 Ou-cas:A=2.2e-01/B=3.6e-01
+smooth integral   S=21 FP-out:A=9.3e-04/B=4.4e-01 FP-in:A=3.3e-01/B=6.5e-04 Ou-par:A=9.2e-02/B=5.7e-01 Ou-cas:A=2.2e-01/B=3.6e-01
+smooth integral   S=25 FP-out:A=7.1e-04/B=4.4e-01 FP-in:A=3.3e-01/B=5.0e-04 Ou-par:A=7.6e-02/B=5.5e-01 Ou-cas:A=2.2e-01/B=3.6e-01
+smooth integral   S=31 FP-out:A=5.2e-04/B=4.4e-01 FP-in:A=3.3e-01/B=3.8e-04 Ou-par:A=6.0e-02/B=5.3e-01 Ou-cas:A=2.2e-01/B=3.6e-01
+smooth integral   S=41 FP-out:A=3.8e-04/B=4.4e-01 FP-in:A=3.3e-01/B=2.9e-04 Ou-par:A=4.5e-02/B=5.0e-01 Ou-cas:A=2.2e-01/B=3.6e-01
+smooth derivative S= 7 FP-out:A=8.3e-02/B=5.2e-01 FP-in:A=1.7e+01/B=1.3e+01 Ou-par:A=1.1e-01/B=4.5e-01 Ou-cas:A=2.2e+00/B=2.2e+00
+smooth derivative S=11 FP-out:A=1.1e-02/B=4.8e-01 FP-in:A=1.6e+01/B=1.2e+01 Ou-par:A=5.1e-02/B=4.7e-01 Ou-cas:A=2.0e+00/B=1.9e+00
+smooth derivative S=15 FP-out:A=1.8e-03/B=4.8e-01 FP-in:A=1.6e+01/B=1.2e+01 Ou-par:A=3.8e-02/B=4.7e-01 Ou-cas:A=1.9e+00/B=1.9e+00
+smooth derivative S=21 FP-out:A=6.7e-04/B=4.8e-01 FP-in:A=1.5e+01/B=1.2e+01 Ou-par:A=2.7e-02/B=4.7e-01 Ou-cas:A=1.8e+00/B=1.8e+00
+smooth derivative S=25 FP-out:A=4.4e-04/B=4.8e-01 FP-in:A=1.5e+01/B=1.2e+01 Ou-par:A=2.2e-02/B=4.7e-01 Ou-cas:A=1.8e+00/B=1.8e+00
+smooth derivative S=31 FP-out:A=2.5e-04/B=4.8e-01 FP-in:A=1.5e+01/B=1.2e+01 Ou-par:A=1.8e-02/B=4.8e-01 Ou-cas:A=1.8e+00/B=1.8e+00
+smooth derivative S=41 FP-out:A=1.0e-04/B=4.8e-01 FP-in:A=1.5e+01/B=1.2e+01 Ou-par:A=1.3e-02/B=4.8e-01 Ou-cas:A=1.8e+00/B=1.8e+00
+smooth crossing   S= 7 FP-out:A=2.5e-02/B=9.3e-01 FP-in:A=1.3e+00/B=1.3e+00 Ou-par:A=5.9e-01/B=1.6e+00 Ou-cas:A=3.4e-01/B=8.6e-01
+smooth crossing   S=11 FP-out:A=4.5e-03/B=9.0e-01 FP-in:A=1.2e+00/B=1.2e+00 Ou-par:A=3.2e-01/B=1.3e+00 Ou-cas:A=3.3e-01/B=8.6e-01
+smooth crossing   S=15 FP-out:A=1.2e-03/B=9.0e-01 FP-in:A=1.2e+00/B=1.2e+00 Ou-par:A=2.2e-01/B=1.2e+00 Ou-cas:A=3.3e-01/B=8.6e-01
+smooth crossing   S=21 FP-out:A=6.0e-04/B=9.0e-01 FP-in:A=1.2e+00/B=1.2e+00 Ou-par:A=1.5e-01/B=1.1e+00 Ou-cas:A=3.2e-01/B=8.5e-01
+smooth crossing   S=25 FP-out:A=4.3e-04/B=9.0e-01 FP-in:A=1.2e+00/B=1.2e+00 Ou-par:A=1.2e-01/B=1.0e+00 Ou-cas:A=3.2e-01/B=8.5e-01
+smooth crossing   S=31 FP-out:A=2.9e-04/B=9.0e-01 FP-in:A=1.2e+00/B=1.2e+00 Ou-par:A=9.5e-02/B=1.0e+00 Ou-cas:A=3.2e-01/B=8.5e-01
+smooth crossing   S=41 FP-out:A=1.8e-04/B=9.0e-01 FP-in:A=1.2e+00/B=1.2e+00 Ou-par:A=7.0e-02/B=9.8e-01 Ou-cas:A=3.2e-01/B=8.5e-01
