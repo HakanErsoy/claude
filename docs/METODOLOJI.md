@@ -4,7 +4,7 @@
 **Çalışma başlığı (taslak):**
 *Definition-Consistent Realization of Variable-Order Fractional Operators with Fixed-Pole Banks: Theory, Discrete-Time Exactness, and Sample-Rate Order Scheduling*
 
-Durum: **Aşama 3 tamamlandı.** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini doğruladı (bkz. §7).
+Durum: **Aşama 4 tamamlandı.** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu ve kaynak tahminini gösterdi (bkz. §7). Kart ölçümleri bekliyor.
 
 ---
 
@@ -134,7 +134,8 @@ Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor;
 | H5 | D/E tipleri, OS/IS bankaların geri-besleme ile terslenmesiyle (dualite) gerçeklenebilir | **Doğrulandı** (E4: literal GL'ye göre ≤6.5e-5, kendi tipine göre ≤3e-13, dualite ≤2e-14) |
 | H5b | Ters her derecede kararlı | **DC tabanıyla doğrulandı.** Tabansız E3 holdout tasarımlarının 99/200'ünde en az bir derecede ters kararsız; tabanla 200/200 kararlı |
 | H5c | Hot-swap edilen Oustaloup tutarlı bir tip gerçekler | **Reddedildi.** Paralel form yaklaşık A, kaskadda en yakın tip girişe göre A/B/D/E arasında değişiyor. Bant > Nyquist iken D/E referansları bile kurulamıyor (ZOH üyeleri minimum-fazlı değil) |
-| H6 | Örnek hızında α güncelleme donanımda ucuzdur: geometrik ızgara sayesinde ağırlıklar m_{k+1} = m_k · q^(±α) özyinelemesiyle üretilir | Açık (E5, RTL + kart) |
+| H6 | Örnek hızında α güncelleme donanımda ucuzdur | **RTL'de doğrulandı** (E5): derece değişimi yalnızca bir ROM adresi, örnek başına 136 çevrim, 0 uyumsuzluk. Kart ölçümü bekliyor. (İlk hipotezdeki q^(±α) özyinelemesi DT bankada kesin değil; yerine P = 1024 seviyeli katsayı tablosu kullanıldı) |
+| H6b | Kuantizasyon ters kararlılığı bozabilir | **Doğrulandı.** Float katsayılar tabanlı olsa bile, kuantizasyondan sonra pozitif derece girişlerinin ~%10'unda H_q(1) ≤ 0 çıkıyor. Kuantizasyona duyarlı taban ile 0 |
 | H7 | Uygulama: gerçek zamanlı multifraksiyonel Brown hareketi (RL-mBm = A-tipi) sentezi, O(K) maliyetle | Açık (E6) |
 
 ---
@@ -148,7 +149,7 @@ Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor;
 | **E2** | En küçük kareler optimal Φ (A: durum kestirimi, B: çıkış eşleme); 6 anahtarlama × S = 7…31 × paralel/kaskad; 4 giriş sınıfında eğitim, taze kümede ve basamakta test; ‖Φ‖–hata Pareto; float32, 18/24/32-bit kuantizasyon, 24-bit durum gürültüsü; sürekli α altında zincirleme eşleme | `results/e2_*.json`, `fig_e2_*.png` |
 | **E3** | Hata terimlerinin izole doğrulaması; 72 spesifikasyonluk geliştirme ızgarası; 400 spesifikasyonluk mühürlü holdout (değerlendirmeden önce SHA-256 ile yazıldı) | `results/e3_*.json`, `fig_e3_*.png` |
 | **E4** | Literal D/E özyinelemeleri ve dualite; bankadan A/B/D/E (5 profil × 3 giriş); E3 holdout tasarımlarında ters kararlılık; hot-swap Oustaloup'un en yakın tipi (own-type referansları); dört tipte VO gevşeme denklemi, O(K) ve O(n²) karşılaştırması | `results/e4_recursive_types.json`, `fig_e4_types.png` |
-| **E5** | Sabit nokta + RTL: ağırlık üretici (sin, exp2 LUT + çarpım zinciri), kelime uzunluğu taraması, xsim paritesi, kartta ölçüm (kaynak, gecikme, α-güncelleme hızı) | planlı |
+| **E5** | Bit-tam tamsayı modeli (örnek birimleri, mod başına durum ölçeklemesi, mantis+kaydırma katsayılar, P = 1024 derece tablosu); iki zarf (A/B, A/B/D/E); WS × WM taraması; kuantize DC tabanı; Verilog çekirdek, iverilog bit-tam paritesi, Verilator lint, Yosys xc7 tahmini; kart paketi | `results/e5_*.json`, `fig_e5_wordlength.png`, `rtl/` |
 | **E6** | mBm sentezi: yerel Hurst tahmini (artış varyansı / dalgacık), A/B farkı, maliyet karşılaştırması (Cholesky, FFT, GL O(n²)) | planlı |
 
 **İstatistik ve tekrarlanabilirlik:** sabit tohumlar; tüm deneyler `python3 experiments/<e>.py` ile tek komutla üretiliyor; testler `pytest`. E3'te geçme/kalma için Clopper–Pearson alt sınırı kullanılacak (TCAS-I'deki yaklaşımla tutarlı).
@@ -163,7 +164,7 @@ Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor;
 4. Definition by structure: OS → A, IS → B (önermeler), gereklilik teoremi
 5. Discrete-time exactness: Beta-integral gösterimi, ayrık banka, Tanım 2/3'ün kuadratür hatası dışında tam gerçeklenmesi; D/E tiplerinin cebirsel ters ile gerçeklenmesi, dualitenin korunması, ters kararlılık önermesi ve DC tabanı; VO diferansiyel denklem çözücüsü
 6. Design rule: analitik K(ε, bant, α-aralığı)
-7. Hardware: örnek hızında α güncelleme, sabit nokta analizi, FPGA ölçümleri
+7. Hardware: örnek birimlerinde bölücüsüz D/E, mod başına durum ölçeklemesi, D/E anahtarlama dinamik aralığı, kuantizasyona duyarlı DC tabanı, kelime uzunluğu seçimi, RTL paritesi, kaynaklar, kart ölçümleri
 8. Application: gerçek zamanlı mBm sentezi
 9. Conclusion
 Ekler: ispatlar, referans formüllerin GL ile doğrulanması
@@ -290,12 +291,55 @@ ZOH'lu Oustaloup integral üyelerinde bant Nyquist'i aştığında birim çember
 - λ = 100: hata ≤ 4.9e-7, tipler arası fark ≤ 0.02 (λy baskın, tip etkisi kayboluyor).
 - Süre (24 çözüm): banka 1.2 s (Python döngüsü, O(nK)), GL üçgensel çözümü 9.6 s (O(n²), C). Fark n ile büyüyor.
 
+### E5: sabit nokta ve RTL
+
+**Tasarım noktası:** R = 4000, ε = 1e-4, |α| ≤ 0.95 → K = 32 (+ gecikme modu). Derece ızgarası P = 1024 (Δα = 1.9e-3).
+
+**Mimari kararlar:**
+- **Örnek birimleri (Ts = 1):** g₀ = 1 olduğu için D/E terslemesi bölücüsüz, v = x − hist. Fiziksel ölçek tek bir Ts^(−α) kazancı (A ve E'de çıkışta, B ve D'de girişte).
+- **Mod başına durum ölçeklemesi (2^G):** giriş zamanlamasında yavaş modların c·v artışları sinyal LSB'sinin çok altında kalıyor. Ölçeklemesiz ilk denemede B/E hatası 2e-2 ile 0.66 arasındaydı.
+- **Kelime genişlikleri:** durum kelimesi = sinyal + 13 bit (log₂ n_max + 1). Katsayılar mantis + 7 bit kaydırma biçiminde.
+
+**Dinamik aralık (çok önemli):** D/E'de integral ile türev dereceleri arasında anahtarlama, çıkışı dondurulmuş-derece l1 sınırının **820 katına** çıkarıyor (DC girişte 2.2e6, sınır 2696). Yeni derecedeki ters işlem, büyümüş bir geçmişe uygulanıyor; bu D-tipi tanımın kendi davranışı. Bu yüzden iki çalışma zarfı var:
+- A/B: 14 tamsayı biti
+- A/B/D/E: 24 tamsayı biti
+
+**Kelime uzunluğu** (36 vaka, kabul ölçütü: GL'ye göre hata ≤ float hatası + 0.1ε):
+
+| Zarf | En küçük yapılandırma (WS / durum / WM) | Not |
+|---|---|---|
+| A/B | **36 / 49 / 16** | A/B, 16-bit mantisle bile float düzeyinde |
+| A/B/D/E | **48 / 61 / 25** | D/E 18-bit mantiste ~1e-3 tabanına takılıyor (terslemenin kötü koşulluluğu: türev bankasının düşük frekans kazancı ~R^(−α)) |
+
+Ayrıca float bankanın kendi çıkış hatası D/E'de 6e-4'e kadar çıkıyor (ağırlık düzeyi ε = 1e-4). Kural ağırlık düzeyinde garanti veriyor; çıkış düzeyindeki bu büyüme makalede ayrıca belirtilecek.
+
+**Kuantizasyon ve ters kararlılık:** Float katsayılar tabanlı olsa bile, kuantizasyondan sonra pozitif derece girişlerinde H_q(1) ≤ 0 çıkıyor:
+- A/B yapılandırmasında 64/512 giriş
+- A/B/D/E yapılandırmasında 51/512 giriş
+
+En kötü girişte (α = 0.855) ρ − 1 = +2.5e-9; e-katına çıkması ~4e8 örnek alıyor, 1 MS/s'de ~400 s. Kuantizasyona duyarlı taban (c_delay'i mantis LSB'si adımlarıyla artırarak H_q(1) ≥ H_float(1) yapmak) bunu 0/512'ye indiriyor. Doğruluk maliyeti yok.
+
+**RTL** (`rtl/vo_bank_core.v`, zaman paylaşımlı, örnek başına 4K + 8 = 136 çevrim):
+
+| Zarf | Yapılandırma | Örnek | Uyumsuzluk | LUT | FF | DSP48E1 | BRAM36 eşd. |
+|---|---|---|---|---|---|---|---|
+| A/B | WS36 / WST49 / WM16 | 31 744 | **0** | 4 171 | 1 882 | 11 | 22 |
+| A/B/D/E | WS48 / WST61 / WM25 | 62 464 | **0** | 6 009 | 2 360 | 29 | 29.5 |
+
+- Vektörler: sabit, parçalı, **her örnekte değişen** ve işaret değiştiren dereceler; tam ölçekli girişler; çalışma anında tip değişimi.
+- Kaynaklar Yosys 0.33 `synth_xilinx -family xc7` tahmini. Vivado sonuçları ve Fmax farklı olabilir.
+- Derece değişimi yalnızca bir ROM adresi: yeniden yükleme yok, ek çevrim yok.
+- Karşılaştırma: E2'deki durum eşlemesi yaklaşımı yalnızca komşu dereceler için 2(P−1) yoğun 33×33 matris ister. Bu yaklaşık 56 Mbit; katsayı tablosu ise 0.78–1.08 Mbit, yani ~50–70 kat daha az.
+
+**Açık / sınırlar:** Fmax ve kart ölçümleri yok (Vivado + kart gerekli, paket `rtl/README.md`'de). Boru hattısız durum makinesi; boru hattıyla örnek başına ~K + birkaç çevrime inilebilir. Sabit nokta tek ölçekli Q formatında, D/E için block-floating denenmedi.
+
 ---
 
 ## 8. Sonraki adımlar
 
-1. Teoremin ve ters-kararlılık önermesinin tam ispatı; DT hata modelinin küçük-r terimi için kapalı form (şu an temsilden sayısal hesaplanıyor)
-2. Sistematik literatür taraması (§2)
-3. E5 sabit-nokta analizi: DC tabanı ve gecikme modu dahil, D/E terslemesinin kelime uzunluğuna duyarlılığı
+1. Kart ölçümleri (`rtl/README.md`): bit-tam parite, Vivado kaynak ve Fmax, uzun koşu kararlılığı
+2. Teoremin ve ters-kararlılık önermesinin tam ispatı; DT hata modelinin küçük-r terimi için kapalı form
+3. Sistematik literatür taraması (§2)
+4. E6 uygulaması (mBm sentezi)
 4. E5: RTL ağırlık üretici, TCAS-I'deki W48 altyapısı yeniden kullanılarak ama yeni çekirdekle
 5. E6 uygulaması (mBm). Alternatif: VO kesirli PID veya zamanla değişen spektral eğimli filtre

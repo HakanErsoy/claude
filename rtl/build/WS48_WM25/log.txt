@@ -1,0 +1,323 @@
+$ iverilog -g2012 -o /home/user/claude/rtl/build/WS48_WM25/sim.vvp -Ptb_vo_bank.K=32 -Ptb_vo_bank.P=1024 -Ptb_vo_bank.AW=10 -Ptb_vo_bank.WS=48 -Ptb_vo_bank.WST=61 -Ptb_vo_bank.WM=25 -Ptb_vo_bank.SB=7 -Ptb_vo_bank.N=62464 -Ptb_vo_bank.COEF_FILE="/home/user/claude/rtl/build/WS48_WM25/coef.mem" -Ptb_vo_bank.UPOLE_FILE="/home/user/claude/rtl/build/WS48_WM25/upole.mem" -Ptb_vo_bank.GAIN_FILE="/home/user/claude/rtl/build/WS48_WM25/gain.mem" -Ptb_vo_bank.STIM_FILE="/home/user/claude/rtl/build/WS48_WM25/stim.mem" -Ptb_vo_bank.OUT_FILE="/home/user/claude/rtl/build/WS48_WM25/out.txt" /home/user/claude/rtl/tb_vo_bank.v /home/user/claude/rtl/vo_bank_core.v
+
+$ vvp -n /home/user/claude/rtl/build/WS48_WM25/sim.vvp
+SAMPLES 62464 CYCLES_PER_SAMPLE 136
+/home/user/claude/rtl/tb_vo_bank.v:62: $finish called at 42475542500 (1ps)
+
+$ verilator --lint-only -Wall -Wno-DECLFILENAME -Wno-UNUSEDPARAM -GK=32 -GWS=48 -GWST=61 -GWM=25 /home/user/claude/rtl/vo_bank_core.v
+%Warning-WIDTHTRUNC: /home/user/claude/rtl/vo_bank_core.v:78:23: Operator ASSIGN expects 88 bits on the Assign RHS, but Assign RHS's SHIFTRS generates 89 bits.
+                                                               : ... note: In instance 'vo_bank_core'
+   78 |                 mulsh = r >>> sh;
+      |                       ^
+                     ... For warning description see https://verilator.org/warn/WIDTHTRUNC?v=5.020
+                     ... Use "/* verilator lint_off WIDTHTRUNC */" and lint_on around source to disable this message.
+%Warning-WIDTHEXPAND: /home/user/claude/rtl/vo_bank_core.v:74:25: Operator GTES expects 32 bits on the LHS, but LHS's VARREF 'sh' generates 10 bits.
+                                                                : ... note: In instance 'vo_bank_core'
+   74 |             else if (sh >= PW)
+      |                         ^~
+%Warning-WIDTHEXPAND: /home/user/claude/rtl/vo_bank_core.v:100:36: Operator ADD expects 16 bits on the RHS, but RHS's VARREF 'k' generates 6 bits.
+                                                                 : ... note: In instance 'vo_bank_core'
+  100 |     wire [CAW-1:0] caddr = rowbase + k;
+      |                                    ^
+%Warning-WIDTHEXPAND: /home/user/claude/rtl/vo_bank_core.v:101:31: Operator LT expects 32 bits on the LHS, but LHS's VARREF 'k' generates 6 bits.
+                                                                 : ... note: In instance 'vo_bank_core'
+  101 |     wire [KW-1:0]  kk    = (k < K) ? k : {KW{1'b0}};
+      |                               ^
+%Warning-WIDTHTRUNC: /home/user/claude/rtl/vo_bank_core.v:107:28: Bit extraction of array[31:0] requires 5 bit index, not 6 bits.
+                                                                : ... note: In instance 'vo_bank_core'
+  107 |         u_q    <= upole_rom[kk];
+      |                            ^
+%Warning-WIDTHTRUNC: /home/user/claude/rtl/vo_bank_core.v:108:27: Bit extraction of array[31:0] requires 5 bit index, not 6 bits.
+                                                                : ... note: In instance 'vo_bank_core'
+  108 |         g_q    <= gain_rom[kk];
+      |                           ^
+%Warning-WIDTHTRUNC: /home/user/claude/rtl/vo_bank_core.v:109:21: Bit extraction of array[31:0] requires 5 bit index, not 6 bits.
+                                                                : ... note: In instance 'vo_bank_core'
+  109 |         st_q   <= st[kk];
+      |                     ^
+%Warning-WIDTHEXPAND: /home/user/claude/rtl/vo_bank_core.v:126:12: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'k' generates 6 bits.
+                                                                 : ... note: In instance 'vo_bank_core'
+  126 |         (k == K) ? (out_sched ? mulsh(dl_x, cM, cS) : dl_x)
+      |            ^~
+%Warning-WIDTHEXPAND: /home/user/claude/rtl/vo_bank_core.v:146:53: Operator SUB expects 32 bits on the RHS, but RHS's VARREF 'in_aidx' generates 10 bits.
+                                                                 : ... note: In instance 'vo_bank_core'
+  146 |                     rowbase <= (in_type[1] ? (P - 1 - in_aidx) : in_aidx) * ROWS;
+      |                                                     ^
+%Warning-WIDTHEXPAND: /home/user/claude/rtl/vo_bank_core.v:146:44: Operator COND expects 32 bits on the Conditional False, but Conditional False's VARREF 'in_aidx' generates 10 bits.
+                                                                 : ... note: In instance 'vo_bank_core'
+  146 |                     rowbase <= (in_type[1] ? (P - 1 - in_aidx) : in_aidx) * ROWS;
+      |                                            ^
+%Warning-WIDTHTRUNC: /home/user/claude/rtl/vo_bank_core.v:146:29: Operator ASSIGNDLY expects 16 bits on the Assign RHS, but Assign RHS's MUL generates 32 bits.
+                                                                : ... note: In instance 'vo_bank_core'
+  146 |                     rowbase <= (in_type[1] ? (P - 1 - in_aidx) : in_aidx) * ROWS;
+      |                             ^~
+%Warning-WIDTHEXPAND: /home/user/claude/rtl/vo_bank_core.v:155:31: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'k' generates 6 bits.
+                                                                 : ... note: In instance 'vo_bank_core'
+  155 |                         if (k == K) phase <= S_CALC;
+      |                               ^~
+%Warning-WIDTHTRUNC: /home/user/claude/rtl/vo_bank_core.v:178:31: Bit extraction of array[31:0] requires 5 bit index, not 6 bits.
+                                                                : ... note: In instance 'vo_bank_core'
+  178 |                             st[k] <= s_new[WST-1:0];
+      |                               ^
+%Warning-WIDTHEXPAND: /home/user/claude/rtl/vo_bank_core.v:174:31: Operator EQ expects 32 bits on the LHS, but LHS's VARREF 'k' generates 6 bits.
+                                                                 : ... note: In instance 'vo_bank_core'
+  174 |                         if (k == K) begin
+      |                               ^~
+%Warning-UNUSEDSIGNAL: /home/user/claude/rtl/vo_bank_core.v:101:20: Bits of signal are not used: 'kk'[5]
+                                                                  : ... note: In instance 'vo_bank_core'
+  101 |     wire [KW-1:0]  kk    = (k < K) ? k : {KW{1'b0}};
+      |                    ^~
+%Warning-UNUSEDSIGNAL: /home/user/claude/rtl/vo_bank_core.v:125:26: Bits of signal are not used: 'hterm'[87:56]
+                                                                  : ... note: In instance 'vo_bank_core'
+  125 |     wire signed [PW-1:0] hterm =
+      |                          ^~~~~
+%Warning-UNUSEDSIGNAL: /home/user/claude/rtl/vo_bank_core.v:132:26: Bits of signal are not used: 's_new'[87:61]
+                                                                  : ... note: In instance 'vo_bank_core'
+  132 |     wire signed [PW-1:0] s_new = st_x + drive - decay;
+      |                          ^~~~~
+%Warning-UNUSEDSIGNAL: /home/user/claude/rtl/vo_bank_core.v:133:26: Bits of signal are not used: 'dl_in'[87:48]
+                                                                  : ... note: In instance 'vo_bank_core'
+  133 |     wire signed [PW-1:0] dl_in = mulsh(v_x, cM, cS);
+      |                          ^~~~~
+%Error: Exiting due to 18 warning(s)
+
+$ yosys -q -s /home/user/claude/rtl/build/WS48_WM25/synth.ys -l /home/user/claude/rtl/build/WS48_WM25/synth.log
+Warning: Literal has a width of 25 bit, but value requires 31 bit. (/home/user/claude/rtl/vo_bank_core.v:1)
+Warning: Literal has a width of 25 bit, but value requires 32 bit. (/home/user/claude/rtl/vo_bank_core.v:1)
+Warning: Resizing cell port vo_bank_core.coef_rom.0.0.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.0.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.0.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.0.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.1.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.1.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.1.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.1.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.10.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.10.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.10.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.10.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.11.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.11.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.11.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.11.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.12.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.12.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.12.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.12.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.13.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.13.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.13.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.13.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.14.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.14.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.14.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.14.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.15.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.15.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.15.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.15.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.16.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.16.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.16.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.16.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.17.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.17.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.17.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.17.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.18.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.18.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.18.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.18.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.19.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.19.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.19.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.19.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.2.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.2.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.2.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.2.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.20.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.20.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.20.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.20.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.21.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.21.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.21.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.21.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.22.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.22.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.22.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.22.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.23.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.23.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.23.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.23.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.24.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.24.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.24.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.24.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.25.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.25.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.25.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.25.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.26.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.26.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.26.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.26.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.27.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.27.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.27.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.27.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.28.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.28.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.28.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.28.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.29.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.29.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.29.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.29.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.3.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.3.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.3.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.3.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.30.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.30.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.30.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.30.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.31.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.31.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.31.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.31.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.32.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.32.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.32.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.32.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.33.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.33.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.33.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.33.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.34.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.34.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.34.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.34.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.35.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.35.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.35.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.35.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.36.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.36.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.36.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.36.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.37.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.37.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.37.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.37.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.38.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.38.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.38.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.38.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.39.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.39.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.39.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.39.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.4.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.4.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.4.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.4.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.40.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.40.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.40.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.40.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.41.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.41.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.41.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.41.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.42.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.42.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.42.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.42.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.43.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.43.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.43.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.43.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.44.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.44.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.44.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.44.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.45.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.45.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.45.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.45.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.46.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.46.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.46.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.46.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.47.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.47.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.47.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.47.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.48.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.48.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.48.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.48.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.49.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.49.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.49.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.49.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.5.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.5.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.5.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.5.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.50.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.50.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.50.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.50.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.51.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.51.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.51.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.51.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.52.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.52.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.52.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.52.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.53.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.53.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.53.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.53.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.54.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.54.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.54.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.54.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.55.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.55.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.55.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.55.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.56.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.56.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.56.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.56.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.57.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.57.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.57.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.57.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.58.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.58.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.58.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.58.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.6.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.6.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.6.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.6.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.7.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.7.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.7.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.7.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.8.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.8.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.8.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.8.DOPBDOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.9.DOADO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.9.DOBDO from 64 bits to 16 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.9.DOPADOP from 8 bits to 2 bits.
+Warning: Resizing cell port vo_bank_core.coef_rom.0.9.DOPBDOP from 8 bits to 2 bits.
+

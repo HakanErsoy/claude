@@ -1,0 +1,6 @@
+WS36_WM16: 31744 samples, mismatches 0, cycles/sample 136, lint rc 1 (18 warnings), synth: LUT 4171 FF 1882 DSP 11 BRAM36 22.0
+WS48_WM25: 62464 samples, mismatches 0, cycles/sample 136, lint rc 1 (18 warnings), synth: LUT 6009 FF 2360 DSP 29 BRAM36 29.5
+
+real	4m1.972s
+user	3m56.994s
+sys	0m2.736s

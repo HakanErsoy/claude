@@ -1,0 +1,34 @@
+Printing statistics.
+
+=== vo_bank_core ===
+
+   Number of wires:               3137
+   Number of wire bits:          20055
+   Number of public wires:          99
+   Number of public wire bits:    3755
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               7004
+     BUFG                            1
+     CARRY4                        158
+     DSP48E1                        11
+     FDRE                         1880
+     FDSE                            2
+     IBUF                           51
+     INV                            71
+     LUT1                          100
+     LUT2                          642
+     LUT3                          964
+     LUT4                          436
+     LUT5                          373
+     LUT6                         1656
+     MUXF7                         502
+     MUXF8                          97
+     OBUF                           38
+     RAMB36E1                       22
+
+Warnings: 88 unique messages, 88 total
+End of script. Logfile hash: 8ab93c4e60, CPU: user 27.98s system 0.71s, MEM: 261.57 MB peak
+Yosys 0.33 (git sha1 2584903a060)
+Time spent: 48% 8x techmap (15 sec), 10% 1x abc (3 sec), ...

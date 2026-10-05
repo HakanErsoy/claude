@@ -1,0 +1,4 @@
+read_verilog /home/user/claude/rtl/vo_bank_core.v
+chparam -set K 32 -set P 1024 -set AW 10 -set WS 36 -set WST 49 -set WM 16 -set SB 7 -set COEF_FILE "/home/user/claude/rtl/build/WS36_WM16/coef.mem" -set UPOLE_FILE "/home/user/claude/rtl/build/WS36_WM16/upole.mem" -set GAIN_FILE "/home/user/claude/rtl/build/WS36_WM16/gain.mem" vo_bank_core
+synth_xilinx -top vo_bank_core -family xc7 -flatten
+stat
