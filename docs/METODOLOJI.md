@@ -4,7 +4,7 @@
 **Çalışma başlığı (taslak):**
 *Definition-Consistent Realization of Variable-Order Fractional Operators with Fixed-Pole Banks: Theory, Discrete-Time Exactness, and Sample-Rate Order Scheduling*
 
-Durum: **Aşama 1 (fikir doğrulama) tamamlandı.** E1/E1b ilk hipotezleri sayısal olarak doğruladı (bkz. §7).
+Durum: **Aşama 2 tamamlandı.** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını doğruladı (bkz. §7).
 
 ---
 
@@ -57,6 +57,8 @@ Geometrik ξ_k ızgarasında trapez kuralı uygulanınca **kutuplar α'dan bağ�
 
 Kesilen kuyruklar analitik olarak geri katılıyor (biri doğrudan geçiş terimine, diğeri en dış kutba). Böylece **tek bir durum bankası** −1 < α < 1 aralığının tamamını, α = 0 geçişi dahil sürekli olarak kapsıyor.
 
+**Kuyruk kapanışı (E3'te geliştirildi):** Tüm düğümler tam h ağırlığı taşıyor. Her kuyruk, ızgaranın ötesindeki *sanal trapez düğümlerinin geometrik serisiyle* kapatılıyor ("Poisson-tutarlı kapanış"). Banka böylece sonsuz trapez kuralına eşit oluyor; yarım uç ağırlıklarının h² mertebesindeki Euler–Maclaurin uç hatası ortadan kalkıyor. Kalan hata yalnızca kapalı formda yazılabilen üç terimden oluşuyor (§3.1).
+
 **Yapı tanımı belirliyor:**
 - **Çıkış zamanlaması** (x' = −Ξx + Ξu, y = m(α(t))ᵀx + d(α(t))u): tüm geçmiş *güncel* dereceyle ağırlıklanır → **A-tipi** (Sierociuk Tanım 2, "order memory yok").
 - **Giriş zamanlaması** (x' = −Ξx + Ξ m(α(t)) u, y = 1ᵀx + d u): her örnek *girdiği andaki* dereceyle ağırlıklanır → **B-tipi** (Tanım 3, "zayıf order memory").
@@ -67,13 +69,34 @@ Kesilen kuyruklar analitik olarak geri katılıyor (biri doğrudan geçiş terim
 
 GL ağırlıklarını sabit ayrık kutupların (θ_k = e^(−ξ_k Ts)) geometrik dizilerinin süperpozisyonu olarak yazıyor. Aynı yerleştirme kuralıyla Tanım 2 ve Tanım 3 **sadece kuadratür hatasıyla** gerçekleniyor; ZOH ayrıklaştırma hatası yok. (Bu, sürekli-zaman bankasında yumuşak α(t) ile türevde gözlenen sorunu da ortadan kaldırıyor, bkz. §7.)
 
-### Çekirdek teorem adayı (ispat yazılacak)
+### 3.1 Analitik hata modeli (E3, regresyonsuz)
 
-> **Teorem (gereklilik).** (A(α), B(α), C(α), D(α)) minimal gerçeklemeler olsun. α₁ → α₂ anahtarlamasında A-tipi davranışı **her giriş için** tam veren doğrusal bir durum eşlemesi Φ (x⁺ = Φx⁻) ancak ve ancak (A(α₁), B(α₁)) ile (A(α₂), B(α₂)) benzer ise, yani kutuplar dereceden bağımsızsa vardır.
+CT, |H/s^α − 1|, ω₁ ≤ ω ≤ ω₂; S = sin(π|α|)/π, G(p) = h/(e^{ph}−1), H(p,q) = G(p) − G(q):
+
+| Terim | integral (α = −a < 0) | türev (α = a > 0) |
+|---|---|---|
+| kuadratür (ilk Poisson aliası) | 2·sin(πa)·e^{−π²/h} | aynı |
+| alt kuyruk | S·(ξ_lo/ω₁)^{2−a}·H(1−a, 2−a) | S·(ξ_lo/ω₁)^{1+a}·G(1+a) |
+| üst kuyruk | S·(ω₂/ξ_hi)^{1+a}·G(1+a) | S·(ω₂/ξ_hi)^{2−a}·H(1−a, 2−a) |
+
+Integral ile türev arasındaki alt↔üst simetrisi kendiliğinden çıkıyor. DT'de (GL ağırlıkları, 1 ≤ r < R, u = ξTs):
+- kuadratür: büyük r için 2√(2π)·(2π/h)^{a+½}·e^{−π²/h}/Γ(1+a); küçük r'de alias genliği temsilden doğrudan hesaplanıyor
+- alt kuyruk: (r−1)·u_lo^{2+a}·H(1+a, 2+a)/B(r−a, 1+a), en kötüsü r = R−1'de
+- üst kuyruk: Σ_j h·u_j·e^{−(2−a)u_j}(1−e^{−u_j})^a / B(2−a, 1+a)
+
+**Kural:** ε bütçesi ε/2 (kuadratür) + ε/4 + ε/4 (kuyruklar) olarak bölünüyor. CT'de h = π²/ln(4·max|sin πα|/ε) kapalı form; kuyruk oranları her α için güç yasasından kapalı formda bulunuyor ve en dar olanı seçiliyor. K = ⌈ln(ξ_hi/ξ_lo)/h⌉ + 1. DT'de h ve u_hi tek boyutlu monoton kök bulmayla, u_lo kapalı formla bulunuyor.
+
+### 3.2 Gereklilik teoremi ve pratik karşılığı (E2 ile düzeltildi)
+
+> **Teorem (gereklilik).** (A(α), B(α), C(α), D(α)) minimal gerçeklemeler olsun. α₁ → α₂ anahtarlamasında A-tipi davranışı **her giriş için tam** veren doğrusal bir durum eşlemesi Φ (x⁺ = Φx⁻) ancak ve ancak (A(α₁), B(α₁)) ile (A(α₂), B(α₂)) benzer ise vardır. B-tipi için de aynısı (C, A) çifti üzerinden geçerli.
 >
-> *Taslak:* x₂(T) = Φx₁(T) her u için ⇔ e^{A₂s}B₂ = Φe^{A₁s}B₁, ∀s ≥ 0 ⇔ (minimallikte) A₂ = ΦA₁Φ⁻¹, B₂ = ΦB₁.
+> *Taslak:* x₂(T) = Φx₁(T) her u için ⇔ e^{A₂s}B₂ = Φe^{A₁s}B₁, ∀s ≥ 0 ⇔ (minimallikte) A₂ = ΦA₁Φ⁻¹, B₂ = ΦB₁. B-tipi: C₂e^{A₂s}Φ = C₁e^{A₁s}, ∀s ≥ 0.
 
-**Sonuç:** Oustaloup, CFE, Matsuda, Carlson gibi kutupları α'ya bağlı tüm yaklaşımlar, durum eşlemesi nasıl seçilirse seçilsin anahtarlamada tanımsal hata üretir. Sabit kutuplu bankada Φ = I ve tanımsal hata sıfırdır.
+**E2'nin gösterdiği (dürüst çerçeve):** *Tam* eşleme imkânsız, ama *yaklaşık* eşleme mümkün. İyi regülarize edilmiş yoğun bir Φ, S ≥ 21'de float64'te tanımsal hatayı 1e-5…1e-8'e indiriyor; çünkü iki kutup kümesinin erişilebilir durum bilgisi pratikte düşük boyutlu bir alt uzayda örtüşüyor. Yani makalenin iddiası "eşleme işe yaramaz" değil, şu:
+1. Hot-swap (Φ = I) tanımsal olarak yanlış; kaskadda S artınca da düzelmiyor.
+2. Yaklaşık eşleme her derece çifti için yoğun bir S×S matris istiyor (örnek başına S² MAC, çift başına S² kelime bellek, eğitim ya da Gramian çözümü). Ayrıca girdi istatistiğine bağlı: basamak gibi dağılım dışı girişlerde hata 1–2 mertebe kötüleşiyor.
+3. Sayısal olarak kırılgan: ‖Φ‖ 1e3–1e10. 24-bit sabit noktada kaskadda hata 20–800'e çıkıyor, paralelde (S ≥ 15) 4e-3 ile 1e-1 arasında kalıyor (float64'te 5e-8).
+4. Sabit kutuplu bankada Φ = I, tanımsal hata **tam 0**, ek maliyet yok, kuantizasyona karşı bir kuvvetlenme yok.
 
 ---
 
@@ -84,7 +107,8 @@ GL ağırlıklarını sabit ayrık kutupların (θ_k = e^(−ξ_k Ts)) geometrik
 | H1 | Çıkış zamanlamalı sabit kutuplu banka A-tipini izler; hata kuadratürle üstel azalır | **Doğrulandı** (E1, E1b) |
 | H2 | Giriş zamanlamalı banka B-tipini izler | **Doğrulandı.** CT bankada yumuşak α'lı türev hariç; DT bankada tüm durumlar |
 | H3 | Durum korumalı Oustaloup: kaskad hiçbir tanıma yakınsamaz; paralel A'ya yavaş (cebirsel) yakınsar | **Doğrulandı** (E1) |
-| H4 | Gerekli K, bant ve α-aralığı için analitik kural (Poisson ayrıklaştırma + kuyruk sınırları) regresyonsuz verilebilir | Açık (E3) |
+| H3b | Optimal durum eşlemesi bile tanımsal hatayı sıfırlayamaz | **Kısmen.** Tam sıfır imkânsız (teorem), ama float64'te 1e-8'e iniyor. Bedeli yoğun S×S eşleme, girdi bağımlılığı ve sabit noktada kırılganlık (E2) |
+| H4 | Gerekli K, bant ve α-aralığı için analitik kural (Poisson ayrıklaştırma + kuyruk sınırları) regresyonsuz verilebilir | **Doğrulandı** (E3: mühürlü holdout 400/400, CP95 alt sınırı %98.5, K − K_min ≤ 3) |
 | H5 | D/E tipleri, OS/IS bankaların geri-besleme ile terslenmesiyle (dualite) gerçeklenebilir | Açık. Önce tanımlar literatürden kesinleştirilecek (E4) |
 | H6 | Örnek hızında α güncelleme donanımda ucuzdur: geometrik ızgara sayesinde ağırlıklar m_{k+1} = m_k · q^(±α) özyinelemesiyle üretilir | Açık (E5, RTL + kart) |
 | H7 | Uygulama: gerçek zamanlı multifraksiyonel Brown hareketi (RL-mBm = A-tipi) sentezi, O(K) maliyetle | Açık (E6) |
@@ -97,8 +121,8 @@ GL ağırlıklarını sabit ayrık kutupların (θ_k = e^(−ξ_k Ts)) geometrik
 |---|---|---|
 | **E1** (CT) | Basamak girişi, kapalı-form A/B referansları; 6 anahtarlama + 3 yumuşak profil; S = 7…41 durum | `results/e1_*.json`, `fig_e1_*.png` |
 | **E1b** (DT) | GL Tanım 2/3 referansları; basamak, beyaz gürültü, çoklu sinüs; 7 profil; *tanımsal hata* metriği | `results/e1b_discrete.json` |
-| **E2** | Tanımsal hata ile durum eşlemesi ilişkisi: Oustaloup için en küçük kareler optimal Φ ile bile hatanın sıfıra inmediğini göstermek (teoremin sayısal kanıtı) | planlı |
-| **E3** | Analitik K kuralı: ε ∈ {1e-2, 1e-3, 1e-4}, bant 2–6 dekad, α-aralıkları; kuralın tahmini ile gerçek hatanın karşılaştırılması; holdout kümesi ayrı tutulacak | planlı |
+| **E2** | En küçük kareler optimal Φ (A: durum kestirimi, B: çıkış eşleme); 6 anahtarlama × S = 7…31 × paralel/kaskad; 4 giriş sınıfında eğitim, taze kümede ve basamakta test; ‖Φ‖–hata Pareto; float32, 18/24/32-bit kuantizasyon, 24-bit durum gürültüsü; sürekli α altında zincirleme eşleme | `results/e2_*.json`, `fig_e2_*.png` |
+| **E3** | Hata terimlerinin izole doğrulaması; 72 spesifikasyonluk geliştirme ızgarası; 400 spesifikasyonluk mühürlü holdout (değerlendirmeden önce SHA-256 ile yazıldı) | `results/e3_*.json`, `fig_e3_*.png` |
 | **E4** | D/E tipleri: geri-beslemeli terslemenin doğrulanması | planlı |
 | **E5** | Sabit nokta + RTL: ağırlık üretici (sin, exp2 LUT + çarpım zinciri), kelime uzunluğu taraması, xsim paritesi, kartta ölçüm (kaynak, gecikme, α-güncelleme hızı) | planlı |
 | **E6** | mBm sentezi: yerel Hurst tahmini (artış varyansı / dalgacık), A/B farkı, maliyet karşılaştırması (Cholesky, FFT, GL O(n²)) | planlı |
@@ -124,18 +148,20 @@ CSSP formatı: Springer `sn-jnl` şablonu; Data Availability ve Conflict of Inte
 
 ---
 
-## 7. İlk sonuçlar (Aşama 1)
+## 7. Sonuçlar
 
 ### E1: CT, basamak girişi, kapalı-form referanslar (S = durum sayısı)
 
-Anahtarlamadan sonraki bağıl RMS hata (A-tipine / B-tipine göre), S = 15 → 41:
+Anahtarlamadan sonraki bağıl RMS hata (A-tipine / B-tipine göre), S = 15 → 41 (geometrik kuyruk kapanışıyla yeniden koşturuldu):
 
-| α₁ → α₂ | A–B farkı | FP-out (A) | FP-in (B) | Ou-par (A) | Ou-cas (A / B) |
+| α₁ → α₂ | A–B farkı | FP-out (A) | FP-in (B) | Ou-par (A) | Ou-cas (A / B), S=41 |
 |---|---|---|---|---|---|
-| −0.3 → −0.7 | 0.52 | 1.9e-3 → 3.9e-4 | 1.2e-3 → 2.1e-4 | 0.12 → 0.042 | 0.16 / 0.33 (sabit) |
-| +0.3 → +0.7 | 0.65 | 1.4e-3 → 1.4e-4 | 4.2e-3 → 1.1e-4 | 0.14 → 0.053 | 1.7 / 1.7 (sabit) |
-| −0.5 → +0.5 | 0.81 | 1.7e-3 → 2.1e-4 | 1.4e-3 → 1.9e-4 | 0.23 → 0.085 | 4.6 / 1.6 (sabit) |
-| +0.5 → −0.5 | 1.35 | 1.1e-3 → 1.8e-4 | 1.2e-3 → 1.1e-4 | 0.25 → 0.080 | 0.24 / 0.87 (sabit) |
+| −0.3 → −0.7 | 0.52 | 1.0e-4 → 1.7e-4 | 1.0e-4 → 5.1e-5 | 0.12 → 0.042 | 0.16 / 0.33 |
+| +0.3 → +0.7 | 0.65 | 2.1e-3 → 1.5e-5 | 4.2e-3 → 1.5e-4 | 0.14 → 0.053 | 1.6 / 1.7 |
+| −0.5 → +0.5 | 0.81 | 1.1e-3 → 4.3e-5 | 5.1e-4 → 3.1e-5 | 0.23 → 0.085 | 4.6 / 1.6 |
+| +0.5 → −0.5 | 1.35 | 9.8e-5 → 3.4e-5 | 9.4e-4 → 8.0e-6 | 0.25 → 0.080 | 0.24 / 0.87 |
+
+(FP-out'ta S=15'te bazı değerlerin S=41'den küçük olması, sabit [1e-3, 1e5] ızgarasında kuyruk tabanına ulaşılmasından kaynaklanıyor. E3 kuralı ızgarayı ε'a göre seçiyor.)
 
 - Anahtarlamadan **önce** (sabit derece) tüm yapıların hatası benzer (1e-3 ile 1e-4 arası). Fark tamamen anahtarlamadan, yani tanımsal etkiden geliyor.
 - Kaskad Oustaloup'ta derece artınca hata **azalmıyor**. Paralel Oustaloup A-tipine yavaş yakınsıyor (kutup kayması, kutup aralığının sabit bir kesri olduğu için). Sabit kutuplu banka eşit durum sayısında 100–1000 kat daha doğru.
@@ -144,7 +170,7 @@ Anahtarlamadan sonraki bağıl RMS hata (A-tipine / B-tipine göre), S = 15 → 
 ### E1b: DT banka ile GL Tanım 2/3 (Ts = 1 ms, 4001 örnek; DFP: 32 mod + gecikme modu; Oustaloup: N = 15, 31 durum)
 
 **Toplam hata** (GL referansına göre, bağıl RMS), 7 α profili × 3 giriş:
-- DFP-out → Tanım 2: **5.6e-6 … 2.1e-3**. DFP-in → Tanım 3: **5.6e-6 … 1.7e-3**. Yumuşak α ile türev dahil, CT'deki sorun ortadan kalktı.
+- DFP-out → Tanım 2: **4.0e-6 … 2.1e-3**. DFP-in → Tanım 3: **1.9e-6 … 1.7e-3**. Yumuşak α ile türev dahil, CT'deki sorun ortadan kalktı.
 
 **Tanımsal hata** (her gerçeklemenin kendi dondurulmuş-derece LTI eşdeğerine göre; yaklaşım kalitesinden bağımsız), parçalı-sabit profiller:
 
@@ -155,15 +181,62 @@ Anahtarlamadan sonraki bağıl RMS hata (A-tipine / B-tipine göre), S = 15 → 
 | Ou-par | 4e-6 … 0.13 (girişe bağlı, en kötüsü basamakta) | 7e-3 … 1.0 |
 | Ou-cas | 7e-3 … **3.0e+3** (−0.5 → +0.5 basamak) | 0.03 … 4.8e+2 |
 
-Yorum: gereklilik teoremi sayısal olarak doğrulandı. Tanımsal hata sıfırsa yapı tanımı tam gerçekliyor, değilse hiçbir derece artışı onu gidermiyor.
+Yorum: sabit kutuplu yapıda tanımsal hata tam sıfır. Hot-swap edilen Oustaloup'ta ise sıfır değil; kaskadda derece artışı da bunu gidermiyor. (Bir durum eşlemesiyle ne kadar giderilebildiği E2'de.)
 Not: Oustaloup'un GL'ye göre *toplam* hatası gürültü/çoklu sinüs girişlerinde büyük çıkıyor (≈10). Bu tanımsal bir etki değil, CT tasarımın (bant 1e5 rad/s > Nyquist) ZOH ile ayrıklaştırılmasından kaynaklanan statik CT/DT uyumsuzluğu. Bu yüzden karşılaştırmada tanımsal hata metriği esas alınacak.
+
+### E2: durum eşlemesi Oustaloup'u kurtarabilir mi?
+
+Kurgu: Ts = 1 ms, anahtarlama nT = 2000'de, pencere L = 2000. Eğitim: 4 sınıf × 200 giriş (beyaz, parçalı-sabit, çoklu sinüs, Brown). Test: 4 sınıf × 150 taze giriş ve basamak. Φ, rcond taramasıyla kesilmiş en küçük kareler ile bulunuyor. "Sağlam" seçim, doğrulama hatası en iyinin 2 katı içinde kalan en küçük normlu Φ.
+Değerler 6 anahtarlama üzerinden en kötü durum (dağılım içi / basamak):
+
+| S | biçim | Φ = I (hot-swap) | LS Φ, float64 | sağlam Φ, float64 (‖Φ‖) | sağlam Φ, float32 | sağlam Φ, 24-bit | B-tipi: Φ = I → LS |
+|---|---|---|---|---|---|---|---|
+| 7 | paralel | 0.9 / 0.7 | 2e-2 / 3e-2 | 3e-2 / 5e-2 (3e4) | 3e-2 / 5e-2 | 3e-2 / 5e-2 | 1.0 → 1e-2 |
+| 7 | kaskad | 4e2 / 1e4 | 2e-2 / 4e-2 | 2e-2 / 4e-2 (9e2) | 2e-2 / 4e-2 | 2e-2 / 3e1 | 2e2 → 1e-2 |
+| 15 | paralel | 0.3 / 0.3 | 1e-4 / 2e-2 | 2e-4 / 4e-4 (5e4) | 2e-4 / 4e-4 | 1e-2 / 8e-3 | 1.0 → 7e-4 |
+| 15 | kaskad | 4e2 / 1e4 | 1e-4 / 1e-3 | 3e-4 / 3e-4 (8e3) | 1e-3 / 0.8 | 0.6 / 4e2 | 2e2 → 2e-4 |
+| 31 | paralel | 0.1 / 0.1 | 4e-8 / 5e-7 | 5e-8 / 2e-7 (5e3) | 2e-7 / 1e-5 | 4e-3 / 2e-3 | 1.0 → 6e-7 |
+| 31 | kaskad | 4e2 / 1e4 | 4e-8 / 6e-7 | 9e-8 / 6e-7 (4e4) | 7e-3 / 0.3 | 2e1 / 8e2 | 2e2 → 5e-7 |
+
+Sürekli α (yumuşak profil 41 seviyeli ızgarada, 80 geçiş, paralel form, sağlam eşleme zinciri), basamak girişi:
+- türev, N=7: Φ=I 4.1e-2 → zincir 1.2e-4. N=15: 2.0e-2 → 1.0e-7
+- integral, N=7: 1.4e-1 → 5.9e-6. N=15: 6.2e-2 → 4.9e-9
+- sabit kutuplu banka: **0** (eşleme yok)
+(İlk denemede doğrulama minimumuyla seçilen büyük normlu eşlemeler N=7'de zinciri hot-swap'tan bile kötü yapmıştı. Sağlam seçim bunu giderdi; makalede iki seçim de raporlanacak.)
+
+**Sonuç:** Yaklaşık tanım tutarlılığı, Oustaloup'a yoğun ve çifte özel bir eşleme eklenerek float64'te elde edilebiliyor. Ancak maliyet O(S²)/geçiş, bellek O(P·S²) (P derece seviyesi). Ayrıca 24-bit sabit noktada 3–10 mertebe doğruluk kaybediliyor, kaskadda yöntem tamamen çöküyor. Sabit kutuplu banka aynı işi O(S) maliyetle, tam ve kuantizasyona dayanıklı biçimde yapıyor.
+Uyarı: sabit nokta testi basit bir tek-ölçekli Q formatı. Satır başına ölçekleme (block floating point) daha iyi sonuç verebilir; makalede bu sınırlama olarak belirtilecek.
+
+### E3: analitik tasarım kuralı
+
+**Terim doğrulaması** (her terim izole; tahmini > 1e-10 olan noktalar): DT'de ölçüm/tahmin 0.49–1.05 (n=45), CT'de 0.99–1.01 (n=66). Model hiçbir terimde hatayı %5'ten fazla küçümsemiyor.
+
+**Kural doğrulaması:**
+
+| Küme | DT geçen | CT geçen | CP95 alt sınırı | elde/ε medyan (maks.) | K − K_min medyan (maks.) |
+|---|---|---|---|---|---|
+| Geliştirme (72) | 36/36 | 36/36 | %92.0 (her biri) | 0.39 / 0.42 (0.61 / 0.53) | 1 / 2 |
+| **Mühürlü holdout (400)** | **200/200** | **200/200** | **%98.5** (her biri) | 0.41 / 0.50 (0.67 / 0.72) | 1 / 1 (3 / 3) |
+
+Holdout spesifikasyonları: ε ∈ [1e-5, 1e-2], R ∈ [1e2, 1e5], bant 0.5–6 dekad, rastgele α-aralıkları ⊂ [−0.95, 0.95]. SHA-256 `ddc4fcf1…` ile değerlendirmeden önce mühürlendi.
+
+**Gereken K, α ∈ [−0.9, 0.9]:**
+
+| ε | DT: R = 1e3 / 1e4 / 1e5 | CT: 2 / 4 / 6 dekad |
+|---|---|---|
+| 1e-2 | 14 / 17 / 19 | 11 / 14 / 16 |
+| 1e-3 | 21 / 24 / 27 | 18 / 22 / 26 |
+| 1e-4 | 29 / 32 / 36 | 27 / 32 / 37 |
+| 1e-5 | 38 / 42 / 46 | 38 / 44 / 50 |
+
+Kaba ölçekleme: K ≈ ln(4/ε)·[ln R + ln(1/ε)/(2+α_min) + …]/π². Bellek uzunluğunun her dekadı ~3 mod, doğruluğun her dekadı ~8 mod ekliyor.
 
 ---
 
 ## 8. Sonraki adımlar
 
-1. E2 (gereklilik teoreminin sayısal kanıtı) ve teoremin tam ispatı
-2. E3: analitik K kuralının türetilmesi ve holdout doğrulaması
+1. Teoremin tam ispatı (A ve B tipi; minimallik koşulları) ve DT hata modelinin küçük-r terimi için kapalı form (şu an temsilden sayısal hesaplanıyor)
+2. E4: D/E tipleri (önce tanımlar literatürden kesinleştirilecek)
 3. Sistematik literatür taraması (§2)
 4. E5: RTL ağırlık üretici, TCAS-I'deki W48 altyapısı yeniden kullanılarak ama yeni çekirdekle
 5. E6 uygulaması (mBm). Alternatif: VO kesirli PID veya zamanla değişen spektral eğimli filtre

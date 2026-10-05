@@ -1,0 +1,90 @@
+{
+ "derivative_N7": {
+  "crossings": 80,
+  "maps": 80,
+  "S": 15,
+  "results": {
+   "white": {
+    "identity": 5.510762312335579e-06,
+    "ls_chain": 3.616151933072446e-08,
+    "dfp": 0.0
+   },
+   "multisine": {
+    "identity": 1.655099355300483e-05,
+    "ls_chain": 3.5506017522415473e-07,
+    "dfp": 0.0
+   },
+   "step": {
+    "identity": 0.04140151149008972,
+    "ls_chain": 0.00012195557629313918,
+    "dfp": 0.0
+   }
+  }
+ },
+ "derivative_N15": {
+  "crossings": 80,
+  "maps": 80,
+  "S": 31,
+  "results": {
+   "white": {
+    "identity": 2.6546876054007254e-06,
+    "ls_chain": 7.675433486740001e-11,
+    "dfp": 0.0
+   },
+   "multisine": {
+    "identity": 7.985167111292947e-06,
+    "ls_chain": 3.4703568473345323e-10,
+    "dfp": 0.0
+   },
+   "step": {
+    "identity": 0.019966553409722178,
+    "ls_chain": 1.0190994367822038e-07,
+    "dfp": 0.0
+   }
+  }
+ },
+ "integral_N7": {
+  "crossings": 80,
+  "maps": 80,
+  "S": 15,
+  "results": {
+   "white": {
+    "identity": 0.08290299545539621,
+    "ls_chain": 3.1143567059119994e-05,
+    "dfp": 0.0
+   },
+   "multisine": {
+    "identity": 0.18946851941151974,
+    "ls_chain": 4.5300288112027335e-05,
+    "dfp": 0.0
+   },
+   "step": {
+    "identity": 0.13507736258449637,
+    "ls_chain": 5.926390640292049e-06,
+    "dfp": 0.0
+   }
+  }
+ },
+ "integral_N15": {
+  "crossings": 80,
+  "maps": 80,
+  "S": 31,
+  "results": {
+   "white": {
+    "identity": 0.03798792780280347,
+    "ls_chain": 8.785645612326992e-09,
+    "dfp": 0.0
+   },
+   "multisine": {
+    "identity": 0.08509624715232868,
+    "ls_chain": 1.0856741542791993e-08,
+    "dfp": 0.0
+   },
+   "step": {
+    "identity": 0.06150652855354182,
+    "ls_chain": 4.910424185351946e-09,
+    "dfp": 0.0
+   }
+  }
+ }
+}

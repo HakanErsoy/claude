@@ -16,22 +16,53 @@ derivatives and the identity. The truncated tails of the integrals are
 folded back analytically: one tail becomes a feedthrough term, the other is
 lumped onto the outermost pole. This is what keeps the bank exact at
 alpha = 0 and continuous when the order crosses zero.
+
+Tail closures (``tails``):
+  "geometric" (default) all nodes carry the full weight h and each tail is
+              the geometric series of the virtual trapezoid nodes beyond
+              the grid, in its asymptotic form. The bank then equals the
+              infinite trapezoid rule up to the asymptotic tail error, so
+              no h^2 endpoint (Euler-Maclaurin) term appears.
+  "integral"  half weights at the end nodes and tails replaced by the
+              analytic integral beyond the end nodes (the first version).
+  None        plain truncated trapezoid rule.
 """
 
 import numpy as np
 
 
+def _closure(tails):
+    if tails is True:
+        return "integral"
+    if tails in (None, False):
+        return None
+    if tails not in ("geometric", "integral"):
+        raise ValueError(tails)
+    return tails
+
+
+def _trapezoid_weights(K, h, closure):
+    c = np.full(K, h)
+    if closure != "geometric":
+        c[0] = c[-1] = 0.5 * h
+    return c
+
+
 class FixedPoleBank:
-    def __init__(self, xi_lo, xi_hi, K, tails=True):
+    def __init__(self, xi_lo, xi_hi, K, tails="geometric"):
         if K < 2:
             raise ValueError("K must be at least 2")
         self.xi = np.geomspace(xi_lo, xi_hi, K)
         self.K = K
         self.h = np.log(xi_hi / xi_lo) / (K - 1)
-        c = np.full(K, self.h)
-        c[0] = c[-1] = 0.5 * self.h
-        self.c = c
-        self.tails = tails
+        self.closure = _closure(tails)
+        self.c = _trapezoid_weights(K, self.h, self.closure)
+
+    def _tail_factor(self, p):
+        """Integral closure: int_0^inf e^(-p x) dx = 1/p; geometric: sum_j>=1 h e^(-p j h)."""
+        if self.closure == "geometric":
+            return self.h / np.expm1(p * self.h)
+        return 1.0 / p
 
     def coeffs(self, alpha):
         """Output weights m (shape K) and feedthrough d for order alpha."""
@@ -43,21 +74,28 @@ class FixedPoleBank:
             S = np.sin(a * np.pi) / np.pi
             m = c * S * xi ** (-a)
             d = 0.0
-            if self.tails:
-                m[0] += S * xi[0] ** (-a) / (1.0 - a)   # xi < xi_lo, lumped on xi_lo
-                d = S * xi[-1] ** (-a) / a              # xi > xi_hi, quasi-static
+            if self.closure:
+                m[0] += S * xi[0] ** (-a) * self._tail_factor(1.0 - a)  # xi < xi_lo, lumped on xi_lo
+                d = S * xi[-1] ** (-a) * self._tail_factor(a)           # xi > xi_hi, quasi-static
             return m, d
         S = np.sin(alpha * np.pi) / np.pi
         v = c * S * xi ** alpha
         d_lo = 0.0
-        if self.tails:
-            v[-1] += S * xi[-1] ** alpha / (1.0 - alpha)  # xi > xi_hi, lumped on xi_hi
-            d_lo = S * xi[0] ** alpha / alpha             # xi < xi_lo, ~ all-pass 1
+        if self.closure:
+            v[-1] += S * xi[-1] ** alpha * self._tail_factor(1.0 - alpha)  # xi > xi_hi, lumped on xi_hi
+            d_lo = S * xi[0] ** alpha * self._tail_factor(alpha)           # xi < xi_lo, ~ all-pass 1
         return -v, v.sum() + d_lo
 
     def freqresp(self, alpha, w):
-        m, d = self.coeffs(alpha)
         s = 1j * np.asarray(w, dtype=float)[:, None]
+        m, d = self.coeffs(alpha)
+        if alpha > 0.0:
+            # d = sum(v) + d_lo with v = -m; evaluating sum v s/(s+xi) + d_lo
+            # avoids cancelling the large high-pole weights
+            v = -m
+            d_lo = d - v.sum() if not self.closure else (
+                np.sin(alpha * np.pi) / np.pi * self.xi[0] ** alpha * self._tail_factor(alpha))
+            return (v * s / (s + self.xi)).sum(axis=1) + d_lo
         return (m * self.xi / (s + self.xi)).sum(axis=1) + d
 
     def simulate(self, u, alpha, Ts, schedule="output"):
@@ -110,21 +148,43 @@ class DiscreteFixedPoleBank:
     on theta_lo. The r = 0 weight Ts^(-a) is an exact feedthrough.
     """
 
-    def __init__(self, Ts, xi_lo, xi_hi, K, tails=True):
+    def __init__(self, Ts, xi_lo, xi_hi, K, tails="geometric"):
         if K < 2:
             raise ValueError("K must be at least 2")
         self.Ts = Ts
         self.K = K
         self.xi = np.geomspace(xi_lo, xi_hi, K)
         self.theta = np.exp(-self.xi * Ts)
-        hx = np.log(xi_hi / xi_lo) / (K - 1)
-        c = np.full(K, hx)
-        c[0] = c[-1] = 0.5 * hx
+        self.h = np.log(xi_hi / xi_lo) / (K - 1)
+        self.closure = _closure(tails)
+        c = _trapezoid_weights(K, self.h, self.closure)
         # dtheta = -Ts xi theta dx (orientation absorbed in the sign); one
         # factor theta is moved into the coefficient so that the states are
         # plain one-pole recursions s[n+1] = theta s[n] + u[n]
         self.jac = c * Ts * self.xi
-        self.tails = tails
+
+    @staticmethod
+    def _node(u, alpha):
+        """u theta^(1-a) (1-theta)^a with theta = e^-u, finite for large u."""
+        return u * np.exp(-(1.0 - alpha) * u) * (-np.expm1(-u)) ** alpha
+
+    def _virtual_sums(self, alpha):
+        """Geometric closure: virtual nodes beyond each end of the u = xi Ts grid.
+
+        Upper nodes only matter at lag r = 1 (delay mode); lower nodes have
+        theta ~ 1 and are lumped on theta_lo, matched at r = 1.
+        """
+        h = self.h
+        u_hi, u_lo = self.xi[-1] * self.Ts, self.xi[0] * self.Ts
+        j = np.arange(1, 400)
+        log_uj = np.log(u_hi) + j * h
+        uj = np.exp(log_uj[log_uj < np.log(745.0 / (1.0 - alpha))])
+        upper = h * self._node(uj, alpha).sum()
+        J = int(min(2e6, np.ceil(43.0 / ((1.0 + alpha) * h))))
+        uj = u_lo * np.exp(-np.arange(1, J + 1) * h)
+        uj = uj[uj > 1e-300]                 # below: u^(1+a) contributes < 1e-14
+        lower = h * self._node(uj, alpha).sum()
+        return upper, lower
 
     def coeffs(self, alpha):
         """(g0, c_delay, c): g_r = g0 [r=0] + c_delay [r=1] + sum_k c_k theta_k^(r-1), r>=1."""
@@ -137,9 +197,13 @@ class DiscreteFixedPoleBank:
         # theta^(1-a) (1-theta)^a, written to stay finite when theta underflows
         c = self.jac * scale * np.exp(-(1.0 - alpha) * self.xi * Ts) * (-np.expm1(-self.xi * Ts)) ** alpha
         c_delay = 0.0
-        if self.tails:
+        if self.closure == "integral":
             c[0] += scale * th[0] * (-np.expm1(-self.xi[0] * Ts)) ** (alpha + 1.0) / (alpha + 1.0)
             c_delay = scale * np.exp(-(1.0 - alpha) * self.xi[-1] * Ts) / (1.0 - alpha)
+        elif self.closure == "geometric":
+            upper, lower = self._virtual_sums(alpha)
+            c[0] += scale * lower
+            c_delay = scale * upper
         return g0, c_delay, c
 
     def weights(self, alpha, R):

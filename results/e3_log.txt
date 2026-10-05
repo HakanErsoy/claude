@@ -1,0 +1,51 @@
+terms dt (pred > 1e-10, n=45): meas/pred median 1.00, min 0.49, max 1.05
+terms ct (pred > 1e-10, n=66): meas/pred median 1.00, min 0.99, max 1.01
+dev: {
+ "dt": {
+  "n": 36,
+  "passed": 36,
+  "cp95_lower": 0.9201534904801056,
+  "ratio_median": 0.3867474870314358,
+  "ratio_max": 0.6076620597542659,
+  "ratio_p05": 0.3306815681939995,
+  "K_over_Kmin_median": 1.0555555555555556,
+  "K_over_Kmin_max": 1.1818181818181819,
+  "K_minus_Kmin_median": 1.0
+ },
+ "ct": {
+  "n": 36,
+  "passed": 36,
+  "cp95_lower": 0.9201534904801056,
+  "ratio_median": 0.41920318184762506,
+  "ratio_max": 0.53120040278329,
+  "ratio_p05": 0.34814749850369237,
+  "K_over_Kmin_median": 1.0681818181818181,
+  "K_over_Kmin_max": 1.1666666666666667,
+  "K_minus_Kmin_median": 2.0
+ }
+}
+holdout sealed, sha256 ddc4fcf16e608458ebf38b99e6e32b4b6317515fe741c7a282cd1f0135162024
+holdout: {
+ "dt": {
+  "n": 200,
+  "passed": 200,
+  "cp95_lower": 0.9851329607687279,
+  "ratio_median": 0.4133943734519574,
+  "ratio_max": 0.6701921595326358,
+  "ratio_p05": 0.3101255760626823,
+  "K_over_Kmin_median": 1.0588235294117647,
+  "K_over_Kmin_max": 1.1428571428571428,
+  "K_minus_Kmin_median": 1.0
+ },
+ "ct": {
+  "n": 200,
+  "passed": 200,
+  "cp95_lower": 0.9851329607687279,
+  "ratio_median": 0.5032564205348454,
+  "ratio_max": 0.7198264249786915,
+  "ratio_p05": 0.36498857917008287,
+  "K_over_Kmin_median": 1.0625,
+  "K_over_Kmin_max": 1.25,
+  "K_minus_Kmin_median": 1.0
+ }
+}
