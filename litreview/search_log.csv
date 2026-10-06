@@ -1,0 +1,31 @@
+query_id,rq,source,query,records
+C01,RQ1,crossref,variable order fractional operator realization,100
+C02,RQ1,crossref,variable order fractional derivative analog realization,100
+C03,RQ1,crossref,variable order fractional circuit implementation,100
+C04,RQ4,crossref,variable order fractional FPGA implementation,100
+C05,RQ4,crossref,time-varying fractional order system FPGA,100
+C06,RQ1,crossref,variable order fractional digital filter,100
+C07,RQ1,crossref,variable fractional order differentiator design,100
+C08,RQ2,crossref,variable order fractional derivative switching scheme,100
+C09,RQ2,crossref,variable order fractional derivative duality recursive definition,100
+C10,RQ2,crossref,variable order fractional derivative definitions comparison,100
+C11,RQ5,crossref,variable order Grunwald-Letnikov numerical approximation,100
+C12,RQ3,crossref,fixed pole approximation fractional order system,100
+C13,RQ3,crossref,diffusive representation fractional integral numerical approximation,100
+C14,RQ3,crossref,sum of exponentials approximation variable order fractional derivative,100
+C15,RQ3,crossref,kernel compression fractional differential equations,100
+C16,RQ3,crossref,infinite state representation fractional system,100
+C17,RQ1,crossref,variable order fractional Oustaloup approximation,100
+C18,RQ1,crossref,variable order fractional PID controller implementation,100
+C19,RQ1,crossref,time-varying fractional order system approximation,100
+C20,RQ6,crossref,multifractional Brownian motion simulation,100
+C21,RQ6,crossref,multifractional Gaussian noise synthesis variable order,100
+C22,RQ6,crossref,Riemann-Liouville multifractional Brownian motion generation,100
+C23,RQ5,crossref,variable order fractional system stability,100
+C24,RQ1,crossref,variable order fractional chaotic system circuit,100
+A01,RQ1,arxiv,"all:""variable order"" AND all:fractional AND (all:realization OR all:implementation OR all:approximation)",47
+A02,RQ1,arxiv,"all:""variable-order"" AND all:fractional AND (all:realization OR all:implementation OR all:approximation)",47
+A03,RQ2,arxiv,"(all:""variable order"" OR all:""variable-order"") AND all:fractional AND (all:definition OR all:switching OR all:duality)",12
+A04,RQ3,arxiv,"all:fractional AND (all:""sum of exponentials"" OR all:""diffusive representation"" OR all:""kernel compression"")",52
+A05,RQ6,arxiv,"all:""multifractional Brownian motion"" AND (all:simulation OR all:synthesis OR all:generation)",27
+A06,RQ4,arxiv,all:fractional AND all:FPGA,54

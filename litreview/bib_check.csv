@@ -1,0 +1,67 @@
+key,status,score,issues,crossref_title,crossref_venue,cr_year,cr_volume,cr_pages,cr_doi
+podlubny1999,NOT FOUND in Crossref (check manually),0.614,,,,,,,
+samko1993,OK,1.0,,Integration and differentiation to a variable fractional order,Integral Transforms and Special Functions,1993,1,277--300,10.1080/10652469308819027
+lorenzo2002,OK,1.0,,Variable Order and Distributed Order Fractional Operators,Nonlinear Dynamics,2002,29,57--98,10.1023/a:1016586905654
+valerio2011,OK,1.0,,Variable-order fractional derivatives and their numerical approximations,Signal Processing,2011,91,470--483,10.1016/j.sigpro.2010.04.006
+sun2019,OK,1.0,,"A Review on Variable-Order Fractional Differential Equations: Mathematical Foundations, Physical Models, Numerical Methods and Applications",Fractional Calculus and Applied Analysis,2019,22,27--59,10.1515/fca-2019-0003
+patnaik2020,OK,1.0,,Applications of variable-order fractional operators: a review,"Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences",2020,476,20190498,10.1098/rspa.2019.0498
+garrappa2021,OK,1.0,,Variable-order fractional calculus: A change of perspective,Communications in Nonlinear Science and Numerical Simulation,2021,102,105904,10.1016/j.cnsns.2021.105904
+sierociuk2015amm,OK,1.0,,"Derivation, interpretation, and analog modelling of fractional variable order derivative definition",Applied Mathematical Modelling,2015,39,3876--3888,10.1016/j.apm.2014.12.009
+sierociuk2015cssp,CHECK,1.0,year: bib=2015 crossref=2014,"On the Recursive Fractional Variable-Order Derivative: Equivalent Switching Strategy, Duality, and Analog Modeling","Circuits, Systems, and Signal Processing",2014,34,1077--1113,10.1007/s00034-014-9895-1
+sierociuk2016cssp,OK,1.0,,Dual Estimation of Fractional Variable Order Based on the Unscented Fractional Order Kalman Filter for Direct and Networked Measurements,"Circuits, Systems, and Signal Processing",2016,35,2055--2082,10.1007/s00034-016-0255-1
+sierociuk2020,OK,1.0,,Analog Realization of a Fractional Recursive Variable-Type and Order Operator for a Particular Switching Strategy,Electronics,2020,9,855,10.3390/electronics9050855
+oustaloup2000,OK,1.0,,Frequency-band complex noninteger differentiator: characterization and synthesis,IEEE Transactions on Circuits and Systems I: Fundamental Theory and Applications,2000,47,25--39,10.1109/81.817385
+vinagre2000,NOT FOUND in Crossref (check manually),0.672,,,,,,,
+wei2016,OK,1.0,,An innovative fixed-pole numerical approximation for fractional order systems,ISA Transactions,2016,62,94--102,10.1016/j.isatra.2016.01.010
+wei2019,OK,1.0,,Fixed pole based modeling and simulation schemes for fractional order systems,ISA Transactions,2019,84,43--54,10.1016/j.isatra.2018.10.001
+aricioglu2025,OK,1.0,,Circuit Design and Implementation of a Time-Varying Fractional-Order Chaotic System,Axioms,2025,14,310,10.3390/axioms14040310
+montseny1998,OK,1.0,,Diffusive representation of pseudo-differential time-operators,ESAIM: Proceedings,1998,5,159--175,10.1051/proc:1998005
+diethelm2023,OK,1.0,,Diffusive Representations for the Numerical Evaluation of Fractional Integrals,2023 International Conference on Fractional Differentiation and Its Applications (ICFDA),2023,,,10.1109/icfda58234.2023.10153228
+trefethen2014,OK,1.0,,The Exponentially Convergent Trapezoidal Rule,SIAM Review,2014,56,385--458,10.1137/130932132
+kailath1980,NOT FOUND in Crossref (check manually),0.667,,,,,,,
+clopper1934,OK,1.0,,THE USE OF CONFIDENCE OR FIDUCIAL LIMITS ILLUSTRATED IN THE CASE OF THE BINOMIAL,Biometrika,1934,26,404--413,10.1093/biomet/26.4.404
+lim2001,OK,1.0,,Fractional Brownian motion and multifractional Brownian motion of Riemann-Liouville type,Journal of Physics A: Mathematical and General,2001,34,1301--1310,10.1088/0305-4470/34/7/306
+muniandy2001,OK,1.0,,Modeling of locally self-similar processes using multifractional Brownian motion of Riemann-Liouville type,Physical Review E,2001,63,,10.1103/physreve.63.046104
+peltier1995,CHECK,0.916,year: bib=1995 crossref=1999; pages missing (crossref=17--32),Generalized Multifractional Brownian Motion: Definition and Preliminary Results,Fractals,1999,,17--32,10.1007/978-1-4471-0873-3_2
+surgailis2008,OK,1.0,,Nonhomogeneous fractional integration and multifractional processes,Stochastic Processes and their Applications,2008,118,171--198,10.1016/j.spa.2007.04.003
+sheng2011,OK,1.0,,Synthesis of multifractional Gaussian noises based on variable-order fractional operators,Signal Processing,2011,91,1645--1650,10.1016/j.sigpro.2011.01.010
+istas1997,OK,0.993,,Quadratic variations and estimation of the local Hölder index of a Gaussian process,Annales de l'Institut Henri Poincare (B) Probability and Statistics,1997,33,407--436,10.1016/s0246-0203(97)80099-4
+coeurjolly2005,OK,1.0,,Identification of multifractional Brownian motion,Bernoulli,2005,11,,10.3150/bj/1137421637
+wood1994,CHECK,1.0,pages: bib=409--432 crossref=409,"Simulation of Stationary Gaussian Processes in [0,1] d",Journal of Computational and Graphical Statistics,1994,3,409,10.2307/1390903
+tcas_submission,skip (unpublished),,,,,,,,
+charef1992,OK,1.0,,Fractal system as represented by singularity function,IEEE Transactions on Automatic Control,1992,37,1465--1470,10.1109/9.159595
+wei2021,OK,1.0,,Multiple Fixed Pole-Based Rational Approximation for Fractional Order Systems,"Journal of Dynamic Systems, Measurement, and Control",2021,143,,10.1115/1.4049557
+trigeassou2012,OK,1.0,,State variables and transients of fractional order differential systems,Computers &amp; Mathematics with Applications,2012,64,3117--3140,10.1016/j.camwa.2012.03.099
+baffet2017,OK,1.0,,A Kernel Compression Scheme for Fractional Differential Equations,SIAM Journal on Numerical Analysis,2017,55,496--520,10.1137/15m1043960
+jiang2017,CHECK,1.0,year: bib=2017 crossref=2018,Fast Evaluation of the Caputo Fractional Derivative and Its Applications to Fractional Diffusion Equations,Communications in Computational Physics,2018,21,650--678,10.4208/cicp.oa-2016-0136
+sierociuk2013tcst,OK,1.0,,Experimental Evidence of Variable-Order Behavior of Ladders and Nested Ladders,IEEE Transactions on Control Systems Technology,2013,21,459--466,10.1109/tcst.2012.2185932
+macias2020,CHECK,1.0,year: bib=2020 crossref=2019,Realization of the Fractional Variable-Order Model with Symmetric Property,Lecture Notes in Electrical Engineering Advances in Non-Integer Order Calculus and Its Applications,2019,,43--54,10.1007/978-3-030-17344-9_4
+zhou2019,OK,1.0,,"Coexisting attractors, crisis route to chaos in a novel 4D fractional-order system and variable-order circuit implementation",The European Physical Journal Plus,2019,134,,10.1140/epjp/i2019-12434-4
+malesza2016,OK,1.0,,"Recursive variable type and order difference, its definition and basic properties",2016 17th International Carpathian Control Conference (ICCC),2016,,473--478,10.1109/carpathiancc.2016.7501144
+sierociuk2016ecc,OK,1.0,,On the differences of variable type and variable fractional order,2016 European Control Conference (ECC),2016,,2191--2196,10.1109/ecc.2016.7810616
+sierociuk2018amc,OK,1.0,,Analog realization of fractional variable-type and -order iterative operator,Applied Mathematics and Computation,2018,336,138--147,10.1016/j.amc.2018.04.047
+sierociuk2014bpas,OK,1.0,,Duality of variable fractional order difference operators and its application in identification,Bulletin of the Polish Academy of Sciences Technical Sciences,2014,62,809--815,10.2478/bpasts-2014-0089
+malesza2019,OK,1.0,,Analytical solution of fractional variable order differential equations,Journal of Computational and Applied Mathematics,2019,348,214--236,10.1016/j.cam.2018.08.035
+tsirimokou2017,CHECK,1.0,year: bib=2017 crossref=2016,Fractional‐order electronically controlled generalized filters,International Journal of Circuit Theory and Applications,2016,45,595--612,10.1002/cta.2250
+charef2012,OK,1.0,,Design of analog variable fractional order differentiator and integrator,Nonlinear Dynamics,2012,69,1577--1588,10.1007/s11071-012-0370-x
+yu2022,OK,1.0,,Circuit Implementation of Variable-Order Scaling Fractal-Ladder Fractor with High Resolution,Fractal and Fractional,2022,6,388,10.3390/fractalfract6070388
+tseng2006,OK,1.0,,Design of variable and adaptive fractional order FIR differentiators,Signal Processing,2006,86,2554--2566,10.1016/j.sigpro.2006.02.004
+tseng2008,OK,1.0,,Series expansion design of variable fractional order integrator and differentiator using logarithm,Signal Processing,2008,88,2278--2292,10.1016/j.sigpro.2008.03.012
+charef2012sivp,CHECK,1.0,year: bib=2012 crossref=2011,Design of digital FIR variable fractional order integrator and differentiator,"Signal, Image and Video Processing",2011,6,679--689,10.1007/s11760-010-0197-1
+tolba2020,OK,1.0,,Enhanced FPGA realization of the fractional-order derivative and application to a variable-order chaotic system,Nonlinear Dynamics,2020,99,3143--3154,10.1007/s11071-019-05449-w
+zhang2022esa,CHECK,1.0,year: bib=2022 crossref=2021,Exponential-sum-approximation technique for variable-order time-fractional diffusion equations,Journal of Applied Mathematics and Computing,2021,68,323--347,10.1007/s12190-021-01528-7
+zhang2022fast,OK,1.0,,Fast Second-Order Evaluation for Variable-Order Caputo Fractional Derivative with Applications to Fractional Sub-Diffusion Equations,"Numerical Mathematics: Theory, Methods and Applications",2022,15,200--226,10.4208/nmtma.oa-2021-0148
+huang2022unified,OK,1.0,,A Unified Fast Memory-Saving Time-Stepping Method for Fractional Operators and Its Applications,"Numerical Mathematics: Theory, Methods and Applications",2022,15,679--714,10.4208/nmtma.oa-2022-0023
+jia2022,OK,1.0,,Numerical Analysis of a Fast Finite Element Method for a Hidden-Memory Variable-Order Time-Fractional Diffusion Equation,Journal of Scientific Computing,2022,91,,10.1007/s10915-022-01820-z
+zetterberg1988,OK,1.0,,Elimination of transients in adaptive filters with application to speech coding,Signal Processing,1988,15,419--428,10.1016/0165-1684(88)90060-6
+valimaki1998,OK,1.0,,Suppression of transients in variable recursive digital filters with a novel and efficient cancellation method,IEEE Transactions on Signal Processing,1998,46,3408--3414,10.1109/78.735314
+lorenzo2008,OK,1.0,,Initialization of Fractional-Order Operators and Fractional Differential Equations,Journal of Computational and Nonlinear Dynamics,2008,3,,10.1115/1.2833585
+sabatier2014,CHECK,1.0,year: bib=2014 crossref=2013,Fractional systems state space description: some wrong ideas and proposed solutions,Journal of Vibration and Control,2013,20,1076--1084,10.1177/1077546313481839
+wang2023mmfbm,OK,1.0,,Memory-multi-fractional Brownian motion with continuous correlations,Physical Review Research,2023,5,,10.1103/physrevresearch.5.l032025
+slezak2023,OK,1.0,,Minimal model of diffusion with time changing Hurst exponent,Journal of Physics A: Mathematical and Theoretical,2023,56,35LT01,10.1088/1751-8121/acecc7
+sly2007,OK,1.0,,Integrated Fractional white Noise as an Alternative to Multifractional Brownian Motion,Journal of Applied Probability,2007,44,393--408,10.1017/s0021900200003041
+ryvkina2015,CHECK,1.0,year: bib=2015 crossref=2013,Fractional Brownian Motion with Variable Hurst Parameter: Definition and Properties,Journal of Theoretical Probability,2013,28,866--891,10.1007/s10959-013-0502-3
+stoev2006,OK,1.0,,How rich is the class of multifractional Brownian motions?,Stochastic Processes and their Applications,2006,116,200--221,10.1016/j.spa.2005.09.007
+chan1998,OK,1.0,,Simulation of Multifractional Brownian Motion,COMPSTAT,1998,,233--238,10.1007/978-3-662-01131-7_27
+bardet2013,OK,1.0,,Nonparametric estimation of the local Hurst function of multifractional Gaussian processes,Stochastic Processes and their Applications,2013,123,1004--1045,10.1016/j.spa.2012.11.009
+mozyrska2019,OK,1.0,,"Fractional-, variable-order PID controller implementation based on two discrete-time fractional order operators","2019 7th International Conference on Control, Mechatronics and Automation (ICCMA)",2019,,26--32,10.1109/iccma46720.2019.8988684

@@ -71,7 +71,7 @@
 
 Fractional-order operators describe systems whose memory decays as a power law. When the decay exponent itself changes in time, the natural model is a variable-order (VO) operator, whose order $\alpha(t)$ is a function of time~\cite{samko1993,lorenzo2002,sun2019,patnaik2020}. Unlike the constant-order case, the generalization is not unique. Different ways of letting the order enter the memory kernel give operators that coincide for constant order but differ as soon as the order changes~\cite{lorenzo2002,valerio2011,garrappa2021}.
 
-For Gr\"unwald--Letnikov (GL) operators, Sierociuk et al.\ distinguished four types~\cite{sierociuk2015amm,sierociuk2015cssp,sierociuk2020}:
+For Gr\"unwald--Letnikov (GL) operators, Sierociuk et al.\ use four types~\cite{sierociuk2015amm,sierociuk2015cssp,malesza2016,sierociuk2020}:
 \begin{itemize}
 \item the A-type weights the whole history with the current order;
 \item the B-type weights each past sample with the order that was active when the sample entered;
@@ -79,9 +79,9 @@ For Gr\"unwald--Letnikov (GL) operators, Sierociuk et al.\ distinguished four ty
 \end{itemize}
 After a single order switch these definitions can differ by as much as the output itself (relative differences of 0.5 to 1.35 in Sect.~\ref{sec:results}). The choice of definition is therefore part of the model, not a detail of the numerics.
 
-Practical realizations of fractional operators are finite-dimensional. Constant-order operators are approximated by rational transfer functions, most often by Oustaloup's recursive distribution of poles and zeros~\cite{oustaloup2000} and related schemes~\cite{vinagre2000}, whose poles and zeros move with the order. Fixed-pole approximations with order-independent poles have been proposed for constant orders~\cite{wei2016,wei2019}. Diffusive representations also lead to quadrature-based realizations with fixed poles~\cite{montseny1998,diethelm2023}.
+Practical realizations of fractional operators are finite-dimensional. Constant-order operators are approximated by rational transfer functions, most often by Oustaloup's recursive distribution of poles and zeros~\cite{oustaloup2000}, Charef's fractional power pole~\cite{charef1992} and related schemes~\cite{vinagre2000}. The poles and zeros of these approximations move with the order. Fixed-pole approximations with order-independent poles have been proposed for constant orders~\cite{wei2016,wei2019,wei2021}. Diffusive, infinite-state and sum-of-exponentials representations also lead to realizations with fixed nodes~\cite{montseny1998,trigeassou2012,baffet2017,jiang2017,diethelm2023}.
 
-When the order varies, common practice is to switch the coefficients of such a realization while keeping its state (a ``hot swap'')~\cite{aricioglu2025}. In our previous work on a constant-order FPGA core~\cite{tcas_submission}, such swaps produced short, bounded transients; which VO operator they implement was not addressed. Analog realizations of particular types exist~\cite{sierociuk2015amm,sierociuk2015cssp,sierociuk2020}. They rely on switching schemes that are equivalent to a given definition, built for a particular switching strategy.
+When the order varies, a constant-order realization can be switched between orders, either by switching circuits or by changing its coefficients while keeping its state (a ``hot swap''). In our previous work on a constant-order FPGA core~\cite{tcas_submission}, such swaps produced short, bounded transients; which VO operator they implement was not addressed. Section~\ref{sec:related} reviews how existing realizations handle a varying order.
 
 This leaves two open questions:
 \begin{enumerate}
@@ -91,14 +91,52 @@ This leaves two open questions:
 This paper answers both for GL operators of order $-1<\alpha<1$. The contributions are:
 \begin{enumerate}
 \item \emph{Necessity.} An exact switching state map exists only between similar realizations (Theorem~\ref{thm:necessity}). Realizations with order-dependent poles therefore cannot implement the A- or B-type exactly at a switch, with or without a state map. Least-squares maps reduce the error in floating point. However, they need a dense $S\times S$ matrix per pair of orders, depend on the input class, and lose three to nine orders of magnitude of accuracy in 24-bit fixed point (Sect.~\ref{sec:res-maps}).
-\item \emph{Definition by structure.} A Beta-integral representation of the GL weights gives a discrete bank with order-independent poles. With the order in the output weights the bank realizes the A-type, and with the order in the input weights the B-type. This holds for every order sequence, up to the frozen-order quadrature error (Proposition~\ref{prop:structure}). Algebraic inversion of the same bank gives the D- and E-types with exact duality at $O(K)$ cost per sample, and solves VO relaxation equations of all four types at the same cost (Proposition~\ref{prop:inverse}).
+\item \emph{Definition by structure.} Order-independent exponents have already been used for the A-type VO Caputo derivative in fast numerical solvers~\cite{zhang2022esa,zhang2022fast}. We show that, in a fixed-pole structure, the place of the order selects the definition. A Beta-integral representation of the GL weights gives a discrete bank with order-independent poles. With the order in the output weights the bank realizes the A-type, and with the order in the input weights the B-type. This holds for every order sequence, up to the frozen-order quadrature error (Proposition~\ref{prop:structure}); the B-type thus costs $O(K)$ per sample as well. Algebraic inversion of the same bank gives the D- and E-types with exact duality at the same cost, and solves VO relaxation equations of all four types (Proposition~\ref{prop:inverse}). In analog form, a direct realization of the D-type has been considered impractical~\cite{sierociuk2020}.
 \item \emph{Fit-free design.} An analytic error model with three closed-form terms sets the bank size and pole range from the tolerance, the memory length and the order range. On a sealed holdout of 400 random specifications the rule met every tolerance (Sects.~\ref{sec:design} and~\ref{sec:res-rule}).
 \item \emph{Inverse stability.} The inverse of a derivative bank is stable if and only if its realized DC gain is positive (Proposition~\ref{prop:stability}). This condition is tested through an exact sign rather than through eigenvalues. A DC floor applied through the delay mode guarantees it, also after coefficient quantization.
 \item \emph{Hardware.} A time-multiplexed fixed-point core realizes all four types. Order and type are per-sample inputs, and changing them only changes a ROM address. The core is bit-exact with its golden model (94\,208 vectors, no mismatch). Word lengths for two operating envelopes and synthesis estimates are reported.
-\item \emph{Application.} The bank streams multifractional Brownian motion (mBm) of Riemann--Liouville type, which is an A-type integral of white noise, and its B-type variant for $0<H<1$, using an exact integer split (Proposition~\ref{prop:split}).
+\item \emph{Application.} The bank streams multifractional Brownian motion (mBm) of Riemann--Liouville type, which is an A-type integral of white noise, and its B-type counterpart, which is the memory-multifractional Brownian motion of~\cite{wang2023mmfbm} up to normalization, for $0<H<1$. One bank suffices because an integer split is exact when placed according to the type (Proposition~\ref{prop:split}).
 \end{enumerate}
 
-Section~\ref{sec:prelim} recalls the definitions and their duality. Section~\ref{sec:bank} builds the continuous- and discrete-time fixed-pole banks, Section~\ref{sec:structure} proves the structural results, and Section~\ref{sec:design} gives the error model, the design rule and the stability result. Section~\ref{sec:results} reports the numerical experiments, Section~\ref{sec:hw} the fixed-point core, and Section~\ref{sec:mbm} the mBm application. Section~\ref{sec:discussion} discusses limitations. All code, seeds and results are available (see the Declarations).
+Section~\ref{sec:related} reviews related work. Section~\ref{sec:prelim} recalls the definitions and their duality. Section~\ref{sec:bank} builds the continuous- and discrete-time fixed-pole banks, Section~\ref{sec:structure} proves the structural results, and Section~\ref{sec:design} gives the error model, the design rule and the stability result. Section~\ref{sec:results} reports the numerical experiments, Section~\ref{sec:hw} the fixed-point core, and Section~\ref{sec:mbm} the mBm application. Section~\ref{sec:discussion} discusses limitations. All code, seeds and results are available (see the Declarations).
+
+\subsection{Related work}\label{sec:related}
+
+The search behind this section is documented in the repository: protocol, queries, screening decisions and data extraction. It used Crossref and arXiv and was complemented by snowballing. Table~\ref{tab:related} summarizes how existing realizations treat a varying order.
+
+\paragraph{Analog realizations.} Most analog VO realizations switch between two or three constant-order circuits~\cite{sierociuk2013tcst,macias2020,zhou2019}, as noted in~\cite{aricioglu2025}. Sierociuk et al.\ made the link between structure and definition explicit for switching:
+\begin{itemize}
+\item a serial cascade in which a block of complementary order is pre-connected at every switch is equivalent to the B-type~\cite{sierociuk2015amm};
+\item switching strategies for the recursive types follow from duality~\cite{sierociuk2015cssp,malesza2016,sierociuk2016ecc,sierociuk2014bpas};
+\item a parallel scheme replaced the serial one, which could not be built in practice~\cite{sierociuk2018amc}.
+\end{itemize}
+The D-type was found impractical to realize directly, because two ideal operators of opposite orders cannot be connected in series with electronic elements~\cite{sierociuk2020}. These schemes add or switch constant-order blocks, so their size grows with the number of distinct switches. Ar{\i}c{\i}o{\u{g}}lu realized a smoothly varying order with a single transfer function~\cite{aricioglu2025}. This restricts the method to the only linear time-invariant definition of Lorenzo and Hartley~\cite{lorenzo2002}. Electronically tunable fractional-order elements and filters~\cite{tsirimokou2017,charef2012,yu2022} and variable fractional-order digital differentiators and integrators~\cite{tseng2006,tseng2008,charef2012sivp} make the order an adjustable parameter of a constant-order design. Their behaviour while the order changes is not analysed.
+
+\paragraph{Digital and hardware realizations.} Tolba et al.\ realized GL operators on an FPGA with an order that can be reconfigured at run time, and used them in a VO chaotic oscillator~\cite{tolba2020}. A direct GL convolution with current-order weights has fixed poles (all at the origin) and its order in the output weights. By the argument of Proposition~\ref{prop:structure} below it is therefore an A-type operator, with a memory and a cost per sample proportional to its length. Discrete-time VO controllers evaluate GL VO differences directly~\cite{mozyrska2019}, at a cost that grows with the memory.
+
+\paragraph{Fixed nodes for variable orders.} The work closest to ours comes from fast solvers for VO time-fractional equations. Zhang, Fang and Sun approximate the VO Caputo derivative, with the order taken at the current time, by an exponential sum whose exponents do not change between time levels~\cite{zhang2022esa,zhang2022fast}. Huang et al.\ give a unified sum-of-exponentials framework for constant and variable orders~\cite{huang2022unified}. These works share the order-independent nodes with the present paper. However, they treat only the A-type, in continuous time and inside an L1-type discretization. They do not address the B-, D- or E-types, a design rule over the whole order range, or hardware. For the hidden-memory VO derivative, whose order is evaluated at the integration variable as in the B-type, the fast method we found uses Taylor expansions and hierarchical matrices at $O(N\log N)$ total cost~\cite{jia2022}.
+
+\paragraph{State and transients.} Transients caused by coefficient changes in recursive filters are a classical topic~\cite{zetterberg1988,valimaki1998}. The meaning of the state of a fractional system has been discussed in the context of initialization~\cite{lorenzo2008,trigeassou2012,sabatier2014}. Neither line asks which VO definition a switched realization implements.
+
+\begin{table}[t]
+\caption{How existing realizations treat a varying order. ``Inferred'' marks entries obtained by applying Proposition~\ref{prop:structure} or Theorem~\ref{thm:necessity} to the described structure}\label{tab:related}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.19\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}@{}}
+\toprule
+Work & Structure & Definition & Order changes & Cost per sample\\
+\midrule
+serial switching~\cite{sierociuk2015amm} & analog; complementary-order block added at each switch & B & any number of switches & grows with switches\\
+recursive, parallel schemes~\cite{sierociuk2015cssp,sierociuk2018amc,sierociuk2020} & analog; switched constant-order ladders & D; B; B$\leftrightarrow$D & a few switches & ---\\
+\cite{aricioglu2025} & analog; one transfer function & LTI (third) type of~\cite{lorenzo2002} & smooth $\alpha(t)$ & fixed\\
+tunable elements, filters~\cite{tsirimokou2017,charef2012,yu2022,tseng2006,charef2012sivp} & order-dependent coefficients & not analysed (FIR: A, inferred) & re-tuning & ---\\
+FPGA GL~\cite{tolba2020} & direct GL convolution & A (inferred) & at run time & $O(L)$, $L$ = memory\\
+hot-swapped Oustaloup (Sect.~\ref{sec:results}) & moving poles, state kept & none exactly (Thm.~\ref{thm:necessity}) & any & $O(S)$\\
+exponential sums~\cite{zhang2022esa,huang2022unified} & fixed exponents, continuous-time Caputo & A & any $\alpha(t)\in(0,1)$ & $O(\log^2 n)$\\
+hidden memory~\cite{jia2022} & Taylor / hierarchical matrices & B-like (Caputo) & any & $O(N\log N)$ in total\\
+this work & discrete fixed-pole bank & A, B; D, E by inversion & every sample & $O(K)$, $K\approx20$--$50$\\
+\botrule
+\end{tabular}
+\end{table}
 
 %% =====================================================================
 \section{Variable-order Gr\"unwald--Letnikov operators}\label{sec:prelim}
@@ -120,7 +158,7 @@ z_n=\big(\Op{E}{\alpha}x\big)_n &= \Ts^{-\alpha_n}x_n-\sum_{r=1}^{n} w_r(-\alpha
 \end{align}
 \end{definition}
 
-The A-type has no memory of past orders: a change of $\alpha_n$ immediately reweights the entire history. The B-type keeps each sample with the weight sequence of its own entry order. For a constant order all four types coincide.
+The A-type has no memory of past orders: a change of $\alpha_n$ immediately reweights the entire history. The B-type keeps each sample with the weight sequence of its own entry order. For a constant order all four types coincide. In~\cite{sierociuk2015amm} the A- and B-types are the first and second types. Their third type indexes the order by the lag, which gives a time-invariant operator. Lorenzo and Hartley~\cite{lorenzo2002} and Val\'erio and S\'a da Costa~\cite{valerio2011} list further variants, and~\cite{malesza2019} exploits the duality below to solve VO equations analytically.
 
 \subsection{Matrix form and duality}
 
@@ -391,6 +429,7 @@ Theorem~\ref{thm:necessity} rules out exact maps, not approximate ones. A least-
 \item is specific to each pair of orders, needing $2(P-1)$ maps for the $P-1$ neighbouring pairs of a grid of $P$ order levels;
 \item depends on the statistics of the input.
 \end{itemize}
+State-update strategies for time-varying recursive filters suppress the transients of a coefficient change~\cite{zetterberg1988,valimaki1998}. By Theorem~\ref{thm:necessity}, no such update can make a moving-pole realization definition-consistent.
 \end{remark}
 
 %% =====================================================================
@@ -729,7 +768,7 @@ A/B/D/E & 48/61/25 & 62\,464 (0) & 6\,009 & 2\,360 & 29 & 29.5\\
 %% =====================================================================
 \section{Application: streaming multifractional Brownian motion}\label{sec:mbm}
 
-Multifractional Brownian motion lets the Hurst exponent vary in time~\cite{peltier1995}. Its Riemann--Liouville form (RL-mBm)~\cite{lim2001,muniandy2001} is a VO integral of white noise of order $H(t)+\tfrac12$, with the current order applied to the whole past. It is thus an A-type integral. Applying the order at the time each increment enters gives the B-type variant, which is related to the nonhomogeneous fractional integration of Surgailis~\cite{surgailis2008}. VO operators have been used to synthesize multifractional Gaussian noise before~\cite{sheng2011}. Exact methods for stationary Gaussian processes such as circulant embedding~\cite{wood1994} rely on stationarity and do not apply directly when $H$ varies.
+Multifractional Brownian motion lets the Hurst exponent vary in time~\cite{peltier1995}, and its definitions are in general not equivalent~\cite{stoev2006}. The Riemann--Liouville form (RL-mBm)~\cite{lim2001,muniandy2001} is a VO integral of white noise of order $H(t)+\tfrac12$, with the current order applied to the whole past. It is thus an A-type integral. Applying the order at the time each increment enters gives the B-type variant. Up to the discretization of the kernel and a per-increment factor $\sqrt{2H_j}\,\Gamma(H_j+\tfrac12)$, this is the memory-multifractional Brownian motion (MMFBM) of Wang et al.~\cite{wang2023mmfbm}, $X(t)=\int_0^t\sqrt{\alpha(s)}\,(t-s)^{(\alpha(s)-1)/2}\,\mathrm dB(s)$ with $\alpha=2H$. The input-scheduled bank applies that factor as a gain on each input sample. Related constructions in which a change of $H$ acts only on new increments are the nonhomogeneous fractional integration of Surgailis~\cite{surgailis2008}, the integrated fractional white noise of Sly~\cite{sly2007}, the variable-Hurst fBm of Ryvkina~\cite{ryvkina2015} and the incremental mBm of \'Sl\c{e}zak and Metzler~\cite{slezak2023}. VO operators have been used to synthesize multifractional Gaussian noise before~\cite{sheng2011}, and simulation methods for mBm include~\cite{chan1998}. Exact methods for stationary Gaussian processes such as circulant embedding~\cite{wood1994} rely on stationarity and do not apply directly when $H$ varies.
 
 In sample units, the discrete processes are
 \[
@@ -757,9 +796,9 @@ The reversed orders are not exact: the relative errors are 0.1 to 1.3 in our tes
 
 Second-order statistics were computed exactly, without Monte Carlo, from the $n\times n$ weight matrix of the generator. The variance agreed with the exact formula to $3.1\times10^{-5}$ and the covariance to $1.7\times10^{-6}$.
 
-The local Hurst exponent was estimated by generalized quadratic variations~\cite{istas1997,coeurjolly2005}. For constant $H$ the estimator itself has a bias of $+0.06$ at $H=0.2$ and a standard deviation of $0.06$ (window 1024). For varying $H$ its mean followed $H(t)$ with RMSE $0.014$ to $0.036$, equally for both types.
+The local Hurst exponent was estimated by generalized quadratic variations~\cite{istas1997,coeurjolly2005}; see~\cite{bardet2013} for multifractional Gaussian processes. For constant $H$ the estimator itself has a bias of $+0.06$ at $H=0.2$ and a standard deviation of $0.06$ (window 1024). For varying $H$ its mean followed $H(t)$ with RMSE $0.014$ to $0.036$, equally for both types.
 
-The two types differ sharply at a jump of $H$ from $0.3$ to $0.8$. The A-type variance jumps from 119 to $1.5\times10^5$, and the path is discontinuous: the squared increment at the jump is $1.3\times10^5$ times the typical one. The B-type is continuous (ratio 1.0). Which definition to use is therefore a modelling decision with visible consequences, for example when continuity of paths is required.
+The two types differ sharply at a jump of $H$ from $0.3$ to $0.8$. The A-type variance jumps from 119 to $1.5\times10^5$, and the path is discontinuous: the squared increment at the jump is $1.3\times10^5$ times the typical one. The B-type is continuous (ratio 1.0), in line with the behaviour reported for MMFBM and incremental mBm~\cite{wang2023mmfbm,slezak2023}. Which definition to use is therefore a modelling decision with visible consequences, as also argued in~\cite{wang2023mmfbm}. The bank makes either choice available at the same cost.
 
 \begin{table}[t]
 \caption{Streaming mBm with the fixed-pole bank}\label{tab:mbm}
@@ -802,7 +841,7 @@ fixed-point core A/B/D/E (48/61/25), vs float & A $3.8\times10^{-6}$, B $1.2\tim
 
 \paragraph{Hardware.} The core is not pipelined. A pipelined version could approach $K$ plus a few cycles per sample. Resources are synthesis estimates, and the board measurements are pending.
 
-\paragraph{Literature.} A systematic review of VO realizations (rational, analog and digital) is still to be completed for the final version. \pending{TODO: systematic search (Scopus/WoS) and comparison table.}
+\paragraph{Literature search.} The review of Sect.~\ref{sec:related} used Crossref and arXiv. \pending{TODO: repeat the documented queries in Scopus and Web of Science before submission.}
 
 %% =====================================================================
 \section{Conclusion}\label{sec:conclusion}

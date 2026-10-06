@@ -19,6 +19,7 @@ vofrac/mbm.py         Multifraksiyonel Brown hareketi üreteci, tam varyans, yer
 rtl/                  Verilog çekirdek, testbench, kart test paketi (E5), bkz. rtl/README.md
 experiments/          E1 (CT), E1b (DT, GL + tanımsal hata), E2 (durum eşlemesi), E3 (tasarım kuralı), E4 (D/E tipleri), E5 (sabit nokta, RTL), E5c (kuantize kararlılık), E6 (mBm)
 paper/                CSSP makale taslağı (LaTeX, sn-jnl), şekil betiği, derlenmiş PDF; bkz. paper/README.md
+litreview/            Sistematik literatür taraması: protokol, sorgular, eleme kararları, veri çıkarma, kaynak doğrulama; bkz. litreview/SENTEZ.md
 results/              JSON çıktıları, şekiller, loglar
 tests/                pytest
 ```
@@ -38,6 +39,8 @@ python3 experiments/e5_rtl_parity.py              # ~4 dk, iverilog + verilator 
 python3 experiments/e5c_quantized_stability.py    # ~1 dk, results/e5c_quantized_stability.json (tam rasyonel aritmetik)
 python3 experiments/e6_mbm.py                     # ~1 dk, results/e6_mbm.json + fig_e6_*.png (E5 sonuçlarını kullanır)
 cd paper && make                                  # makale şekilleri + main.pdf
+python3 litreview/search.py && python3 litreview/screen_stage1.py && python3 litreview/snowball.py \
+  && python3 litreview/screening.py && python3 litreview/extraction.py   # tarama (ham yanıtlar önbellekli)
 ```
 
 ## Sonuçlar (özet)

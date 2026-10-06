@@ -1,0 +1,36 @@
+{
+ "records_identified": 2639,
+ "unique_after_dedup": 1702,
+ "stage1_pass": 368,
+ "stage1_excluded": 1334,
+ "stage2": {
+  "include:I4": 6,
+  "exclude:PDE": 44,
+  "include:I5": 16,
+  "exclude:APP": 28,
+  "include:I2": 12,
+  "include:I3": 33,
+  "exclude:THEORY": 15,
+  "include:I1": 23,
+  "exclude:SPACE": 19,
+  "exclude:OFF": 19,
+  "exclude:MBM": 96,
+  "exclude:VFD": 18,
+  "exclude:FPAPP": 37,
+  "exclude:DUP": 2
+ },
+ "included_from_search": 90,
+ "snowball_targets": 42,
+ "snowball_dropped": 3,
+ "snowball_already_in_search": 0,
+ "included_from_snowball": 39,
+ "included_total": 129,
+ "included_by_criterion": {
+  "BG": 5,
+  "I1": 33,
+  "I2": 25,
+  "I3": 36,
+  "I4": 7,
+  "I5": 23
+ }
+}

@@ -32,7 +32,13 @@ Kurallar:
 
 ---
 
-## 2. Literatür konumu (ön tarama, tamamlanması gerekiyor)
+## 2. Literatür konumu
+
+**Sistematik tarama yapıldı** (2026-10-06): [`litreview/PROTOKOL.md`](../litreview/PROTOKOL.md), [`litreview/SENTEZ.md`](../litreview/SENTEZ.md).
+- Kapsam: Crossref ve arXiv, 30 sorgu, 2639 kayıt, 1702 tekil. Kural filtresinden 368 kayıt geçti; elle elemeden ve kartopundan sonra 129 kayıt dahil edildi.
+- **Ana sonuç:** VO Caputo için dereceden bağımsız üstel toplam (Zhang–Fang–Sun 2021–2022) ve mBm'de A/B ayrımı (MMFBM, Wang ve ark. 2023) öncül çalışmalar. Yapı ⇔ tanım bağı, A ve B'nin tek bankada gerçeklenmesi, ayrık-zaman GL tamlığı, D/E terslemesi, kural, kararlılık ve donanım için öncül bulunmadı. Makalenin katkı listesi buna göre güncellendi.
+
+İlk ön tarama notları:
 
 - **VO tanımları:** Lorenzo–Hartley; Sierociuk, Malesza, Macias (A/B/C tipi GL tanımları, D/E özyinelemeli tanımlar, anahtarlama şemaları, domino-merdiven analog gerçeklemesi, iki derece arasında anahtarlama). [arXiv:1304.5072](https://arxiv.org/pdf/1304.5072)
 - **D/E tanımları ve dualite (E4'te kullanılan birincil kaynaklar):** Sierociuk, Macias, Malesza, Wiraszka, *Electronics* 9 (2020) 855, denklem (7)–(8) ([PDF](https://mdpi-res.com/d_attachment/electronics/electronics-09-00855/article_deploy/electronics-09-00855.pdf)); Sierociuk ve ark., *CSSP* 35 (2016) 2055–2082, Remark 2 ([açık erişim](https://d-nb.info/1095394320/34)); Sierociuk, Malesza, Macias, *CSSP* 34 (2015) 1077–1113 (özyinelemeli tanım, dualite, analog model). Son ikisi hedef dergide yayımlanmış; mutlaka atıf alacaklar.
@@ -47,7 +53,7 @@ Kurallar:
   - Yerel Hurst kestiricisi: genelleştirilmiş kuadratik varyasyon (Istas–Lang, Coeurjolly 2005)
 
 **Boşluk:** Sonlu boyutlu (rasyonel) VO gerçeklemelerinde *hangi tanımın gerçeklendiği* yapısal olarak hiç analiz edilmemiş. Tanımı "yapıdan seçen" bir tasarım yöntemi de önerilmemiş.
-**Yapılacak:** Scopus/WoS'ta sistematik tarama ("variable order" ∧ (realization ∨ approximation ∨ FPGA ∨ analog)), son 10 yıl, CSSP/FCAA/Nonlinear Dyn/Signal Process./ISA Trans./Mechatronics.
+**Yapılacak (kısmen yapıldı, §2 başı):** Scopus/WoS'ta sistematik tarama ("variable order" ∧ (realization ∨ approximation ∨ FPGA ∨ analog)), son 10 yıl, CSSP/FCAA/Nonlinear Dyn/Signal Process./ISA Trans./Mechatronics.
 
 ---
 
@@ -373,7 +379,7 @@ Yorum:
 
 1. Kart ölçümleri (`rtl/README.md`): bit-tam parite, Vivado kaynak ve Fmax, uzun koşu kararlılığı (isteğe bağlı: kartta gürültü üretecili mBm demosu)
 2. Teoremin, ters-kararlılık önermesinin ve bileşim önermesinin tam ispatı; DT hata modelinin küçük-r terimi için kapalı form
-3. Sistematik literatür taraması (§2)
+3. Sistematik literatür taraması: Crossref + arXiv ile yapıldı (§2). Kalan: Scopus/WoS tekrarı
 4. Makale taslağı: **başladı** (`paper/main.tex`, 29 sayfa, 6 şekil + TikZ şema, 8 tablo, 4 ek). Açık maddeler `paper/README.md`'de
 4. E5: RTL ağırlık üretici, TCAS-I'deki W48 altyapısı yeniden kullanılarak ama yeni çekirdekle
 5. E6 uygulaması (mBm). Alternatif: VO kesirli PID veya zamanla değişen spektral eğimli filtre

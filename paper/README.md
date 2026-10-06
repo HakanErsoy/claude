@@ -20,7 +20,7 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 | Dosya | İçerik |
 |---|---|
 | `main.tex` | Makale metni |
-| `refs.bib` | Kaynaklar (29'u atıf alıyor) |
+| `refs.bib` | Kaynaklar (66 girdi, 65'i atıf alıyor; Crossref ile doğrulandı, `litreview/bib_check.csv`) |
 | `make_figures.py` | Altı vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
 | `figs/` | Üretilen şekiller (PDF) |
 | `sn-jnl.cls`, `sn-mathphys-num.bst` | Resmî Springer Nature şablonundan (değiştirilmedi) |
@@ -30,7 +30,7 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 
 | Bölüm | İçerik | Kaynak |
 |---|---|---|
-| 1 | Giriş, katkılar | — |
+| 1 | Giriş, katkılar; 1.1 ilgili çalışmalar ve karşılaştırma tablosu (Tablo 1) | `litreview/` |
 | 2 | A/B/D/E tanımları, matris formu, dualite, CT basamak referansları, difüzif gösterim | — |
 | 3 | CT ve DT sabit kutuplu banka (Beta-integral, Lemma 1), kuyruk kapanışı, OS/IS, Şekil 1 (TikZ) | — |
 | 4 | Önerme 2 (OS→A, IS→B), Sonuç 3 (hata sınırı), Önerme 4 (D/E terslemeyle), Teorem 5 (gereklilik), Sonuç 6 | — |
@@ -55,6 +55,10 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
   - En kötü satırın baskın kutbu artık tam hesaplanıyor: A/B/D/E'de 1 + 1.9e-9 (önceki özdeğer tahmini 2.5e-9), e-katına çıkma süresi 5.2e8 örnek. A/B'de 1 + 4.8e-6.
   - Kuantizasyona duyarlı tabanla iki yapılandırmada da 0.
 
+- **Literatür taraması sonrası (2026-10-06):**
+  - **Katkı iddiaları daraltıldı.** VO Caputo için dereceden bağımsız üsler Zhang–Fang–Sun 2021'de zaten var; mBm'de A/B ayrımı Wang ve ark. 2023'te (MMFBM) var. Yenilik artık şu noktalarda: yapı ⇔ tanım bağı, A ve B tek bankada, ayrık-zaman GL tamlığı, D/E terslemesi, tasarım kuralı, kararlılık ve donanım.
+  - **Hatalı bir atıf düzeltildi.** Arıcıoğlu 2025, hot-swap örneği değil; LTI (üçüncü) tanımı tek transfer fonksiyonuyla gerçekliyor.
+
 ## Yapılacaklar (gönderimden önce)
 
 1. **Yazarlar:** isimler, kurumlar, e-postalar (`main.tex` başı, şu an yer tutucu).
@@ -65,8 +69,8 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
    - en kötü kuantize satırda (D-tipi, α = −0.855) ≥ 1e7 örneklik uzun koşu
    Paket ve adımlar: `rtl/README.md`. TCAS-I ölçümleri kullanılmayacak.
 3. **TCAS-I referansı:** `refs.bib` → `tcas_submission` (başlık, yazarlar, durum).
-4. **Kaynak doğrulama:** `montseny1998` (cilt/sayfa TODO). Diğer tüm girdiler yayıncı kaydıyla bir kez daha kontrol edilmeli. Eksik DOI'ler eklenmeli.
-5. **Sistematik literatür taraması** (Scopus/WoS, son 10 yıl, VO gerçeklemeleri) ve §9'daki kırmızı TODO: karşılaştırma tablosu.
+4. **Kaynak doğrulama:** yapıldı (`litreview/verify_bib.py`). `montseny1998` doğrulandı ve DOI eklendi. Crossref'te olmayan kitaplar, INRIA raporu ve FCAA 2000 web üzerinden kontrol edildi. Yalnızca TCAS-I yer tutucusu kaldı.
+5. **Literatür taraması:** Crossref + arXiv üzerinde yapıldı (`litreview/`, PROTOKOL.md ve SENTEZ.md; 129 dahil kayıt). §1.1 ve Tablo 1 buna dayanıyor. **Kalan:** aynı dizgelerle Scopus/WoS tekrarı (§9'daki kırmızı TODO) ve SENTEZ.md'deki tam metin kontrolleri.
 6. **Beyanlar:** finansman, çıkar çatışması, kod erişimi (depo URL'si veya Zenodo DOI), yazar katkıları, teşekkür.
 7. **Kapak mektubu:** TCAS-I çalışmasıyla ilişki açıkça yazılmalı. Springer'in eşzamanlı gönderim politikası kontrol edilmeli.
 8. **CSSP yazım kuralları:** özet 249 kelime (sınır 250 kabul edildi). Anahtar kelime sayısı (şu an 7) ve sayfa/şekil sınırları dergi sayfasından doğrulanmalı.
