@@ -290,4 +290,6 @@ if __name__ == "__main__":
     res["part7"] = part7(rng)
     with open(os.path.join(OUT, "e6_mbm.json"), "w") as f:
         json.dump(res, f, indent=1)
+    with open(os.path.join(OUT, "e6_traces.json"), "w") as f:
+        json.dump({"hurst": tr4, "step": tr5}, f)
     figures(tr4, tr5, res["part4"]["n"])

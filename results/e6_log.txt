@@ -14,12 +14,8 @@ P4 ramp 0.2->0.8: A: RMSE(mean) 0.015 std 0.064 | B: RMSE(mean) 0.014 std 0.064
 P4 sine 0.5+-0.3: A: RMSE(mean) 0.035 std 0.063 | B: RMSE(mean) 0.036 std 0.064
 P4 step 0.3->0.8: A: RMSE(mean) 0.030 std 0.063 | B: RMSE(mean) 0.027 std 0.062
 P5 step: Var A 119.1 -> 154297.1 | Var B 119.1 -> 119.1 | increment^2 at jump / before: A 131845.0, B 1.0
-P6 n=1024: K=22 bank 47 MAC/sample vs GL 512 avg | time per path: bank batched 0.6 ms, bank single 32 ms, GL direct 10 ms
-P6 n=4096: K=24 bank 51 MAC/sample vs GL 2048 avg | time per path: bank batched 2.2 ms, bank single 113 ms, GL direct 120 ms
-P6 n=16384: K=26 bank 55 MAC/sample vs GL 8192 avg | time per path: bank batched 11.5 ms, bank single 506 ms, GL direct 1060 ms
+P6 n=1024: K=22 bank 47 MAC/sample vs GL 512 avg | time per path: bank batched 0.5 ms, bank single 36 ms, GL direct 14 ms
+P6 n=4096: K=24 bank 51 MAC/sample vs GL 2048 avg | time per path: bank batched 2.6 ms, bank single 159 ms, GL direct 96 ms
+P6 n=16384: K=26 bank 55 MAC/sample vs GL 8192 avg | time per path: bank batched 10.5 ms, bank single 485 ms, GL direct 1041 ms
 P7 core AB 36/49/16: mBm paths vs float bank, max rel err A 1.8e-05  B 8.9e-04
 P7 core ABDE 48/61/25: mBm paths vs float bank, max rel err A 3.8e-06  B 1.2e-04
-
-real	0m54.068s
-user	0m52.717s
-sys	0m9.858s

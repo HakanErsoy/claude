@@ -4,7 +4,7 @@
 **Çalışma başlığı (taslak):**
 *Definition-Consistent Realization of Variable-Order Fractional Operators with Fixed-Pole Banks: Theory, Discrete-Time Exactness, and Sample-Rate Order Scheduling*
 
-Durum: **Aşama 5 tamamlandı (E1–E6).** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu ve kaynak tahminini, E6 gerçek zamanlı multifraksiyonel Brown hareketi sentezini gösterdi (bkz. §7). Kart ölçümleri bekliyor.
+Durum: **Aşama 6: makale taslağı başladı** (`paper/`, Springer `sn-jnl`, bkz. [`paper/README.md`](../paper/README.md)). **Aşama 5 tamamlandı (E1–E6).** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu ve kaynak tahminini, E6 gerçek zamanlı multifraksiyonel Brown hareketi sentezini gösterdi (bkz. §7). Kart ölçümleri bekliyor.
 
 ---
 
@@ -128,7 +128,8 @@ Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor;
 
 **Önerme (ters kararlılık):**
 - *İntegral dereceleri:* bütün rezidüler pozitif, dolayısıyla H'nin sıfırları (0,1) içindeki kutupların arasına düşüyor ve ters her zaman kararlı.
-- *Türev dereceleri:* gecikme modu dışında bütün rezidüler negatif ve z ≥ 1 için H(z) ≥ H(1). Ters kararlı ⇔ H(1) = Σ_r g_r > 0.
+- *Türev dereceleri:* gecikme modu dışında bütün rezidüler negatif; z·H(z), z > θ_max'ta artan. Ters kararlı ⇔ H(1) = Σ_r g_r > 0 (c_d > 0 ise ayrıca H(−1) > 0).
+- *Ek koşul (taslakta tamamlandı):* gecikme kutbu z = 0 olduğundan son sıfır negatif eksene düşebiliyor. Bu yüzden integral bankasında da H(−1) > 0 gerekiyor. İlk iki ağırlık 1/3 doğrulukla gerçekleniyorsa bu kendiliğinden sağlanıyor. Holdout'ta H(−1), tam değeri 2^α·g₀'a %0.06 içinde yakın. İspat: makale Ek B.
 - Gerçek GL değeri 0. Büyük α'da DC toplamının kuadratür hatası H(1)'i hafifçe negatife itebiliyor. **DC tabanı**, kuyruğun doğal pozitif DC katkısının %1'i (0.01·|S|·g₀·u_lo^α/(α(1+α))) ve gecikme modu üzerinden uygulanıyor.
 - Taban yalnızca g₁'i, yaklaşık DC kuadratür hatası kadar değiştiriyor. E3 holdout sonuçları byte düzeyinde aynı kaldı.
 - Kararlılık özdeğerle değil H(1)'in işaretiyle test ediliyor, çünkü kutuplar 1'e çok yakın kümelendiğinde özdeğer çözücü güvenilmez.
@@ -330,7 +331,7 @@ Ayrıca float bankanın kendi çıkış hatası D/E'de 6e-4'e kadar çıkıyor (
 - A/B yapılandırmasında 64/512 giriş
 - A/B/D/E yapılandırmasında 51/512 giriş
 
-En kötü girişte (α = 0.855) ρ − 1 = +2.5e-9; e-katına çıkması ~4e8 örnek alıyor, 1 MS/s'de ~400 s. Kuantizasyona duyarlı taban (c_delay'i mantis LSB'si adımlarıyla artırarak H_q(1) ≥ H_float(1) yapmak) bunu 0/512'ye indiriyor. Doğruluk maliyeti yok.
+En kötü girişte (α = 0.855) baskın ters kutup 1 + 1.9e-9 (E5c, tam rasyonel aritmetik; önceki özdeğer tahmini 2.5e-9 idi). e-katına çıkması 5.2e8 örnek alıyor, 1 MS/s'de ~520 s. A/B yapılandırmasında en kötü satır α = 0.931, kutup 1 + 4.8e-6. Kuantizasyona duyarlı taban (c_delay'i mantis LSB'si adımlarıyla artırarak H_q(1) ≥ H_float(1) yapmak) bunu 0/512'ye indiriyor. Doğruluk maliyeti yok.
 
 **RTL** (`rtl/vo_bank_core.v`, zaman paylaşımlı, örnek başına 4K + 8 = 136 çevrim):
 
@@ -373,6 +374,6 @@ Yorum:
 1. Kart ölçümleri (`rtl/README.md`): bit-tam parite, Vivado kaynak ve Fmax, uzun koşu kararlılığı (isteğe bağlı: kartta gürültü üretecili mBm demosu)
 2. Teoremin, ters-kararlılık önermesinin ve bileşim önermesinin tam ispatı; DT hata modelinin küçük-r terimi için kapalı form
 3. Sistematik literatür taraması (§2)
-4. Makale taslağı (CSSP, Springer `sn-jnl`): §6 iskeletine göre şekil ve tablo seçimi
+4. Makale taslağı: **başladı** (`paper/main.tex`, 29 sayfa, 6 şekil + TikZ şema, 8 tablo, 4 ek). Açık maddeler `paper/README.md`'de
 4. E5: RTL ağırlık üretici, TCAS-I'deki W48 altyapısı yeniden kullanılarak ama yeni çekirdekle
 5. E6 uygulaması (mBm). Alternatif: VO kesirli PID veya zamanla değişen spektral eğimli filtre

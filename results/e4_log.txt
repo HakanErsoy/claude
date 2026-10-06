@@ -112,7 +112,3 @@ P5 lam=  100 smooth             step  err A:4.9e-07 B:4.9e-07 D:3.1e-09 E:2.1e-0
 P5 lam=  100 smooth             noise err A:1.5e-07 B:1.6e-07 D:1.7e-08 E:1.7e-08 | gaps A-B:0.00 A-D:0.00 B-E:0.00 D-E:0.00
 P5 lam=  100 switch -0.3->-0.8  step  err A:4.2e-09 B:7.8e-10 D:1.9e-07 E:1.3e-07 | gaps A-B:0.01 A-D:0.00 B-E:0.00 D-E:0.00
 P5 lam=  100 switch -0.3->-0.8  noise err A:1.2e-10 B:1.1e-10 D:4.4e-09 E:2.7e-09 | gaps A-B:0.00 A-D:0.00 B-E:0.00 D-E:0.00
-
-real	0m51.307s
-user	1m18.028s
-sys	0m9.309s

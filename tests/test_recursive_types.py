@@ -68,3 +68,14 @@ def test_dc_floor_makes_every_inverse_stable():
     assert not all(without.inverse_is_stable(a) for a in grid)
     # sign test agrees with the spectral radius where the latter is resolvable
     assert without.inverse_spectral_radius(0.95) > 1.0 + 1e-5
+
+
+def test_negative_axis_condition_holds():
+    """H(-1) is close to its exact value 2^a g0, so the last zero of H lies inside the disc."""
+    d = design_dt(H, 4000, -0.95, 0.95, 1e-4)
+    bank = DiscreteFixedPoleBank(H, d["xi_lo"], d["xi_hi"], d["K"])
+    for a in np.linspace(-0.95, 0.95, 39):
+        g0, cd, c = bank.coeffs(float(a))
+        Hm1 = g0 - cd - np.sum(c / (1.0 + bank.theta))
+        assert abs(Hm1 / (g0 * 2.0 ** a) - 1.0) < 1e-2
+        assert bank.inverse_is_stable(float(a))

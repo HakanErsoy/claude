@@ -242,4 +242,6 @@ if __name__ == "__main__":
     res["part5"], traces = part5(rng)
     with open(os.path.join(OUT, "e4_recursive_types.json"), "w") as f:
         json.dump(res, f, indent=1)
+    with open(os.path.join(OUT, "e4_traces.json"), "w") as f:
+        json.dump(traces, f)
     figures(res["part3"], traces)

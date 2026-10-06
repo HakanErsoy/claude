@@ -351,17 +351,25 @@ class DiscreteFixedPoleBank:
     def inverse_is_stable(self, alpha):
         """Exact-sign stability test of the frozen-order inverse (D/E types).
 
-        Integral orders: all residues are positive, so the zeros of H
-        interlace its poles in (0, 1) and the inverse is always stable.
-        Derivative orders: all residues except possibly the delay mode are
-        negative and H(z) >= H(1) on z >= 1, so the inverse is stable iff
-        H(1) > 0. Unlike eigenvalues near z = 1, the sign of H(1) is
-        computed to full relative precision.
+        H(z) = g0 + cd/z + sum_k c_k/(z - theta_k) has K + 1 zeros.
+        Integral orders: all residues are positive, so K zeros interlace the
+        poles in [0, 1) and the last one lies on the negative real axis; it
+        is inside the unit circle iff H(-1) > 0.
+        Derivative orders: the theta-residues are negative, so K - 1 zeros
+        lie between the poles, z H(z) increases on z > theta_max (one zero
+        in (theta_max, 1) iff H(1) > 0, none beyond 1), and the last zero is
+        in (0, theta_min) for cd <= 0 or on the negative axis, inside the
+        unit circle iff H(-1) > 0, for cd > 0.
+        H(-1) is close to its exact value 2^alpha g0 whenever g_1, g_2 are
+        accurate, so in practice the test reduces to the sign of H(1).
+        Unlike eigenvalues near z = 1, these signs are computed to full
+        relative precision.
         """
         g0, cd, c = self.coeffs(alpha)
+        H_m1 = g0 - cd - np.sum(c / (1.0 + self.theta))
         if alpha <= 0.0:
-            return bool(np.all(c >= 0.0) and cd >= 0.0)
-        return bool(np.all(c <= 0.0) and self.dc_gain(alpha) > 0.0)
+            return bool(np.all(c >= 0.0) and cd >= 0.0 and H_m1 > 0.0)
+        return bool(np.all(c <= 0.0) and self.dc_gain(alpha) > 0.0 and (cd <= 0.0 or H_m1 > 0.0))
 
     def inverse_spectral_radius(self, alpha):
         """Spectral radius of the inverse dynamics A - B C / D at frozen order.

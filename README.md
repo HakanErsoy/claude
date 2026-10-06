@@ -17,7 +17,8 @@ vofrac/types.py       Herhangi bir LTI ailesi için kendi A/B/D/E tipi referansl
 vofrac/fixedpoint.py  Bit-tam sabit noktalı golden model, ROM dışa aktarımı (E5)
 vofrac/mbm.py         Multifraksiyonel Brown hareketi üreteci, tam varyans, yerel Hurst kestiricisi (E6)
 rtl/                  Verilog çekirdek, testbench, kart test paketi (E5), bkz. rtl/README.md
-experiments/          E1 (CT), E1b (DT, GL + tanımsal hata), E2 (durum eşlemesi), E3 (tasarım kuralı), E4 (D/E tipleri), E5 (sabit nokta, RTL), E6 (mBm)
+experiments/          E1 (CT), E1b (DT, GL + tanımsal hata), E2 (durum eşlemesi), E3 (tasarım kuralı), E4 (D/E tipleri), E5 (sabit nokta, RTL), E5c (kuantize kararlılık), E6 (mBm)
+paper/                CSSP makale taslağı (LaTeX, sn-jnl), şekil betiği, derlenmiş PDF; bkz. paper/README.md
 results/              JSON çıktıları, şekiller, loglar
 tests/                pytest
 ```
@@ -34,7 +35,9 @@ python3 experiments/e3_design_rule.py             # ~30 s, results/e3_*.json + f
 python3 experiments/e4_recursive_types.py         # ~1 dk, results/e4_*.json + fig_e4_types.png
 python3 experiments/e5_fixed_point.py             # ~2 dk, results/e5_fixed_point.json + fig_e5_wordlength.png
 python3 experiments/e5_rtl_parity.py              # ~4 dk, iverilog + verilator + yosys gerekli
+python3 experiments/e5c_quantized_stability.py    # ~1 dk, results/e5c_quantized_stability.json (tam rasyonel aritmetik)
 python3 experiments/e6_mbm.py                     # ~1 dk, results/e6_mbm.json + fig_e6_*.png (E5 sonuçlarını kullanır)
+cd paper && make                                  # makale şekilleri + main.pdf
 ```
 
 ## Sonuçlar (özet)

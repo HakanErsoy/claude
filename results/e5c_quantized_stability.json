@@ -1,0 +1,34 @@
+{
+ "WS36_WM16": {
+  "float_floor_only": {
+   "positive_rows": 512,
+   "rows_H1_nonpositive": 64,
+   "rows_Hm1_nonpositive": 0,
+   "worst_alpha": 0.931427174975562,
+   "worst_H1": -1.1058025426474245e-05,
+   "dominant_pole_minus_1": 4.773544226404848e-06,
+   "efolding_samples": 209488.45121229286
+  },
+  "quantized_floor": {
+   "positive_rows": 512,
+   "rows_H1_nonpositive": 0,
+   "rows_Hm1_nonpositive": 0
+  }
+ },
+ "WS48_WM25": {
+  "float_floor_only": {
+   "positive_rows": 512,
+   "rows_H1_nonpositive": 51,
+   "rows_Hm1_nonpositive": 0,
+   "worst_alpha": 0.8552785923753666,
+   "worst_H1": -2.7842299855425622e-08,
+   "dominant_pole_minus_1": 1.9196450245221863e-09,
+   "efolding_samples": 520929621.83013535
+  },
+  "quantized_floor": {
+   "positive_rows": 512,
+   "rows_H1_nonpositive": 0,
+   "rows_Hm1_nonpositive": 0
+  }
+ }
+}
