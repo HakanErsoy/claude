@@ -186,6 +186,10 @@ class FixedPointBank:
         """Golden integer model; vo_type is one letter or a per-sample sequence."""
         K, P = self.K, self.P
         lim_s, lim_x = 1 << (self.WST - 1), 1 << (self.WS - 1)
+        # Python ints throughout: numpy int64 inputs would overflow silently in
+        # the wide products
+        x_int = [int(v) for v in x_int]
+        aidx = [int(v) for v in aidx]
         types = [vo_type] * len(x_int) if isinstance(vo_type, str) else list(vo_type)
         U, Go, Gi = self.U, self.Go, self.Gi
         s = [0] * K

@@ -4,7 +4,7 @@
 **Çalışma başlığı (taslak):**
 *Definition-Consistent Realization of Variable-Order Fractional Operators with Fixed-Pole Banks: Theory, Discrete-Time Exactness, and Sample-Rate Order Scheduling*
 
-Durum: **Aşama 4 tamamlandı.** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu ve kaynak tahminini gösterdi (bkz. §7). Kart ölçümleri bekliyor.
+Durum: **Aşama 5 tamamlandı (E1–E6).** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu ve kaynak tahminini, E6 gerçek zamanlı multifraksiyonel Brown hareketi sentezini gösterdi (bkz. §7). Kart ölçümleri bekliyor.
 
 ---
 
@@ -39,7 +39,12 @@ Kurallar:
 - **Sabit kutuplu yaklaşım (sabit α için):** Wei ve ark., ISA Trans. 2016 ([link](https://www.sciencedirect.com/science/article/abs/pii/S0019057816000288)), ISA Trans. 2019 ([link](https://www.sciencedirect.com/science/article/abs/pii/S0019057818303707)). Burada VO tanım tutarlılığı ele alınmıyor; α≈0 çevresinde iyileştirme gerekiyor (bizdeki kuyruk düzeltmesi bunu analitik olarak çözüyor).
 - **Zamanla değişen derece için devre:** Arıcıoğlu, Axioms 2025 ([link](https://doi.org/10.3390/axioms14040310)). LTI tabanlı tanım kullanıyor, hangi VO tanımının gerçeklendiği analiz edilmiyor.
 - **Difüzif gösterim kuadratürü:** Diethelm 2023 ([arXiv:2301.11931](https://arxiv.org/pdf/2301.11931)), sadece sabit α.
-- **Uygulama adayı:** Sheng, Sun, Chen, Qiu, "Synthesis of multifractional Gaussian noises based on variable-order fractional operators", Signal Processing 2011.
+- **Uygulama (E6):**
+  - RL-mBm: Lim, *J. Phys. A* 34 (2001) 1301; Muniandy ve Lim, *Phys. Rev. E* (2001)
+  - Homojen olmayan kesirli integrasyon, B-tipi benzeri süreçler: Surgailis, *Stoch. Proc. Appl.* 118 (2008) 171–198
+  - VO operatörleriyle mGn sentezi: Sheng, Sun, Chen, Qiu, *Signal Processing* 91 (2011) 1645–1650
+  - Güncel mBm yazılımları: R paketi Rmfrac (2026), MATLAB mBm (Rabelaiss)
+  - Yerel Hurst kestiricisi: genelleştirilmiş kuadratik varyasyon (Istas–Lang, Coeurjolly 2005)
 
 **Boşluk:** Sonlu boyutlu (rasyonel) VO gerçeklemelerinde *hangi tanımın gerçeklendiği* yapısal olarak hiç analiz edilmemiş. Tanımı "yapıdan seçen" bir tasarım yöntemi de önerilmemiş.
 **Yapılacak:** Scopus/WoS'ta sistematik tarama ("variable order" ∧ (realization ∨ approximation ∨ FPGA ∨ analog)), son 10 yıl, CSSP/FCAA/Nonlinear Dyn/Signal Process./ISA Trans./Mechatronics.
@@ -86,6 +91,14 @@ Integral ile türev arasındaki alt↔üst simetrisi kendiliğinden çıkıyor. 
 - üst kuyruk: Σ_j h·u_j·e^{−(2−a)u_j}(1−e^{−u_j})^a / B(2−a, 1+a)
 
 **Kural:** ε bütçesi ε/2 (kuadratür) + ε/4 + ε/4 (kuyruklar) olarak bölünüyor. CT'de h = π²/ln(4·max|sin πα|/ε) kapalı form; kuyruk oranları her α için güç yasasından kapalı formda bulunuyor ve en dar olanı seçiliyor. K = ⌈ln(ξ_hi/ξ_lo)/h⌉ + 1. DT'de h ve u_hi tek boyutlu monoton kök bulmayla, u_lo kapalı formla bulunuyor.
+
+### 3.4 Tamsayı integratörle bileşim (E6)
+
+Derece 1'i aşınca (ör. RL-mBm'de a = H + ½ ∈ (½, 3/2)) bir tamsayı integrasyonu ayırmak ayrık zamanda **tam**, ama yalnızca doğru yerde:
+- **A-tipi:** önce integre et: A^{−a} ξ = A^{−(a−1)}(cumsum ξ)
+- **B-tipi:** sonra integre et: B^{−a} ξ = cumsum(B^{−(a−1)} ξ)
+
+Ters sıralar tam değil (bağıl hata 0.1–1.3). Bu sayede tek bir banka 1/2 − H derecesinde (|α| < ½) 0 < H < 1 aralığının tamamını kapsıyor ve H = ½'yi pürüzsüz geçiyor (bankada α = 0 tam).
 
 ### 3.2 Gereklilik teoremi ve pratik karşılığı (E2 ile düzeltildi)
 
@@ -136,7 +149,7 @@ Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor;
 | H5c | Hot-swap edilen Oustaloup tutarlı bir tip gerçekler | **Reddedildi.** Paralel form yaklaşık A, kaskadda en yakın tip girişe göre A/B/D/E arasında değişiyor. Bant > Nyquist iken D/E referansları bile kurulamıyor (ZOH üyeleri minimum-fazlı değil) |
 | H6 | Örnek hızında α güncelleme donanımda ucuzdur | **RTL'de doğrulandı** (E5): derece değişimi yalnızca bir ROM adresi, örnek başına 136 çevrim, 0 uyumsuzluk. Kart ölçümü bekliyor. (İlk hipotezdeki q^(±α) özyinelemesi DT bankada kesin değil; yerine P = 1024 seviyeli katsayı tablosu kullanıldı) |
 | H6b | Kuantizasyon ters kararlılığı bozabilir | **Doğrulandı.** Float katsayılar tabanlı olsa bile, kuantizasyondan sonra pozitif derece girişlerinin ~%10'unda H_q(1) ≤ 0 çıkıyor. Kuantizasyona duyarlı taban ile 0 |
-| H7 | Uygulama: gerçek zamanlı multifraksiyonel Brown hareketi (RL-mBm = A-tipi) sentezi, O(K) maliyetle | Açık (E6) |
+| H7 | Uygulama: gerçek zamanlı multifraksiyonel Brown hareketi (RL-mBm = A-tipi) sentezi, O(K) maliyetle | **Doğrulandı** (E6): yollar GL'ye 1e-6, varyans ve kovaryans tam formüle ≤3e-5 ve ≤2e-6 yakın; örnek başına 47–55 MAC; sabit noktalı çekirdekle A-tipi 1.8e-5 |
 
 ---
 
@@ -150,7 +163,7 @@ Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor;
 | **E3** | Hata terimlerinin izole doğrulaması; 72 spesifikasyonluk geliştirme ızgarası; 400 spesifikasyonluk mühürlü holdout (değerlendirmeden önce SHA-256 ile yazıldı) | `results/e3_*.json`, `fig_e3_*.png` |
 | **E4** | Literal D/E özyinelemeleri ve dualite; bankadan A/B/D/E (5 profil × 3 giriş); E3 holdout tasarımlarında ters kararlılık; hot-swap Oustaloup'un en yakın tipi (own-type referansları); dört tipte VO gevşeme denklemi, O(K) ve O(n²) karşılaştırması | `results/e4_recursive_types.json`, `fig_e4_types.png` |
 | **E5** | Bit-tam tamsayı modeli (örnek birimleri, mod başına durum ölçeklemesi, mantis+kaydırma katsayılar, P = 1024 derece tablosu); iki zarf (A/B, A/B/D/E); WS × WM taraması; kuantize DC tabanı; Verilog çekirdek, iverilog bit-tam paritesi, Verilator lint, Yosys xc7 tahmini; kart paketi | `results/e5_*.json`, `fig_e5_wordlength.png`, `rtl/` |
-| **E6** | mBm sentezi: yerel Hurst tahmini (artış varyansı / dalgacık), A/B farkı, maliyet karşılaştırması (Cholesky, FFT, GL O(n²)) | planlı |
+| **E6** | mBm sentezi: bileşim kuralları; GL ile yol karşılaştırması; üretecin n×n ağırlık matrisiyle tam varyans ve kovaryans (Monte Carlo'suz); yerel Hurst izleme (sabit/rampa/sinüs/basamak, A ve B); H sıçramasında A/B davranışı; maliyet; E5 çekirdekleriyle bit-tam üretim | `results/e6_mbm.json`, `fig_e6_*.png` |
 
 **İstatistik ve tekrarlanabilirlik:** sabit tohumlar; tüm deneyler `python3 experiments/<e>.py` ile tek komutla üretiliyor; testler `pytest`. E3'te geçme/kalma için Clopper–Pearson alt sınırı kullanılacak (TCAS-I'deki yaklaşımla tutarlı).
 
@@ -165,7 +178,7 @@ Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor;
 5. Discrete-time exactness: Beta-integral gösterimi, ayrık banka, Tanım 2/3'ün kuadratür hatası dışında tam gerçeklenmesi; D/E tiplerinin cebirsel ters ile gerçeklenmesi, dualitenin korunması, ters kararlılık önermesi ve DC tabanı; VO diferansiyel denklem çözücüsü
 6. Design rule: analitik K(ε, bant, α-aralığı)
 7. Hardware: örnek birimlerinde bölücüsüz D/E, mod başına durum ölçeklemesi, D/E anahtarlama dinamik aralığı, kuantizasyona duyarlı DC tabanı, kelime uzunluğu seçimi, RTL paritesi, kaynaklar, kart ölçümleri
-8. Application: gerçek zamanlı mBm sentezi
+8. Application: gerçek zamanlı mBm sentezi (RL-mBm = A-tipi, B-tipi varyant; tamsayı bölme kuralı; H sıçramasında süreklilik farkı; O(K) akış maliyeti; sabit noktalı çekirdek)
 9. Conclusion
 Ekler: ispatlar, referans formüllerin GL ile doğrulanması
 
@@ -333,13 +346,33 @@ En kötü girişte (α = 0.855) ρ − 1 = +2.5e-9; e-katına çıkması ~4e8 ö
 
 **Açık / sınırlar:** Fmax ve kart ölçümleri yok (Vivado + kart gerekli, paket `rtl/README.md`'de). Boru hattısız durum makinesi; boru hattıyla örnek başına ~K + birkaç çevrime inilebilir. Sabit nokta tek ölçekli Q formatında, D/E için block-floating denenmedi.
 
+### E6: gerçek zamanlı multifraksiyonel Brown hareketi
+
+Banka E3 kuralıyla tasarlandı (ε = 1e-4, |α| ≤ 0.45, yani 0.05 ≤ H ≤ 0.95); n = 1024 / 4096 / 16384 için K = 22 / 24 / 26.
+
+| Bölüm | Sonuç |
+|---|---|
+| P1 bileşim | A integratör önce, B integratör sonra: ≤ 9e-15. Ters sıralar: 0.1–1.3 |
+| P2 yol (aynı gürültü) | GL'ye göre A ≤ 1.9e-6, B ≤ 2.4e-6 |
+| P3 ikinci derece istatistik (n = 2048, deterministik) | varyans ≤ 3.1e-5, kovaryans (Frobenius) ≤ 1.7e-6 |
+| P4 yerel Hurst (M = 400, n = 16384, pencere 1024, genişletme 4/8) | sabit H'de kestirici bias'ı +0.06 (H=0.2), 0.00 (0.5), −0.02 (0.8), std 0.06. Değişken H'de ortalamanın RMSE'si 0.014–0.036; A ve B aynı |
+| P5 H sıçraması (0.3 → 0.8) | A-tipi (RL-mBm) varyansı 119 → 154 297'e sıçrıyor ve yol süreksiz (sıçrama anındaki artışın karesi, öncekinin 1.3e5 katı). B-tipi sürekli (oran 1.0). Kestirici sıçrama penceresinde A için geçici bir plato gösteriyor |
+| P6 maliyet | Banka örnek başına 47–55 MAC (n'den bağımsız); GL ortalama n/2 MAC. Yol başına süre (Python): banka toplu 0.6 / 2.2 / 11.5 ms, GL 10 / 120 / 1060 ms. Tek yol Python döngüsünde banka 32 / 113 / 506 ms (yorumlayıcı yükü; donanımda örnek başına sabit 136 çevrim) |
+| P7 sabit nokta (E5 çekirdekleri) | A/B çekirdeği (36/49/16): A 1.8e-5, **B 8.9e-4**. A/B/D/E çekirdeği (48/61/25): A 3.8e-6, B 1.2e-4 |
+
+Yorum:
+- Banka mBm'yi tanım düzeyinde tam üretiyor; kalan farklar kuadratür (~1e-6) ve kestiricinin kendi bias'ı.
+- A ile B'nin farkı en çarpıcı biçimde H sıçramasında görünüyor. A-tipi (RL-mBm) bütün geçmişin çekirdeğini değiştirdiği için yol sıçrıyor; B-tipi sürekli kalıyor. Bu, uygulamada hangi tanımın seçileceğini doğrudan belirliyor (ör. süreklilik gerekiyorsa B).
+- Donanım notu: A-tipinde akümülatör çekirdeğin önünde ve tam (tamsayı toplam), bu yüzden ucuz çekirdek yetiyor. B-tipinde akümülatör çekirdeğin arkasında ve çekirdeğin düşük frekans yuvarlama hatalarını biriktiriyor; bu da daha geniş bir çekirdek gerektiriyor.
+- Önemli düzeltme: golden model artık girişleri Python tamsayısına çeviriyor. numpy int64 girişler geniş çarpımlarda sessizce taşabiliyordu; E5 sonuçları bundan etkilenmedi.
+
 ---
 
 ## 8. Sonraki adımlar
 
-1. Kart ölçümleri (`rtl/README.md`): bit-tam parite, Vivado kaynak ve Fmax, uzun koşu kararlılığı
-2. Teoremin ve ters-kararlılık önermesinin tam ispatı; DT hata modelinin küçük-r terimi için kapalı form
+1. Kart ölçümleri (`rtl/README.md`): bit-tam parite, Vivado kaynak ve Fmax, uzun koşu kararlılığı (isteğe bağlı: kartta gürültü üretecili mBm demosu)
+2. Teoremin, ters-kararlılık önermesinin ve bileşim önermesinin tam ispatı; DT hata modelinin küçük-r terimi için kapalı form
 3. Sistematik literatür taraması (§2)
-4. E6 uygulaması (mBm sentezi)
+4. Makale taslağı (CSSP, Springer `sn-jnl`): §6 iskeletine göre şekil ve tablo seçimi
 4. E5: RTL ağırlık üretici, TCAS-I'deki W48 altyapısı yeniden kullanılarak ama yeni çekirdekle
 5. E6 uygulaması (mBm). Alternatif: VO kesirli PID veya zamanla değişen spektral eğimli filtre

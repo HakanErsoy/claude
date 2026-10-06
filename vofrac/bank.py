@@ -270,6 +270,38 @@ class DiscreteFixedPoleBank:
                 raise ValueError(schedule)
         return y
 
+    def simulate_batch(self, X, alpha, vo_type="A"):
+        """A- or B-type for many realizations at once; X has shape (M, n).
+
+        Same recursion as _run, vectorized over the rows (one shared order
+        sequence), for Monte Carlo work.
+        """
+        X = np.asarray(X, dtype=float)
+        alpha = np.asarray(alpha, dtype=float)
+        M, n = X.shape
+        th = self.theta[:, None]
+        s = np.zeros((self.K, M))
+        dl = np.zeros(M)
+        Y = np.empty_like(X)
+        cache = {}
+        for k in range(n):
+            a = float(alpha[k])
+            if a not in cache:
+                cache[a] = self.coeffs(a)
+            g0, cd, c = cache[a]
+            v = X[:, k]
+            if vo_type == "A":
+                Y[:, k] = g0 * v + cd * dl + c @ s
+                s = th * s + v
+                dl = v
+            elif vo_type == "B":
+                Y[:, k] = g0 * v + dl + s.sum(axis=0)
+                s = th * s + c[:, None] * v
+                dl = cd * v
+            else:
+                raise ValueError("batch mode supports the forward types A and B")
+        return Y
+
     def simulate(self, u, alpha, schedule="output"):
         """schedule="output" realizes Def. 2 (A-type), "input" Def. 3 (B-type)."""
         return self.simulate_type(u, alpha, "A" if schedule == "output" else "B")
