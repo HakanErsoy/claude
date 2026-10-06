@@ -65,6 +65,9 @@ TARGETS = [
     ("S40", "I1", "Fractal system as represented by singularity function", "Charef Sun Tsao Onaral"),
     ("S41", "I5", "The covariance structure of multifractional Brownian motion, with application to long range dependence", "Ayache Cohen Levy Vehel"),
     ("S42", "I1", "Analog modeling of fractional switched-order derivatives: experimental approach", "Sierociuk Podlubny Petras"),
+    # third round: found during the full-text checks (FULLTEXT.md)
+    ("S43", "I2", "Time-varying fractionally integrated processes with nonstationary long memory", "Philippe Surgailis Viano"),
+    ("S44", "I2", "Invariance principle for a class of non stationary processes with long memory", "Philippe Surgailis Viano"),
 ]
 
 

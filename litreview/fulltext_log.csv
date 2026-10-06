@@ -1,0 +1,27 @@
+key,doi,oa_status,arxiv,candidates,downloaded,source,check
+huang2022unified,10.4208/nmtma.oa-2022-0023,closed,,,False,,are the SOE nodes for variable order independent of the order; which VO definition
+valerio2011,10.1016/j.sigpro.2010.04.006,closed,,,False,,which definitions; how the Crone/fuzzy approximations treat a varying order
+tseng2006,10.1016/j.sigpro.2006.02.004,closed,,,False,,structure (Farrow? order as a polynomial variable?)
+tseng2008,10.1016/j.sigpro.2008.03.012,closed,,,False,,structure
+charef2012sivp,10.1007/s11760-010-0197-1,closed,,,False,,structure
+charef2012,10.1007/s11071-012-0370-x,closed,,,False,,how the order is varied (element values / switches)
+charef2024,10.1016/j.ifacol.2024.08.158,gold,,unpaywall:publisher:publishedVersion https://doi.org/10.1016/j.ifacol.2024.08.158,False,,definition and structure
+huang2018a,10.23919/chicc.2018.8483651,closed,,,False,,structure: order-dependent poles?
+huang2018b,10.23919/chicc.2018.8482866,closed,,,False,,structure and definition
+tolba2020,10.1007/s11071-019-05449-w,closed,,,False,,which VO definition; memory length; how the order changes
+tsirimokou2017,10.1002/cta.2250,closed,,,False,,order adjustment mechanism; behaviour while the order changes
+yu2022,10.3390/fractalfract6070388,gold,,unpaywall:publisher:publishedVersion https://www.mdpi.com/2504-3110/6/7/388/pdf?version=1657725939 | unpaywall:repository:submittedVersion https://doaj.org/article/36fc0f555f374af3b2e88d06fe67f191,False,,order adjustment; time-varying operation
+oziablo2020,10.3390/e22070771,gold,,unpaywall:publisher:publishedVersion https://www.mdpi.com/1099-4300/22/7/771/pdf?version=1595390333 | unpaywall:repository:submittedVersion https://www.ncbi.nlm.nih.gov/pmc/articles/7517321 | unpaywall:repository:submittedVersion https://doaj.org/article/2fd435fd343641c1bcb2d34828090245,False,,which GL VO differences
+mozyrska2019,10.1109/iccma46720.2019.8988684,closed,,,False,,which operators
+sheng2011,10.1016/j.sigpro.2011.01.010,closed,,,False,,which VO definition
+sheng2010,10.1109/mesa.2010.5552002,closed,,,False,,which VO definition
+wei2016,10.1016/j.isatra.2016.01.010,closed,,,False,,poles independent of the order; any variable-order use
+wei2019,10.1016/j.isatra.2018.10.001,closed,,,False,,poles independent of the order; any variable-order use
+wei2021,10.1115/1.4049557,closed,,,False,,any variable-order use
+sierociuk2015cssp,10.1007/s00034-014-9895-1,hybrid,,unpaywall:publisher:publishedVersion https://link.springer.com/content/pdf/10.1007/s00034-014-9895-1.pdf,False,,D-type switching structure
+sierociuk2013tcst,10.1109/tcst.2012.2185932,closed,http://arxiv.org/abs/1107.2575v3,arxiv http://arxiv.org/pdf/1107.2575v3,True,arxiv http://arxiv.org/pdf/1107.2575v3,is it a switching realization (cited as such)?
+zhou2019,10.1140/epjp/i2019-12434-4,closed,,,False,,switching between orders
+surgailis2008,10.1016/j.spa.2007.04.003,bronze,,unpaywall:publisher:publishedVersion https://www.sciencedirect.com/science/article/pii/S0304414907000567/pdf,False,,is the order applied at the increment time (B-type)?
+sly2007,10.1017/s0021900200003041,closed,,,False,,definition; does a change of H act only on new increments?
+ryvkina2015,10.1007/s10959-013-0502-3,green,,unpaywall:repository:submittedVersion https://arxiv.org/pdf/1306.2870 | unpaywall:repository:None https://doi.org/10.48550/arxiv.1306.2870,True,unpaywall:repository:submittedVersion https://arxiv.org/pdf/1306.2870,definition; does a change of H act only on new increments?
+lim2001,10.1088/0305-4470/34/7/306,closed,,,False,,A-type definition

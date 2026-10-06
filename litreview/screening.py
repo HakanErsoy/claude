@@ -52,7 +52,7 @@ INCLUDE = {
     "R0193": ("I1", "analog realization of a variable fractional-order integrator I^alpha(t)"),
     "R0096": ("I1", "analog D-type realization for a particular switching strategy (Sierociuk et al. 2020)"),
     "R0098": ("I1", "analog VO chaotic system; LTI (third) Lorenzo-Hartley definition, one transfer function"),
-    "R0220": ("I1", "variable-order fractal-ladder fractor, order set by multiplying DACs"),
+    "R0220": ("I1", "programmable fractal-ladder fractor; order jumps and continuous change compared with a B-type GL reference (full text)"),
     "R0757": ("I1", "variable fractional order integrator, closed-form design (Tseng)"),
     "R0120": ("I1", "VO chaotic circuit, switching between orders"),
     "R0242": ("I1", "analog variable fractional order differentiator/integrator (Charef)"),
@@ -60,7 +60,7 @@ INCLUDE = {
     "R0855": ("I1", "variable fractional order differentiator, modular cascade structure (Tseng, Lee)"),
     "R0245": ("I1", "variable fractional order differentiator, infinite product expansion (Tseng, Lee)"),
     "R0249": ("I1", "digital circuit of a VO Hopfield network"),
-    "R0883": ("I1", "discrete-time VO PID with GL VO differences"),
+    "R0883": ("I1", "discrete-time VO PID; FVOGLD = A-type GL difference, cost grows with time (full text)"),
     "R0124": ("I1", "FPGA GL operator with run-time configurable order; VO chaotic oscillator (Tolba et al.)"),
     "R0998": ("I1", "FPGA VO operator with Mittag-Leffler kernel"),
     "R0072": ("I1", "VO PID with two discrete-time VO operators"),
@@ -131,7 +131,7 @@ INCLUDE = {
     "R0426": ("I5", "generalized mBm (Ayache, Levy Vehel)"),
     "R1694": ("I5", "wavelet-based synthesis of a multifractional process"),
     "R0013": ("I5", "integrated fractional white noise as an alternative to mBm (Sly 2007)"),
-    "R1018": ("I5", "fBm with variable Hurst parameter incl. jumps (Ryvkina)"),
+    "R1018": ("I5", "fBm with variable Hurst parameter; kernel uses H(t), paths jump with H (A-like; full text)"),
     "R1241": ("I5", "incremental mBm: H changes act on new increments only (Slezak, Metzler)"),
     "R0137": ("I5", "mBm with telegraphic stochastically varying exponent"),
     "R1260": ("I5", "step fractional Brownian motion"),
@@ -201,6 +201,8 @@ SNOW_NOTES = {
     "S40": "Charef fractional power pole approximation",
     "S41": "covariance structure of mBm",
     "S42": "analog modeling of switched-order derivatives, experimental",
+    "S43": "time-varying fractional filters A(d), B(d) with B(-d)A(d) = A(-d)B(d) = I (full text of S44 read)",
+    "S44": "time-varying fractional filters, definitions recalled (full text)",
 }
 
 

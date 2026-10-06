@@ -20,15 +20,15 @@
   "exclude:DUP": 2
  },
  "included_from_search": 90,
- "snowball_targets": 42,
+ "snowball_targets": 44,
  "snowball_dropped": 3,
  "snowball_already_in_search": 0,
- "included_from_snowball": 39,
- "included_total": 129,
+ "included_from_snowball": 41,
+ "included_total": 131,
  "included_by_criterion": {
   "BG": 5,
   "I1": 33,
-  "I2": 25,
+  "I2": 27,
   "I3": 36,
   "I4": 7,
   "I5": 23

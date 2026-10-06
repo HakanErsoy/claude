@@ -1,6 +1,6 @@
 # Literatür taraması: sentez ve makaleye etkisi
 
-Protokol: [`PROTOKOL.md`](PROTOKOL.md). Dahil edilen 129 kayıt: `included.csv`. Çekirdek karşılaştırma: `extraction.csv` (22 satır).
+Protokol: [`PROTOKOL.md`](PROTOKOL.md). Dahil edilen 131 kayıt: `included.csv`. Çekirdek karşılaştırma: `extraction.csv` (26 satır). Tam metin kontrolleri: [`FULLTEXT.md`](FULLTEXT.md).
 
 ## Kısa sonuç
 
@@ -20,7 +20,10 @@ Taramada üç önemli öncül çıktı. Üçü de makalede açıkça atıf almal
 3. **mBm'de A/B ayrımı literatürde var.**
    - Wang ve ark. (PRR 2023) memory-multi-FBM'i X(t) = ∫ √α(s)(t−s)^{(α(s)−1)/2} dB(s) olarak tanımlıyor. Üs artışın kendi zamanında değerlendiriliyor; bu, normalizasyon dışında bizim B-tipi varyantımız.
    - Sıçramada daha sürekli davrandığını da gösteriyorlar. Lim'in RL-mBm'i (A-tipi) ile farkı açıkça tartışıyorlar.
-   - Benzer fikirler: Ślęzak–Metzler (J. Phys. A 2023, incremental mBm), Sly (J. Appl. Prob. 2007), Surgailis (SPA 2008), Ryvkina (JTP 2015).
+   - Benzer davranış: Ślęzak–Metzler (J. Phys. A 2023, incremental mBm).
+   - mBm'e başka alternatifler: Surgailis (SPA 2008, homojen olmayan kesirli integrasyon) ve Sly (J. Appl. Prob. 2007). İkisinin de tam metni okunamadı (FULLTEXT.md).
+   - Ryvkina (JTP 2015) **tersine** A-tipine benziyor: H sıçrayınca yollar süreksiz (tam metin).
+4. **Zaman serisi literatüründe dualitenin bir benzeri var** (tam metin kontrolünde bulundu). Philippe, Surgailis ve Viano (CRAS 2006, TVP 2008) zamanla değişen kesirli filtreler A(d), B(d) tanımlıyor ve B(−d)A(d) = A(−d)B(d) = I ilişkisini kanıtlıyor. Katsayılar aradaki zamanların d_u değerlerinin çarpımı; yani GL A/B tiplerinden farklı bir aile.
 
 ## Bulunan boşluk (yenilik iddialarının yeni hali)
 
@@ -40,7 +43,7 @@ Taramada aşağıdakileri yapan bir çalışma bulamadım:
 ## RQ'lara göre özet
 
 **RQ1 (gerçeklemeler).** Analog VO gerçeklemelerin çoğu iki-üç sabit derece arasında anahtarlamaya dayanıyor:
-- Sierociuk grubu (domino merdivenler, 2013–2020)
+- Sierociuk grubu (2015–2020); ayrıca 2013 TCST'de sabit pasif merdivenlerin zaman bölgesinde değişken derece davranışı gösterdiği deneysel olarak gösterilmiş (anahtarlama değil; tam metin)
 - Macias ve ark. 2019
 - Zhou ve ark. 2019
 
@@ -50,7 +53,7 @@ Ayarlanabilir dereceli elemanlar ve filtreler sabit derecede çalışıyor; dere
 - analog: OTA (Tsirimokou ve ark. 2016), Charef ve Idiou 2012, DAC'li fraktal merdiven (Yu ve ark. 2022)
 - dijital: Tseng 2006/2008, Charef ve Bensouici 2011
 
-Bu yapılarda derece değişince ne olduğu analiz edilmemiş. Bizim Önerme 2'ye göre, katsayıları güncel dereceyle değiştirilen bir FIR, uzunluğu kadar belleği olan bir A-tipi operatör (çıkarım). Kutupları dereceye bağlı olan analog yapılar ise Teorem 5 kapsamında.
+Bunlardan Yu ve ark. 2022 (tam metin) derece sıçramasını ve sürekli değişimi deneysel olarak inceliyor ve B-tipi bir GL referansıyla karşılaştırıyor. Eleman değerleri değiştiği için kutuplar hareketli; Teorem 5'e göre bu ancak yaklaşık olabilir. Bizim Önerme 2'ye göre, katsayıları güncel dereceyle değiştirilen bir FIR, uzunluğu kadar belleği olan bir A-tipi operatör (çıkarım). Kutupları dereceye bağlı olan analog yapılar ise Teorem 5 kapsamında.
 
 **RQ2 (tanımlar).**
 - Tanım ailesi: Lorenzo–Hartley 2002, Coimbra 2003, Valério–Sá da Costa 2011, Ramirez–Coimbra 2010 (seçim ve anlam), Sun ve ark. 2009/2011, Ortigueira–Valério–Machado 2019.
@@ -99,10 +102,13 @@ Bu yapılarda derece değişince ne olduğu analiz edilmemiş. Bizim Önerme 2'y
 ## Açık kalanlar
 
 - Scopus/WoS'ta aynı dizgelerle tekrar (PROTOKOL.md).
-- Tam metin kontrolü gerekenler:
-  - Tseng 2006 (yapı)
-  - Huang ve ark. 2018 (iki CCC bildirisi, polinom uydurma)
-  - Charef ve Ladaci 2024 (IFAC)
-  - Valério–Sá da Costa 2011 (hangi tipleri hangi yaklaşımla)
-  - Huang ve ark. 2022 (VO SOE'de düğümler dereceden bağımsız mı?)
+- **Tam metin kontrolleri yapıldı** (FULLTEXT.md):
+  - Dört sınıflama düzeltildi: Sierociuk 2013 TCST, Ryvkina 2015, Yu 2022 ve Oziablo 2020 ile ilgili ifadeler.
+  - Bir öncül eklendi: Philippe–Surgailis–Viano.
+  - Kapalı erişim ya da yayıncı JS doğrulaması nedeniyle okunamayanlar:
+    - Huang ve ark. 2022 ve 2018
+    - Valério–Sá da Costa 2011
+    - Tseng 2006/2008, Charef 2012 ve 2024
+    - Tolba 2020, Surgailis 2008, Sly 2007, Sierociuk 2015 CSSP
+  - Bu kayıtlar için makalede yalnızca özet veya başlık düzeyinde iddia bırakıldı ya da çıkarımlar koşullu yazıldı. **Kurumsal erişimle okunmaları önerilir.**
 - İkinci okuyucuyla eleme uyumu.
