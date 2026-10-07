@@ -68,7 +68,7 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
    - f_max/136 örnek hızı
    - en kötü kuantize satırda (D-tipi, α = −0.855) ≥ 1e7 örneklik uzun koşu
    Paket ve adımlar: `rtl/README.md`. TCAS-I ölçümleri kullanılmayacak.
-3. **TCAS-I referansı:** `refs.bib` → `tcas_submission` (başlık, yazarlar, durum).
+3. **Önceki makalenin referansı:** `refs.bib` → `tcas_submission`. TCAS-I editörü önceki makaleyi kapsam dışı buldu; yeni dergisi belli olunca başlık, yazarlar ve durum güncellenecek. TCAS-I bu makale için de hedef değil.
 4. **Kaynak doğrulama:** yapıldı (`litreview/verify_bib.py`). `montseny1998` doğrulandı ve DOI eklendi. Crossref'te olmayan kitaplar, INRIA raporu ve FCAA 2000 web üzerinden kontrol edildi. Yalnızca TCAS-I yer tutucusu kaldı.
 5. **Literatür taraması:** Crossref + arXiv üzerinde yapıldı (`litreview/`: PROTOKOL.md, SENTEZ.md, FULLTEXT.md; 131 dahil kayıt). §1.1 ve Tablo 1 buna dayanıyor. Tam metin kontrolleri yapıldı; dört ifade düzeltildi ve bir öncül eklendi. **Kalan:** aynı dizgelerle Scopus/WoS tekrarı (§9'daki kırmızı TODO) ve FULLTEXT.md'de "okunamadı" diye işaretlenen 11 kaydın kurumsal erişimle okunması.
 6. **Beyanlar:** finansman, çıkar çatışması, kod erişimi (depo URL'si veya Zenodo DOI), yazar katkıları, teşekkür.
