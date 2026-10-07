@@ -16,7 +16,7 @@ O çalışmada sıcak-değişim (hot-swap) testleri **durum korunarak katsayı d
 
 ### Örtüşme koruması (çift yayın riskine karşı)
 
-| Konu | Önceki makale (sabit derece; TCAS-I kapsam dışı buldu, AEÜ'ye gönderildi) | Bu makale (yeni) |
+| Konu | Önceki makale (sabit derece; TCAS-I kapsam dışı buldu, AEÜ'de incelemede) | Bu makale (yeni) |
 |---|---|---|
 | Operatör | sabit α | zamanla değişen α(t) |
 | Kutuplar | α'ya bağlı (kutup–sıfır çiftleri) | **α'dan bağımsız** (sabit kutuplu banka) |
@@ -25,7 +25,7 @@ O çalışmada sıcak-değişim (hot-swap) testleri **durum korunarak katsayı d
 | Donanım | derece seçimli W48 çekirdeği, ms mertebesinde yeniden yükleme | **her örnekte** α güncelleme (sadece çıkış/giriş ağırlıkları) |
 
 Kurallar:
-- TCAS-I'den şekil, tablo veya metin yeniden kullanılmayacak. Önceki makale AEÜ'ye gönderilmiş makale olarak atıf alacak (karar gelince güncellenecek), hot-swap sonucu sadece motivasyon cümlesi olarak geçecek.
+- TCAS-I'den şekil, tablo veya metin yeniden kullanılmayacak. Önceki makale "AEÜ'de incelemede" olarak atıf alacak (karar gelince güncellenecek), hot-swap sonucu sadece motivasyon cümlesi olarak geçecek.
 - δ kuralı ve N = ⌊log₁₀r⌋ + 5 kuralı CSSP'de **kullanılmayacak**. Sabit kutuplu bankanın kendi analitik kuralı türetilecek.
 - Kart ölçümleri CSSP için **yeniden** yapılacak (yeni çekirdek, yeni bitstream). Eski ölçümler raporlanmayacak.
 - Gönderimden önce: Springer'in "eşzamanlı gönderim" politikası kontrol edilecek ve kapak mektubunda TCAS-I ile ilişki açıkça yazılacak.
