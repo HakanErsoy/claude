@@ -18,10 +18,11 @@ vofrac/fixedpoint.py  Bit-tam sabit noktalı golden model, ROM dışa aktarımı
 vofrac/mbm.py         Multifraksiyonel Brown hareketi üreteci, tam varyans, yerel Hurst kestiricisi (E6)
 vofrac/opnorm.py      Yoğun operatör matrisleri, Schur sabitleri, operatör normları (E7)
 vofrac/baselines.py   Karşılaştırma yöntemleri: LP ile uydurulmuş artıklar, kayan kutup, budanmış GL (E8)
-vofrac/cm.py          Tam monoton çekirdek aileleri: karışım, akış, temperleme (E9)
+vofrac/cm.py          Tam monoton çekirdek aileleri: karışım, akış, temperleme, GL sabitleri ve a priori tasarım (E9)
+vofrac/tracking.py    Çevrimiçi derece izleme: A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, kesin GL-EKF (E10)
 rtl/                  Verilog çekirdek, testbench, kart test paketi (E5), bkz. rtl/README.md
-experiments/          E1 (CT), E1b (DT, GL + tanımsal hata), E2 (durum eşlemesi), E3 (tasarım kuralı), E4 (D/E tipleri), E5 (sabit nokta, RTL), E5c (kuantize kararlılık), E6 (mBm), E7 (operatör normu), E8 (karşılaştırma), E9 (CM aileleri)
-paper/                CSSP makale taslağı (LaTeX, sn-jnl), şekil betiği, derlenmiş PDF; bkz. paper/README.md
+experiments/          E1 (CT), E1b (DT, GL + tanımsal hata), E2 (durum eşlemesi), E3 (tasarım kuralı), E4 (D/E tipleri), E5 (sabit nokta, RTL), E5c (kuantize kararlılık), E6 (mBm), E7 (operatör normu), E8 (karşılaştırma), E9 (CM aileleri), E10 (derece izleme)
+paper/                Makale taslağı ve ek materyal (LaTeX, sn-jnl), şekil betiği, derlenmiş PDF'ler; bkz. paper/README.md
 litreview/            Sistematik literatür taraması: protokol, sorgular, eleme kararları, veri çıkarma, kaynak doğrulama; bkz. litreview/SENTEZ.md
 results/              JSON çıktıları, şekiller, loglar
 tests/                pytest
@@ -44,7 +45,8 @@ python3 experiments/e6_mbm.py                     # ~1 dk, results/e6_mbm.json +
 python3 experiments/e7_operator_norm.py           # ~10 dk, results/e7_operator_norm.json (yoğun 1000x1000 matrisler)
 python3 experiments/e8_baselines.py               # ~35 dk, results/e8_baselines.json (LP uydurmaları)
 python3 experiments/e9_cm_kernels.py              # ~5 dk, results/e9_cm_kernels.json
-cd paper && make                                  # makale şekilleri + main.pdf
+python3 experiments/e10_order_tracking.py         # ~15 dk, results/e10_order_tracking.json (50 Monte Carlo koşusu)
+cd paper && make                                  # makale şekilleri + main.pdf + supplement.pdf
 python3 litreview/search.py && python3 litreview/screen_stage1.py && python3 litreview/snowball.py \
   && python3 litreview/screening.py && python3 litreview/extraction.py   # tarama (ham yanıtlar önbellekli)
 ```
@@ -60,3 +62,4 @@ python3 litreview/search.py && python3 litreview/screen_stage1.py && python3 lit
 - **E7:** Ağırlık hatası operatörü bütün olarak sınırlıyor (Teorem 5). A/B tiplerinin ℓ1/ℓ∞ göreli operatör hatası her derece dizisi için ≤ ε_R; Schur sınırları sabit ve kötü niyetli dizilerde tam yakalanıyor. Özyinelemeli integraller hatayı koşul sayısıyla (≈ 2N^a/Γ(1+a)) büyütüyor: ölçülen en fazla 22 ε_R. Adım yanıtından a-posteriori sertifika 3–4 kat içinde.
 - **E8:** Karşılaştırma (N = 1000, 39 seviye): kayan kutuplu hot swap anahtarlamada 0.2–1 hatada kalıyor (K'dan bağımsız). Budanmış GL tam bellek ister. Sabit kutuplu banka her dizide ε_R altında kalıyor. LP ile uydurulmuş artıklar kutup sayısını %40–50 (kısıtsız; bazı seviyelerde ters kararsız) veya %20–30 (işaret/DC kısıtlı; tümü sertifikalı) azaltıyor.
 - **E9:** Yapı sonuçları tam monoton her çekirdek ailesine genelleşiyor (Teorem 9). K ≈ ln(1/ε) ln(R/ε)/π²: 35 tasarımda uydurulan katsayı 0.106, teoride 0.101. Zamanla değişen dağılımlı derece ve sabit temperleme aynı bankayla gerçekleniyor.
+- **E10:** Bilinen girişten değişken derece izleme (n = 2000, 50 koşu). A-tipinde banka durumu dereceden bağımsız olduğu için 381 derecelik tam ızgara filtresi örnek başına O(GK). Doğru tipte hata SNR ile azalıyor (60 dB: A 1.3e-3, B 1.2e-2); yanlış tip varsayılırsa 0.14–0.24 yanlılık kalıyor ve veri arttıkça azalmıyor.

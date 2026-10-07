@@ -292,8 +292,35 @@ def fig_pareto():
     save(fig, "fig_pareto.pdf")
 
 
+# ---------------------------------------------------------------- E10
+def fig_tracking():
+    d = load("e10_order_tracking.json")
+    tr = d["traces"]
+    t = np.array(tr["t"])
+    fig, axes = plt.subplots(1, 2, figsize=(FULL, 2.6), sharey=True)
+    for ax, T, lab in ((axes[0], "A", "a"), (axes[1], "B", "b")):
+        for name, col, label in (("A-grid", C[0], "A-type grid filter"), ("B-EKF", C[1], "B-type EKF")):
+            matched = name[0] == T
+            q = tr[f"60dB/{T}/{name}"]
+            ls = "-" if matched else "--"
+            ax.fill_between(t, np.maximum(q["abs_err_p50"], 1e-5), np.maximum(q["abs_err_p90"], 1e-5),
+                            color=col, alpha=0.15, lw=0)
+            ax.plot(t, np.maximum(q["abs_err_p50"], 1e-5), ls, color=col, lw=1.1,
+                    label=f"{label} ({'matched' if matched else 'wrong type'})")
+        for tb in (1.0, 2.0, 2.5):
+            ax.axvline(tb, color=GREY, lw=0.6, ls=":")
+        ax.set_xlabel("time [s] (2000 samples)")
+        style(ax)
+        ax.set_ylim(1e-5, 2)
+        ax.legend(loc="lower right", fontsize=6.3)
+        panel(ax, lab, f"{T}-type data, 60 dB, 50 runs")
+    axes[0].set_ylabel(r"$|\hat\alpha_n-\alpha_n|$ (median, band to 90 %)")
+    fig.tight_layout()
+    save(fig, "fig_tracking.pdf")
+
+
 if __name__ == "__main__":
     os.makedirs(FIG, exist_ok=True)
-    for f in (fig_definition, fig_rule, fig_maps, fig_types, fig_wordlength, fig_mbm, fig_pareto):
+    for f in (fig_definition, fig_rule, fig_maps, fig_types, fig_wordlength, fig_mbm, fig_pareto, fig_tracking):
         f()
         print("wrote", f.__name__)

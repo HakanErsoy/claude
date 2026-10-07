@@ -53,16 +53,16 @@
 
 \begin{document}
 
-\title[Variable-order operators from fixed-pole banks]{Definition-Consistent Variable-Order Fractional Operators from Fixed-Pole Banks: Structure, Error Guarantees, and Order Tracking}
+\title[Variable-order operators from one fixed-pole bank]{Definition-Consistent Variable-Order Fractional Operators from a Single Fixed-Pole Bank: Structure, Design Rule, and Fixed-Point Realization}
 
 %% TODO: author names, affiliations and e-mail addresses
 \author*[1]{\fnm{First} \sur{Author}}\email{first.author@example.org}
 \author[1]{\fnm{Second} \sur{Author}}\email{second.author@example.org}
 \affil*[1]{\orgdiv{Department}, \orgname{Institution}, \orgaddress{\city{City}, \country{Country}}}
 
-\abstract{Variable-order (VO) fractional operators have several inequivalent definitions that differ in how past orders enter the memory. When a finite-dimensional realization switches coefficients as the order varies, it is unclear which definition it implements. An exact switching state map exists only between similar realizations, so realizations whose poles move with the order cannot implement the A- or B-type Gr\"unwald--Letnikov definitions under switching. A Beta-integral representation instead realizes the Gr\"unwald--Letnikov weights with order-independent poles. With the order in the output weights the bank is the A-type, and with it in the input weights the B-type, for every order sequence; inverting it gives the recursive D- and E-types with exact duality, at $O(K)$ cost. In the $\ell^1$ and $\ell^\infty$ operator norms the relative error of the forward types never exceeds the relative weight error, while the recursive integrals amplify it by a computable condition number. The construction extends to every kernel family that is completely monotone in the lag, with $K=O(\ln(1/\eps)\ln(R/\eps))$ common poles for tolerance $\eps$ and memory $R$, and explicit constants for Gr\"unwald--Letnikov weights. A fit-free rule met all 400 specifications of a sealed holdout, and a DC floor makes every inverse stable. Moving-pole hot swapping stays at errors of 0.2 to 1 under switching. In online tracking of a time-varying order, filters on the bank reach median errors of $1.3\times10^{-3}$ (A-type) and $1.2\times10^{-2}$ (B-type) at 60\,dB, while assuming the wrong definition leaves biases of 0.14 to 0.24. A bit-exact fixed-point core and streaming multifractional Brownian motion illustrate the realization.}
+\abstract{Variable-order (VO) fractional operators have several inequivalent definitions that differ in how past orders enter the memory. When a finite-dimensional realization switches coefficients as the order varies, it is unclear which definition it implements. An exact switching state map exists only between similar realizations, so realizations whose poles move with the order cannot implement the A- or B-type Gr\"unwald--Letnikov definitions under switching. A Beta-integral representation instead realizes the Gr\"unwald--Letnikov weights with order-independent poles. With the order in the output weights the bank is the A-type, and with it in the input weights the B-type, for every order sequence; inverting it gives the recursive D- and E-types with exact duality, at $O(K)$ cost per sample. In the $\ell^1$ and $\ell^\infty$ operator norms the relative error of the forward types never exceeds the relative weight error; the recursive integrals amplify it by the condition number of the inverted derivative. The construction extends to every kernel family that is completely monotone in the lag, including time-varying distributed orders, with $K=O(\ln(1/\eps)\ln(R/\eps))$ common poles for tolerance $\eps$ and memory $R$. A fit-free analytic rule sets the bank size and met all 400 specifications of a sealed holdout, and a DC floor makes every inverse stable. Moving-pole hot swapping stays at errors of 0.2 to 1 under switching at any size; residues fitted by sign-constrained linear programming save 20 to 30\,\% of the poles. A bit-exact fixed-point core changes order and type per sample through a ROM address, and the bank streams multifractional Brownian motion.}
 
-\keywords{variable-order fractional calculus, Gr\"unwald--Letnikov, fixed-pole approximation, completely monotone kernels, order tracking, Kalman filtering, multifractional Brownian motion}
+\keywords{variable-order fractional calculus, Gr\"unwald--Letnikov, diffusive representation, fixed-pole approximation, duality, fixed-point hardware, multifractional Brownian motion}
 
 \maketitle
 
@@ -90,15 +90,17 @@ This leaves two open questions:
 \end{enumerate}
 This paper answers both for GL operators of order $-1<\alpha<1$ and, more generally, for kernel families that are completely monotone in the lag. The contributions are:
 \begin{enumerate}
-\item \emph{Necessity.} An exact switching state map exists only between similar realizations (Theorem~\ref{thm:necessity}). Realizations with order-dependent poles therefore cannot implement the A- or B-type exactly at a switch, with or without a state map. Least-squares maps reduce the error in floating point, but they are dense, depend on the input class, and lose three to nine orders of magnitude of accuracy in 24-bit fixed point (Sect.~\ref{sec:res-maps}).
-\item \emph{Definition by structure.} Order-independent exponents have already been used for the A-type VO Caputo derivative in fast numerical solvers~\cite{zhang2022esa,zhang2022fast}. We show that, in a fixed-pole structure, the place of the order selects the definition. A Beta-integral representation of the GL weights gives a discrete bank with order-independent poles. With the order in the output weights it realizes the A-type, and with the order in the input weights the B-type, for every order sequence up to the frozen-order quadrature error (Proposition~\ref{prop:structure}). Inverting the same bank gives the D- and E-types with exact duality at the same $O(K)$ cost per sample (Proposition~\ref{prop:inverse}); in analog form, a direct realization of the D-type has been considered impractical~\cite{sierociuk2020}.
+\item \emph{Necessity.} An exact switching state map exists only between similar realizations (Theorem~\ref{thm:necessity}). Realizations with order-dependent poles therefore cannot implement the A- or B-type exactly at a switch, with or without a state map. Least-squares maps reduce the error in floating point. However, they need a dense $S\times S$ matrix per pair of orders, depend on the input class, and lose three to nine orders of magnitude of accuracy in 24-bit fixed point (Sect.~\ref{sec:res-maps}).
+\item \emph{Definition by structure.} Order-independent exponents have already been used for the A-type VO Caputo derivative in fast numerical solvers~\cite{zhang2022esa,zhang2022fast}. We show that, in a fixed-pole structure, the place of the order selects the definition. A Beta-integral representation of the GL weights gives a discrete bank with order-independent poles. With the order in the output weights the bank realizes the A-type, and with the order in the input weights the B-type. This holds for every order sequence, up to the frozen-order quadrature error (Proposition~\ref{prop:structure}); the B-type thus costs $O(K)$ per sample as well. Algebraic inversion of the same bank gives the D- and E-types with exact duality at the same cost, and solves VO relaxation equations of all four types (Proposition~\ref{prop:inverse}). In analog form, a direct realization of the D-type has been considered impractical~\cite{sierociuk2020}.
 \item \emph{Operator-level guarantees.} The weight error bounds the realized operators as a whole, for every order sequence (Theorem~\ref{thm:opnorm}). In the $\ell^1$ and $\ell^\infty$ operator norms the relative error of the A- and B-types never exceeds the relative weight error. The recursive integrals amplify it by the condition number of the inverted derivative, which grows like $N^{|\alpha|}$; one step response of the bank certifies their error a posteriori.
 \item \emph{Completely monotone families.} The structural results hold for every kernel family that is completely monotone in the lag, including time-varying distributed orders and fixed tempering. Under analyticity and power-law conditions on the density, a common pole set of size $K=O(\ln(1/\eps)\ln(R/\eps))$ meets a relative tolerance $\eps$ over a memory $R$ uniformly in the order (Theorem~\ref{thm:cm}). For the GL weights all constants are explicit (Lemma~\ref{lem:glconst}), which gives a fully a-priori design.
-\item \emph{Design and stability.} An analytic error model with three closed-form terms sets the bank size from the tolerance, the memory length and the order range; it met every tolerance of a sealed holdout of 400 random specifications (Sects.~\ref{sec:design} and~\ref{sec:res-rule}). The inverse of a derivative bank is stable if and only if its realized DC gain is positive (Proposition~\ref{prop:stability}). This is tested through an exact sign and guaranteed by a DC floor, also after quantization. Against moving-pole hot swapping, truncated convolution and fixed poles with residues fitted by linear programming, only the fixed-pole structure reaches small errors under switching; fitted residues reduce the bank by 20 to 50\,\%, but keep the stability certificate only with sign constraints (Sect.~\ref{sec:res-baselines}).
-\item \emph{Applications.} In online tracking of a time-varying order, the A-type bank gives regressors that do not depend on the order, so an extended Kalman filter costs $O(K)$ and an exact grid filter $O(GK)$ per sample; the B-type bank gives a finite state for an augmented filter. Assuming the wrong definition biases the estimate by 0.14 to 0.24 at high SNR (Sect.~\ref{sec:track}). The bank also streams multifractional Brownian motion of both types (Sect.~\ref{sec:mbm}), and a bit-exact fixed-point core changes order and type at every sample through a ROM address (Sect.~\ref{sec:hw}).
+\item \emph{Fit-free design.} An analytic error model with three closed-form terms sets the bank size and pole range from the tolerance, the memory length and the order range. On a sealed holdout of 400 random specifications the rule met every tolerance (Sects.~\ref{sec:design} and~\ref{sec:res-rule}). Against moving-pole hot swapping, truncated convolution and fixed poles with residues fitted by linear programming, the fixed-pole structure is the only one that reaches small errors under switching; fitted residues reduce the bank size, but keep a stability certificate only with sign constraints (Sect.~\ref{sec:res-baselines}).
+\item \emph{Inverse stability.} The inverse of a derivative bank is stable if and only if its realized DC gain is positive (Proposition~\ref{prop:stability}). This condition is tested through an exact sign rather than through eigenvalues. A DC floor applied through the delay mode guarantees it, also after coefficient quantization.
+\item \emph{Hardware.} A time-multiplexed fixed-point core realizes all four types. Order and type are per-sample inputs, and changing them only changes a ROM address. The core is bit-exact with its golden model (94\,208 vectors, no mismatch). Word lengths for two operating envelopes and synthesis estimates are reported.
+\item \emph{Application.} The bank streams multifractional Brownian motion (mBm) of Riemann--Liouville type, which is an A-type integral of white noise, and its B-type counterpart, which is the memory-multifractional Brownian motion of~\cite{wang2023mmfbm} up to normalization, for $0<H<1$. One bank suffices because an integer split is exact when placed according to the type (Proposition~\ref{prop:split}).
 \end{enumerate}
 
-Section~\ref{sec:related} reviews related work. Section~\ref{sec:prelim} recalls the definitions and their duality. Section~\ref{sec:bank} builds the continuous- and discrete-time fixed-pole banks, Section~\ref{sec:structure} proves the structural results and the operator-norm bounds, and Section~\ref{sec:design} gives the error model, the design rule and the stability result. Section~\ref{sec:cm} extends the construction to completely monotone kernel families. Section~\ref{sec:results} reports the numerical experiments, and Section~\ref{sec:apps} two applications: order tracking and multifractional Brownian motion. Section~\ref{sec:hw} summarizes the fixed-point core, and Section~\ref{sec:discussion} discusses limitations. Secondary results and implementation details are in the Supplementary Material. All code, seeds and results are available (see the Declarations).
+Section~\ref{sec:related} reviews related work. Section~\ref{sec:prelim} recalls the definitions and their duality. Section~\ref{sec:bank} builds the continuous- and discrete-time fixed-pole banks, Section~\ref{sec:structure} proves the structural results and the operator-norm bounds, and Section~\ref{sec:design} gives the error model, the design rule and the stability result. Section~\ref{sec:cm} extends the construction to completely monotone kernel families. Section~\ref{sec:results} reports the numerical experiments, Section~\ref{sec:hw} the fixed-point core, and Section~\ref{sec:mbm} the mBm application. Section~\ref{sec:discussion} discusses limitations. All code, seeds and results are available (see the Declarations).
 
 \subsection{Related work}\label{sec:related}
 
@@ -182,7 +184,7 @@ For the continuous-time experiments we use the step responses of the A- and B-ty
 y_{\mathrm A}(t) &= F\big(t,\alpha(t)\big), \label{eq:stepA}\\
 y_{\mathrm B}(t) &= F\big(t,\alpha(0)\big)+\int_0^t \partial_a F\big(t-\tau,\alpha(\tau)\big)\,\dot\alpha(\tau)\,\mathrm d\tau. \label{eq:stepB}
 \end{align}
-Equation~\eqref{eq:stepB} is derived in Supplementary Sect.~S6. For a piecewise-constant order with switches at $T_i$, \eqref{eq:stepB} reduces to $F(t,\alpha_0)+\sum_i\big[F(t-T_i,\alpha_i)-F(t-T_i,\alpha_{i-1})\big]$.
+Equation~\eqref{eq:stepB} is derived in Appendix~\ref{app:stepB}. For a piecewise-constant order with switches at $T_i$, \eqref{eq:stepB} reduces to $F(t,\alpha_0)+\sum_i\big[F(t-T_i,\alpha_i)-F(t-T_i,\alpha_{i-1})\big]$.
 
 \subsection{Diffusive representation}
 
@@ -470,7 +472,7 @@ The design rule chooses $h$, $\ulo$, $\uhi$ and hence $K$ from a tolerance $\eps
 
 With the tail closure, the realized weights are the infinite trapezoidal rule applied to~\eqref{eq:betax}, apart from two tail residuals. The error therefore has three terms.
 
-\paragraph{Quadrature.} The integrand of~\eqref{eq:betax} is analytic in a strip around the real axis, so the error of the infinite trapezoidal rule is the aliasing of its Fourier transform at $2\pi/h$ (Poisson summation)~\cite{trefethen2014}. For large $r$ the integrand is $e^{(1+a)x}e^{-(r-a)e^x}$ to leading order. The modulus of its transform at $2\pi/h$ is $|\Gamma(1+a-2\pi\mathrm i/h)|$ relative to $\Gamma(1+a)$, and Stirling's formula gives (Supplementary Sect.~S7)
+\paragraph{Quadrature.} The integrand of~\eqref{eq:betax} is analytic in a strip around the real axis, so the error of the infinite trapezoidal rule is the aliasing of its Fourier transform at $2\pi/h$ (Poisson summation)~\cite{trefethen2014}. For large $r$ the integrand is $e^{(1+a)x}e^{-(r-a)e^x}$ to leading order. The modulus of its transform at $2\pi/h$ is $|\Gamma(1+a-2\pi\mathrm i/h)|$ relative to $\Gamma(1+a)$, and Stirling's formula gives (Appendix~\ref{app:alias})
 \begin{equation}
 E_q^{\infty}(a,h)=\frac{2\sqrt{2\pi}\,(2\pi/h)^{a+1/2}\,e^{-\pi^2/h}}{\Gamma(1+a)}.\label{eq:Eq}
 \end{equation}
@@ -625,7 +627,7 @@ The baselines are Oustaloup approximations~\cite{oustaloup2000} on $[10^{-3},10^
 
 \subsection{Which definition does a switched realization track?}\label{sec:res-def}
 
-\paragraph{Continuous time.} Figure~\ref{fig:definition} and Supplementary Table~S1 show a unit step with one order switch at $t=2$\,s, at equal state count. The fixed-pole bank with output schedule tracks the A-type and the one with input schedule tracks the B-type, with errors down to $10^{-4}$--$10^{-5}$. Before the switch, all realizations have similar errors ($10^{-3}$--$10^{-4}$), so the differences come from the switch. The hot-swapped parallel Oustaloup approaches the A-type only slowly. The cascade form tracks neither type: its error stays between 0.16 and 4.6 and does not decrease with $S$.
+\paragraph{Continuous time.} Figure~\ref{fig:definition} and Table~\ref{tab:e1} show a unit step with one order switch at $t=2$\,s, at equal state count. The fixed-pole bank with output schedule tracks the A-type and the one with input schedule tracks the B-type, with errors down to $10^{-4}$--$10^{-5}$. Before the switch, all realizations have similar errors ($10^{-3}$--$10^{-4}$), so the differences come from the switch. The hot-swapped parallel Oustaloup approaches the A-type only slowly. The cascade form tracks neither type: its error stays between 0.16 and 4.6 and does not decrease with $S$.
 
 One negative result motivates the discrete-time bank. The continuous-time bank with input schedule fails for a smooth \emph{derivative} order (relative error about 12), because modes faster than $1/\Ts$ respond to every step of the sampled order.
 
@@ -635,7 +637,7 @@ One negative result motivates the discrete-time bank. The continuous-time bank w
 \caption{Continuous time, unit step, one order switch at $t=2$\,s. Relative RMS error after the switch against the A-type (top) and B-type (bottom) closed forms versus state count. The dotted line is the distance between the two definitions. Every series has its own marker and line style}\label{fig:definition}
 \end{figure}
 
-
+@@B1@@
 \paragraph{Discrete time.} The discrete bank (32 modes and the delay mode) was compared with the GL definitions over 7 order profiles and 3 inputs (step, white noise, multisine). The total error of the output schedule against the A-type was $2.5\times10^{-6}$ to $2.0\times10^{-3}$, and that of the input schedule against the B-type $1.9\times10^{-6}$ to $1.6\times10^{-3}$. Smooth derivative orders are included, so the continuous-time failure disappears. Table~\ref{tab:e1b} gives the definitional errors. For the bank they are zero, or zero to rounding, as Proposition~\ref{prop:structure} predicts. For the hot-swapped Oustaloup forms they are not, and the cascade form reaches $3\times10^{3}$.
 
 \begin{table}[t]
@@ -654,8 +656,7 @@ Oustaloup cascade, hot swap & $7\times10^{-3}$ to $3.0\times10^{3}$ & $0.03$ to 
 
 \subsection{Can a state map repair a moving-pole realization?}\label{sec:res-maps}
 
-We fitted least-squares maps $\Phi$ for six single switches on mixed input ensembles and tested them on fresh inputs and on a unit step (details in Supplementary Sect.~S2). In float64 the worst A-type definitional error fell from 0.14 (parallel form, hot swap) and $1.1\times10^4$ (cascade form) to below $10^{-6}$ at $S=31$. The map, however, is a dense $S\times S$ matrix with norm $10^3$ to $5\times10^4$, specific to each pair of orders. Rounded to 24 bits, it loses 3.5 to 4.3 orders of magnitude of accuracy in the parallel form and 7.4 to 9.1 in the cascade form ($S\ge21$). For the 1024 order levels of Sect.~\ref{sec:hw}, maps between neighbouring levels alone would need about 56\,Mbit, against 0.78--1.08\,Mbit for the whole coefficient table of the bank, which needs no map.
-
+@@B2@@
 \subsection{Design rule on a sealed holdout}\label{sec:res-rule}
 
 \paragraph{Term validation.} Each term of Sect.~\ref{sec:design} was first isolated by making the other two negligible (Fig.~\ref{fig:rule}a,b). The ratio of measured to predicted error was 0.49--1.05 in discrete time ($n=45$) and 0.99--1.01 in continuous time ($n=66$). The model never underestimates a term by more than 5\,\%.
@@ -712,7 +713,13 @@ E & $2.2\times10^{-8}$ to $5.5\times10^{-5}$ & $\le2.8\times10^{-13}$\\
 
 \paragraph{Inverse stability.} Over the 200 discrete-time holdout designs, checked at 25 orders spanning each design range, the inverse was stable at every order in 200/200 designs with the DC floor and in 101/200 without it. Figure~\ref{fig:types}b shows a D-type integral of order $0.95$ driven by white noise for $2\times10^5$ samples ($\eps=10^{-2}$, $R=1000$, $K=15$). Without the floor the output RMS grows to $1.9\times10^{21}$; with the floor it stays below $0.36$.
 
-\paragraph{Which type does a hot swap implement?} Measured against their own A-, B-, D- and E-types over eight cases, the fixed-pole bank is always closest to A (output schedule) or B (input schedule), at distances below $2.1\times10^{-14}$. The parallel Oustaloup form is closest to the A-type, at distances up to 0.42, and the cascade form has no consistent type (Supplementary Sect.~S3).
+\paragraph{Which type does a hot swap implement?} Using the own-type references, we asked which of the four types each hot-swapped realization is closest to, over 8 cases (four piecewise-constant order profiles, step and white-noise inputs) for $N=7$ and $N=15$:
+\begin{itemize}
+\item the fixed-pole bank is closest to A (output schedule) or B (input schedule) in all cases, at distances $\le2.1\times10^{-14}$;
+\item the parallel Oustaloup form is closest to the A-type in all cases, at distances up to $0.42$;
+\item for the cascade form with $\omega_h=10^3$\,rad/s, the closest type is A, B, D and E in two cases each, so the cascade has no consistent type; with $\omega_h=10^5$\,rad/s it is A or B, at distances up to $1.3\times10^{3}$;
+\item with $\omega_h=10^5$\,rad/s, above the Nyquist frequency, the zero-order-hold members of the integral approximations have zeros outside the unit circle (moduli 3 to 41), and their own D- and E-types cannot even be formed in 6 of 8 cases.
+\end{itemize}
 
 \paragraph{Relaxation equations.} For $\Op{T}{\alpha}y+\lambda y=u$ (Remark~\ref{rem:relax}; $K=40$, $n=4000$), the bank matched the triangular GL solutions to $1.7\times10^{-5}$ ($\lambda=1$) and $4.9\times10^{-7}$ ($\lambda=100$). The solutions of different types differed by up to $0.40$ for $\lambda=1$ (Fig.~\ref{fig:types}a), so the choice of type changes the solution visibly. For $\lambda=100$ the term $\lambda y$ dominates and the types differ by at most $0.02$.
 
@@ -789,65 +796,98 @@ Accuracy is the relative operator error in $\ell^\infty$, which is the worst-cas
 \paragraph{Fitted residues.} The structure, and with it the type, is the same for every residue design, and the variable-order error of every fixed-pole design stayed below its relative weight error, as Theorem~\ref{thm:opnorm}(b) states. Unconstrained LP residues need 40 to 50\,\% fewer poles than the rule ($K=20$ against 34 for about $10^{-6}$). However, their residues have mixed signs at up to 11 of the 19 derivative levels, and the realized DC gain is not positive at up to 5 levels. The D- and E-type inverses are then unstable there, and Proposition~\ref{prop:stability} cannot certify the others. With the sign and DC constraints, all 19 levels are certified, and the saving drops to 20 to 30\,\% ($K=24$ against 30 at $3\times10^{-6}$, $K=28$ against 39 at $2\times10^{-7}$). The analytic rule thus does not give the smallest bank. It trades a fifth to a quarter of the states for a closed-form design that needs no optimization, was validated on a sealed holdout, and keeps the residue signs by construction.
 
 %% =====================================================================
-\section{Applications}\label{sec:apps}
+\section{Fixed-point realization}\label{sec:hw}
 
-\subsection{Online order tracking}\label{sec:track}
+The design point is $R=4000$, $\eps=10^{-4}$ and $|\alpha|\le0.95$, giving $K=32$ plus the delay mode. Orders come from a grid of $P=1024$ levels, $\alpha_i=0.95\,(2i/(P-1)-1)$, so $\Delta\alpha=1.9\times10^{-3}$.
 
-Consider a fractional element, such as an ultracapacitor or a viscoelastic material, excited by a known input $x$ while its memory exponent drifts. The task is to track the order from the noisy output
-\begin{equation}
-y_n=\big(\Op{T}{\alpha}x\big)_n+v_n,\qquad \mathrm T\in\{\mathrm A,\mathrm B\},\label{eq:trackmodel}
-\end{equation}
-with a random-walk prior $\alpha_{n+1}=\alpha_n+w_n$. Unscented fractional-order Kalman filters have been used to estimate a variable order jointly with the state~\cite{sierociuk2016cssp}. The bank contributes the measurement model and its derivative at $O(K)$ cost for either type, and its structure decides which estimator is natural.
+\subsection{Arithmetic in sample units}
 
-\paragraph{A-type.} With the order in the output weights, the states $s_n$ and $\sd[n]$ of~\eqref{eq:os} are driven by the known input alone. Hence
-\begin{equation}
-y_n=\varphi_n(\alpha_n)+v_n,\qquad \varphi_n(a)=\gh_0(a)x_n+\cd(a)\,\sd[n]+c(a)^{\top}s_n,\label{eq:phi}
-\end{equation}
-a memoryless measurement of the current order, whose regressors are shared by all orders. An extended Kalman filter (EKF) needs $\varphi_n$ and $\varphi_n'$, which cost $O(K)$. Because the regressors do not depend on the order, the exact likelihood of $G$ order hypotheses costs $O(GK)$, and a grid (point-mass) Bayes filter becomes affordable.
+The core runs in sample units ($\Ts=1$), where $\gh_0=1$ for every order. The inversion~\eqref{eq:inverse} then needs no divider: $v_n=x_n-\eta_n$. Physical units follow from one gain $\Ts^{-\alpha_n}$, applied at the output for the A- and E-types and at the input for the B- and D-types. This follows directly from~\eqref{eq:A}--\eqref{eq:E}; for the E-type, substitute $z_n=\Ts^{-\alpha_n}\zeta_n$.
 
-\paragraph{B-type.} With the order in the input weights, the state of~\eqref{eq:is} carries the order history. The filter state is $(s,\sd,\alpha)$, of dimension $K+2$; the model and its Jacobians cost $O(K)$ and the covariance update $O(K^2)$. In the literal GL form every past order enters the output, so a B-type filter would have to carry the whole order history.
-
-\paragraph{Experiment.} We used sample units ($\Ts=1$, so that $\gh_0=1$ and the order enters only through the memory), $n=2000$, and an order that is constant at 0.3, ramps to 0.7, jumps to 0.2 and then oscillates (Fig.~\ref{fig:tracking}). The input was a known AR(1) process with pole 0.98. The data came from the literal GL definitions, with white noise at 20, 40 and 60\,dB SNR, in 50 Monte Carlo runs. One rule-designed bank ($\eps=10^{-5}$, $|\alpha|\le0.95$, $K=40$, coefficients interpolated by cubic splines on a grid of spacing 0.0025) served three estimators:
+The number formats are as follows:
 \begin{itemize}
-\item an A-type grid filter on 381 orders, with a Gaussian random walk mixed with a uniform switch of probability $10^{-3}$, and a likelihood averaged over each grid cell;
-\item an A-type EKF with an iterated measurement update;
-\item a B-type EKF on the augmented state.
+\item \emph{Signals:} $W_S$-bit two's complement with $F$ fractional bits.
+\item \emph{States:} $W_{ST}=W_S+13$ bits. Each mode stores its state scaled by a power of two $2^{G_k}$ (one gain per schedule) so that its own bound uses the full word. Without this scaling, the input-scheduled slow modes lose their increments $c_kv_n$, which lie far below the signal LSB; the B- and E-type errors were then $2\times10^{-2}$ to $0.66$.
+\item \emph{Coefficients:} a $W_M$-bit mantissa with a 7-bit shift.
 \end{itemize}
-Both EKFs use the random-walk variance $10^{-5}$ and inflate the order variance by $5\times10^{-4}$ when the normalized innovation exceeds 16, which detects jumps. Every estimator was also run on data of the other type.
+Products are rounded as $\mathrm{mulsh}(a,M,S)=(aM+2^{S-1})\gg S$. Algorithm~\ref{alg:core} gives one sample of the core in exact arithmetic; the bit-accurate golden model and the RTL use the same sequence with the formats above.
+
+\begin{algorithm}[t]
+\caption{One sample of the bank, all four types. In hardware the coefficient row is a ROM word addressed by the order index (mirrored for D and E), so an order or type change costs nothing}\label{alg:core}
+\begin{algorithmic}[1]
+\Require type $T\in\{\mathrm{A,B,D,E}\}$, order $\alpha_n$, input $x_n$; states $s_0,\dots,s_{K-1},\sd$
+\State $a\gets\alpha_n$ if $T\in\{\mathrm{A,B}\}$, else $a\gets-\alpha_n$; read $(\cd,c_0,\dots,c_{K-1})$ for order $a$
+\If{$T\in\{\mathrm{A,D}\}$} \Comment{output schedule}
+  \State $\eta\gets\cd\,\sd+\sum_k c_k s_k$
+\Else \Comment{input schedule}
+  \State $\eta\gets\sd+\sum_k s_k$
+\EndIf
+\If{$T\in\{\mathrm{A,B}\}$} $v\gets x_n$;\ \ $y_n\gets v+\eta$
+\Else\ $v\gets x_n-\eta$;\ \ $y_n\gets v$ \Comment{no divider in sample units}
+\EndIf
+\If{$T\in\{\mathrm{A,D}\}$} $s_k\gets\theta_k s_k+v$;\ \ $\sd\gets v$
+\Else\ $s_k\gets\theta_k s_k+c_k v$;\ \ $\sd\gets\cd v$
+\EndIf
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Dynamic range: two operating envelopes}
+
+For $|x|\le1$ over $4000$ samples, the frozen-order $\ell_1$ bound on the output is $2696$. For the A-type this bound holds under any switching, because each output uses the weights of a single order; for the B-type the switching stress tests stayed within it. For the D- and E-types, switching from an integral to a derivative order drives the output to $2.2\times10^6$ under a DC input, 820 times the frozen-order bound. The new inverse acts on a history that has grown under the old order. This is the behaviour of the recursive definitions themselves, not an artefact of the bank. We therefore size two envelopes with a factor-two margin: 14 integer bits for the forward types only (A/B), and 24 integer bits for all four types (A/B/D/E).
+
+\subsection{Quantization and inverse stability}\label{sec:hw-stab}
+
+Quantization can undo the DC floor. Coefficients and pole steps are dyadic rationals, so the signs of $\Hh_q(\pm1)$ of every quantized ROM row can be evaluated exactly in rational arithmetic, which we did. With the floating-point floor alone:
+\begin{itemize}
+\item in the A/B configuration, 64 of the 512 positive-order rows have $\Hh_q(1)\le0$, the worst having its dominant inverse pole at $1+4.8\times10^{-6}$ (e-folding time $2.1\times10^5$ samples);
+\item in the A/B/D/E configuration, 51 of 512 rows have $\Hh_q(1)\le0$, the worst ($\alpha=0.855$) having its pole at $1+1.9\times10^{-9}$ (e-folding time $5.2\times10^{8}$ samples, about 9 minutes at 1\,MS/s).
+\end{itemize}
+$\Hh_q(-1)$ was positive in every row. The \emph{quantization-aware} DC floor raises the delay mantissa in LSB steps until $\Hh_q(1)$ is at least the floating-point value $\Hh(1)$. It brings both counts to zero without any measurable change in accuracy.
+
+\subsection{Word length}
+
+We swept $W_S\in\{32,\dots,56\}$ and $W_M\in\{16,18,25,32\}$ (Fig.~\ref{fig:wordlength}). The test set comprised 3 order profiles (random piecewise, a new order every sample, a sign-changing switch), 3 inputs, and all types of the envelope. A configuration was accepted if, for every type, its error against the literal definition was at most the floating-point bank's error plus $0.1\eps$. The smallest accepted configurations were:
+\begin{itemize}
+\item A/B: $W_S/W_{ST}/W_M=36/49/16$;
+\item A/B/D/E: $48/61/25$.
+\end{itemize}
+With an 18-bit mantissa the D- and E-types stall near $10^{-3}$, because the inversion is ill-conditioned: the low-frequency gain of a derivative bank is about $R^{-\alpha}$. The floating-point bank itself has D- and E-type output errors up to $6\times10^{-4}$ at this design point, although its weight error is $10^{-4}$. This is the cancellation effect of Corollary~\ref{cor:bound}, amplified by the inversion.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figs/fig_wordlength.pdf}
+\caption{Word length, A/B/D/E envelope: worst relative RMS error against the literal definitions versus signal word $W_S$ (state word $W_S+13$), for four mantissa widths. Dotted: floating-point bank; dashed: acceptance limit}\label{fig:wordlength}
+\end{figure}
+
+\subsection{RTL, parity and resources}
+
+The core (\texttt{vo\_bank\_core.v}) is a non-pipelined, time-multiplexed state machine with synchronous coefficient, pole and gain ROMs. It takes $4K+8=136$ clock cycles per sample. Order index and type are inputs with every sample. An order change only changes a ROM address: there is no reload and no extra cycle.
+
+The test vectors cover constant, piecewise and per-sample orders, sign-changing switches, full-scale inputs, and type changes at run time. The type changes exercise the datapath; a type change is not itself a VO operation. Icarus Verilog simulation matched the golden model bit for bit on all 94\,208 vectors (31\,744 for A/B, 62\,464 for A/B/D/E). Verilator lint reported only intentional width extensions and truncations. Table~\ref{tab:rtl} lists Yosys estimates for a 7-series FPGA.
 
 \begin{table}[t]
-\caption{Order tracking (Sect.~\ref{sec:track}): RMSE of the order over $0.2\le t<4$\,s, median [90th percentile] over 50 runs. ``Wrong'' marks data of the other type. Costs are multiplications per sample ($K=40$, $G=381$)}\label{tab:track}
-\footnotesize\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}llccc@{}}
+\caption{RTL configurations: bit-exact parity with the golden model and Yosys \texttt{synth\_xilinx} (xc7) resource estimates. Vivado results and $f_{\max}$ are pending}\label{tab:rtl}
+\begin{tabular}{@{}lcccccc@{}}
 \toprule
-Estimator (cost) & Data & 20\,dB & 40\,dB & 60\,dB\\
+Envelope & $W_S/W_{ST}/W_M$ & vectors (mismatches) & LUT & FF & DSP48E1 & RAMB36 eq.\\
 \midrule
-A-type grid filter ($G(K+2)\approx16\,000$) & A & 0.018 [0.025] & 0.0040 [0.005] & 0.0013 [0.002]\\
- & B, wrong & 0.029 [0.042] & 0.059 [0.111] & 0.140 [0.272]\\
-A-type EKF ($\approx3(K+2)$ per iteration) & A & 0.026 [0.043] & 0.0083 [0.110] & 0.017 [0.154]\\
- & B, wrong & 0.037 [0.056] & 0.099 [0.302] & 0.213 [0.370]\\
-B-type EKF ($\approx4(K+2)^2\approx7100$) & B & 0.027 [0.040] & 0.015 [0.017] & 0.012 [0.013]\\
- & A, wrong & 0.032 [0.053] & 0.054 [0.088] & 0.238 [0.478]\\
+A/B & 36/49/16 & 31\,744 (0) & 4\,171 & 1\,882 & 11 & 22\\
+A/B/D/E & 48/61/25 & 62\,464 (0) & 6\,009 & 2\,360 & 29 & 29.5\\
 \botrule
 \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{figs/fig_tracking.pdf}
-\caption{Order tracking at 60\,dB: absolute error of the order estimate (median over 50 runs, band to the 90th percentile). Solid: filter of the type that generated the data; dashed: filter of the other type. Dotted lines mark the start and end of the ramp and the jump}\label{fig:tracking}
-\end{figure}
+\pending{Board measurements (to be added): bitstream-level parity on the same vectors, Vivado utilization and $f_{\max}$, sample rate $f_{\max}/136$, per-sample order changes, and a long run ($\ge10^7$ samples) of the D-type at the worst quantized row. These will be measured with the new core; no measurement from~\cite{tcas_submission} is reused.}
 
-\paragraph{Results.} Table~\ref{tab:track} and Fig.~\ref{fig:tracking} show two regimes.
+%% =====================================================================
+\section{Application: streaming multifractional Brownian motion}\label{sec:mbm}
+
+Multifractional Brownian motion lets the Hurst exponent vary in time~\cite{peltier1995}, and its definitions are in general not equivalent~\cite{stoev2006}. The Riemann--Liouville form (RL-mBm)~\cite{lim2001,muniandy2001} is a VO integral of white noise of order $H(t)+\tfrac12$, with the current order applied to the whole past. It is thus an A-type integral. Applying the order at the time each increment enters gives the B-type variant. Up to the discretization of the kernel and a per-increment factor $\sqrt{2H_j}\,\Gamma(H_j+\tfrac12)$, this is the memory-multifractional Brownian motion (MMFBM) of Wang et al.~\cite{wang2023mmfbm}, $X(t)=\int_0^t\sqrt{\alpha(s)}\,(t-s)^{(\alpha(s)-1)/2}\,\mathrm dB(s)$ with $\alpha=2H$. The input-scheduled bank applies that factor as a gain on each input sample. The incremental mBm of \'Sl\c{e}zak and Metzler~\cite{slezak2023} is defined through the covariance of its increments and shares the property that a change of $H$ acts only on new increments. Other alternatives to mBm include:
 \begin{itemize}
-\item \emph{Matched type.} The error decreases with the SNR. At 60\,dB the A-type grid filter reaches a median RMSE of $1.3\times10^{-3}$ and the B-type EKF $1.2\times10^{-2}$. The A-type EKF on the bank reproduced the same EKF on the literal GL weights to $9\times10^{-6}$, at about $3(K+2)$ instead of $3n$ multiplications per iteration.
-\item \emph{Wrong type.} The error increases with the SNR, to 0.14--0.24 at 60\,dB, which is 10 to 100 times the matched error. In the half second after the jump, the filters of the wrong type were off by 0.13 to 0.30. A wrong definition biases the estimate, and more data does not remove the bias. While the order is still constant ($t<1$\,s), the two definitions coincide and both filters are accurate; the bias appears as soon as the order varies (Fig.~\ref{fig:tracking}).
+\item the multifractional processes of Surgailis, built by nonhomogeneous fractional integration of white noise~\cite{surgailis2008}, whose covariance is not a local function of $H(t)$ and $H(t')$ as it is for mBm~\cite{bardet2013};
+\item the integrated fractional white noise of Sly, proposed to avoid the extreme changes in magnitude of mBm~\cite{sly2007}.
 \end{itemize}
-The choice of definition is therefore a modelling decision for inference as well, and the bank lets both models be fitted and compared at the same cost. The A-type EKF has a heavy tail at high SNR (90th percentile 0.11 to 0.15). At the jump, the likelihood of a single sample has several maxima, and the iterated update can lock onto the wrong one. The grid filter avoids this at about 16\,000 multiplications per sample, still independent of $n$. With a physical sampling time the gain $\Ts^{-\alpha}$ adds direct information about the current order and makes the problem easier.
-
-\subsection{Streaming multifractional Brownian motion}\label{sec:mbm}
-
-Multifractional Brownian motion lets the Hurst exponent vary in time~\cite{peltier1995}, and its definitions are in general not equivalent~\cite{stoev2006}. The Riemann--Liouville form (RL-mBm)~\cite{lim2001,muniandy2001} is a VO integral of white noise of order $H(t)+\tfrac12$, with the current order applied to the whole past. It is thus an A-type integral. Applying the order at the time each increment enters gives the B-type variant. Up to the discretization of the kernel and a per-increment factor $\sqrt{2H_j}\,\Gamma(H_j+\tfrac12)$, this is the memory-multifractional Brownian motion (MMFBM) of Wang et al.~\cite{wang2023mmfbm}, $X(t)=\int_0^t\sqrt{\alpha(s)}\,(t-s)^{(\alpha(s)-1)/2}\,\mathrm dB(s)$ with $\alpha=2H$. The input-scheduled bank applies that factor as a gain on each input sample. Other multifractional constructions treat a varying $H$ differently~\cite{surgailis2008,sly2007,ryvkina2015,slezak2023}; they are compared in Supplementary Sect.~S5. VO operators have been used to synthesize multifractional Gaussian noise before~\cite{sheng2011}, and simulation methods for mBm include~\cite{chan1998}.
+Conversely, the variable-Hurst fBm of Ryvkina uses the current Hurst value in its kernel and has discontinuous paths wherever $H$ jumps~\cite{ryvkina2015}, like the A-type. VO operators have been used to synthesize multifractional Gaussian noise before~\cite{sheng2011}, and simulation methods for mBm include~\cite{chan1998}. Exact methods for stationary Gaussian processes such as circulant embedding~\cite{wood1994} rely on stationarity and do not apply directly when $H$ varies.
 
 In sample units, the discrete processes are
 \[
@@ -871,9 +911,35 @@ The right-hand side is the cumulative sum of $\Op{B}{-(a-1)}\xi$.
 
 The reversed orders are not exact: the relative errors are 0.1 to 1.3 in our tests. With the split, one bank of order $\tfrac12-H$, which satisfies $|\tfrac12-H|<\tfrac12$, covers all of $0<H<1$. It crosses $H=\tfrac12$ seamlessly because the order $0$ is exact in the bank.
 
-\paragraph{Results.} The bank was designed by the rule for $\eps=10^{-4}$ and $0.05\le H\le0.95$ ($K=22$ to 26 for $n=1024$ to 16\,384). Paths agree with the literal GL processes driven by the same noise to $1.9\times10^{-6}$ (A) and $2.4\times10^{-6}$ (B). Computed exactly from the weight matrix, the variance agrees with the exact formula to $3.1\times10^{-5}$ and the covariance to $1.7\times10^{-6}$. The local Hurst exponent, estimated by generalized quadratic variations~\cite{istas1997,coeurjolly2005}, follows a varying $H(t)$ with an RMSE of the mean of 0.014 to 0.036 for both types (Fig.~\ref{fig:mbm}). The bank needs 47 to 55 multiplications per sample, independent of $n$, against $n/2$ on average for the direct GL sum. Further results, including the fixed-point generators, are in Supplementary Sect.~S5.
+\paragraph{Results.} Table~\ref{tab:mbm} and Fig.~\ref{fig:mbm} summarize the results. The bank was designed by the rule for $\eps=10^{-4}$ and $0.05\le H\le0.95$, giving $K=22$, 24 and 26 for $n=1024$, 4096 and 16\,384.
 
-The two types differ sharply at a jump of $H$ from $0.3$ to $0.8$. The A-type variance jumps from 119 to $1.5\times10^5$, and the path is discontinuous: the squared increment at the jump is $1.3\times10^5$ times the typical one. The B-type is continuous, in line with the behaviour reported for MMFBM and incremental mBm~\cite{wang2023mmfbm,slezak2023}. Which definition to use is therefore a modelling decision with visible consequences~\cite{wang2023mmfbm}, and the bank makes either choice available at the same cost.
+Second-order statistics were computed exactly, without Monte Carlo, from the $n\times n$ weight matrix of the generator. The variance agreed with the exact formula to $3.1\times10^{-5}$ and the covariance to $1.7\times10^{-6}$.
+
+The local Hurst exponent was estimated by generalized quadratic variations~\cite{istas1997,coeurjolly2005}; see also~\cite{bardet2013}. For constant $H$ the estimator itself has a bias of $+0.06$ at $H=0.2$ and a standard deviation of $0.06$ (window 1024). For varying $H$ its mean followed $H(t)$ with RMSE $0.014$ to $0.036$, equally for both types.
+
+The two types differ sharply at a jump of $H$ from $0.3$ to $0.8$. The A-type variance jumps from 119 to $1.5\times10^5$, and the path is discontinuous: the squared increment at the jump is $1.3\times10^5$ times the typical one. The B-type is continuous (ratio 1.0), in line with the behaviour reported for MMFBM and incremental mBm~\cite{wang2023mmfbm,slezak2023}. Which definition to use is therefore a modelling decision with visible consequences, as also argued in~\cite{wang2023mmfbm}. The bank makes either choice available at the same cost.
+
+\begin{table}[t]
+\caption{Streaming mBm with the fixed-pole bank}\label{tab:mbm}
+\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.44\textwidth}>{\raggedright\arraybackslash}p{0.52\textwidth}@{}}
+\toprule
+Quantity & Result\\
+\midrule
+integer split, correct order (A first, B last) & $\le9\times10^{-15}$\\
+integer split, reversed order & $0.1$ to $1.3$\\
+path vs literal GL, same noise & A $\le1.9\times10^{-6}$, B $\le2.4\times10^{-6}$\\
+exact variance / covariance ($n=2048$) & $\le3.1\times10^{-5}$ / $\le1.7\times10^{-6}$ (Frobenius)\\
+local Hurst tracking, varying $H$ (400 paths) & RMSE of mean 0.014 to 0.036, A and B alike\\
+variance before/after a jump of $H$ from $0.3$ to $0.8$ & A $119\to1.5\times10^{5}$; B $119\to119$\\
+cost per sample & bank 47 to 55 MACs ($n$-independent); direct GL $n/2$ on average\\
+fixed-point core A/B (36/49/16), vs float & A $1.8\times10^{-5}$, B $8.9\times10^{-4}$\\
+fixed-point core A/B/D/E (48/61/25), vs float & A $3.8\times10^{-6}$, B $1.2\times10^{-4}$\\
+\botrule
+\end{tabular}
+\end{table}
+
+\paragraph{Hardware.} The cores of Sect.~\ref{sec:hw} generate the same processes bit-exactly from integer noise. For the A-type, the accumulator sits in front of the core and is exact (an integer sum), so the small A/B core suffices. For the B-type, the accumulator follows the core and integrates its low-frequency rounding errors. The B-type therefore benefits from the wider configuration (Table~\ref{tab:mbm}, last two rows). Input scales were $2^{-9}$ for A and $0.25$ for B, chosen to keep the accumulated A-type input within the signal range.
 
 \begin{figure}[t]
 \centering
@@ -881,60 +947,6 @@ The two types differ sharply at a jump of $H$ from $0.3$ to $0.8$. The A-type va
 \caption{Streaming mBm. (a, b) Local Hurst estimates (mean $\pm$ one standard deviation over 400 paths) for a ramp and a step of $H$. (c) Exact variance of the A-type (RL-mBm) and B-type processes for a jump of $H$ at $n/2$. (d) Sample paths driven by the same noise}\label{fig:mbm}
 \end{figure}
 
-%% =====================================================================
-\section{Fixed-point realization}\label{sec:hw}
-
-The design point is $R=4000$, $\eps=10^{-4}$ and $|\alpha|\le0.95$, giving $K=32$ plus the delay mode. Orders come from a grid of $P=1024$ levels, $\alpha_i=0.95\,(2i/(P-1)-1)$, so $\Delta\alpha=1.9\times10^{-3}$.
-
-The core runs in sample units ($\Ts=1$), where $\gh_0=1$ for every order, so the inversion~\eqref{eq:inverse} needs no divider: $v_n=x_n-\eta_n$. Physical units follow from one gain $\Ts^{-\alpha_n}$, applied at the output for the A- and E-types and at the input for the B- and D-types. Signals are $W_S$-bit two's complement numbers, states have $W_S+13$ bits with a power-of-two scaling per mode, and coefficients have a $W_M$-bit mantissa with a 7-bit shift. Algorithm~\ref{alg:core} gives one sample in exact arithmetic; the bit-accurate golden model and the RTL use the same sequence.
-
-\begin{algorithm}[t]
-\caption{One sample of the bank, all four types. In hardware the coefficient row is a ROM word addressed by the order index (mirrored for D and E), so an order or type change costs nothing}\label{alg:core}
-\begin{algorithmic}[1]
-\Require type $T\in\{\mathrm{A,B,D,E}\}$, order $\alpha_n$, input $x_n$; states $s_0,\dots,s_{K-1},\sd$
-\State $a\gets\alpha_n$ if $T\in\{\mathrm{A,B}\}$, else $a\gets-\alpha_n$; read $(\cd,c_0,\dots,c_{K-1})$ for order $a$
-\If{$T\in\{\mathrm{A,D}\}$} \Comment{output schedule}
-  \State $\eta\gets\cd\,\sd+\sum_k c_k s_k$
-\Else \Comment{input schedule}
-  \State $\eta\gets\sd+\sum_k s_k$
-\EndIf
-\If{$T\in\{\mathrm{A,B}\}$} $v\gets x_n$;\ \ $y_n\gets v+\eta$
-\Else\ $v\gets x_n-\eta$;\ \ $y_n\gets v$ \Comment{no divider in sample units}
-\EndIf
-\If{$T\in\{\mathrm{A,D}\}$} $s_k\gets\theta_k s_k+v$;\ \ $\sd\gets v$
-\Else\ $s_k\gets\theta_k s_k+c_k v$;\ \ $\sd\gets\cd v$
-\EndIf
-\end{algorithmic}
-\end{algorithm}
-
-Two effects set the word lengths (Supplementary Sect.~S4).
-\begin{itemize}
-\item \emph{Dynamic range.} Under switching from an integral to a derivative order, the D- and E-types reach 820 times the frozen-order $\ell^1$ bound on the output. This is a property of the recursive definitions, not of the bank. We therefore size two envelopes: forward types only (A/B, 14 integer bits) and all four types (A/B/D/E, 24 integer bits).
-\item \emph{Quantization and inverse stability.}\label{sec:hw-stab} Quantization can undo the DC floor. Coefficients and pole steps are dyadic rationals, so the signs of $\Hh_q(\pm1)$ of every quantized ROM row were evaluated exactly in rational arithmetic. With the floating-point floor alone, 64 (A/B) and 51 (A/B/D/E) of the 512 positive-order rows had $\Hh_q(1)\le0$; the worst inverse pole was at $1+1.9\times10^{-9}$. A quantization-aware floor, which raises the delay mantissa in LSB steps until $\Hh_q(1)\ge\Hh(1)$, brings both counts to zero.
-\end{itemize}
-A configuration was accepted if every type stayed within $0.1\eps$ of the floating-point bank on a stress set of order profiles and inputs. The smallest accepted configurations are $W_S/W_{ST}/W_M=36/49/16$ (A/B) and $48/61/25$ (A/B/D/E).
-
-\paragraph{RTL, parity and resources.}
-
-The core (\texttt{vo\_bank\_core.v}) is a non-pipelined, time-multiplexed state machine with synchronous coefficient, pole and gain ROMs. It takes $4K+8=136$ clock cycles per sample. Order index and type are inputs with every sample. An order change only changes a ROM address: there is no reload and no extra cycle.
-
-The test vectors cover constant, piecewise and per-sample orders, sign-changing switches, full-scale inputs, and type changes at run time. The type changes exercise the datapath; a type change is not itself a VO operation. Icarus Verilog simulation matched the golden model bit for bit on all 94\,208 vectors (31\,744 for A/B, 62\,464 for A/B/D/E). Verilator lint reported only intentional width extensions and truncations. Table~\ref{tab:rtl} lists Yosys estimates for a 7-series FPGA.
-
-\begin{table}[t]
-\caption{RTL configurations: bit-exact parity with the golden model and Yosys \texttt{synth\_xilinx} (xc7) resource estimates. Vivado results and $f_{\max}$ are pending}\label{tab:rtl}
-\begin{tabular}{@{}lcccccc@{}}
-\toprule
-Envelope & $W_S/W_{ST}/W_M$ & vectors (mismatches) & LUT & FF & DSP48E1 & RAMB36 eq.\\
-\midrule
-A/B & 36/49/16 & 31\,744 (0) & 4\,171 & 1\,882 & 11 & 22\\
-A/B/D/E & 48/61/25 & 62\,464 (0) & 6\,009 & 2\,360 & 29 & 29.5\\
-\botrule
-\end{tabular}
-\end{table}
-
-\pending{Board measurements (to be added): bitstream-level parity on the same vectors, Vivado utilization and $f_{\max}$, sample rate $f_{\max}/136$, per-sample order changes, and a long run ($\ge10^7$ samples) of the D-type at the worst quantized row. These will be measured with the new core; no measurement from~\cite{tcas_submission} is reused.}
-
-%% =====================================================================
 %% =====================================================================
 \section{Discussion and limitations}\label{sec:discussion}
 
@@ -950,14 +962,12 @@ A/B/D/E & 48/61/25 & 62\,464 (0) & 6\,009 & 2\,360 & 29 & 29.5\\
 
 \paragraph{Hardware.} The core is not pipelined. A pipelined version could approach $K$ plus a few cycles per sample. Resources are synthesis estimates, and the board measurements are pending.
 
-\paragraph{Estimation.} The tracking experiment assumes a known input and a known noise level. Joint estimation of the state or the input, as in dual and triple estimation with unscented fractional-order Kalman filters~\cite{sierociuk2016cssp}, can use the same $O(K)$ model but was not tested here. Neither was a physical system.
-
 \paragraph{Literature search.} The review of Sect.~\ref{sec:related} used Crossref and arXiv. \pending{TODO: repeat the documented queries in Scopus and Web of Science before submission.}
 
 %% =====================================================================
 \section{Conclusion}\label{sec:conclusion}
 
-For a finite-dimensional realization of a variable-order operator, the definition it implements is a property of its structure. If the poles move with the order, no state map can make a switched realization exact for the A- or B-type. If the poles are fixed and the order sits in the output or input weights, the realization is the A- or B-type for every order sequence, up to the frozen-order quadrature error. Inverting the same bank gives the D- and E-types with exact duality. The Beta-integral representation makes this exact in discrete time. The weight error bounds the realized operators as a whole: for the forward types the relative operator error never exceeds it, and for the recursive integrals it is amplified by a computable condition number. Nothing in the construction is specific to Gr\"unwald--Letnikov weights: every kernel family that is completely monotone in the lag, such as distributed orders with a time-varying density, is realized in the same way, with a common pole set whose size grows like $\ln(1/\eps)\ln(R/\eps)$. An analytic rule sizes the bank, and a DC floor, tested by an exact sign, keeps every inverse stable, also after quantization. In hardware the order and the type become a ROM address that can change at every sample. Order tracking and streaming multifractional Brownian motion show that the choice between the A- and B-type is a modelling decision with visible consequences, in inference as in synthesis, and the bank makes either choice available at the same cost.
+For a finite-dimensional realization of a variable-order operator, the definition it implements is a property of its structure. If the poles move with the order, no state map can make a switched realization exact for the A- or B-type. If the poles are fixed and the order sits in the output or input weights, the realization is the A- or B-type for every order sequence, up to the frozen-order quadrature error. Inverting the same bank gives the D- and E-types with exact duality. The Beta-integral representation makes this exact in discrete time. The weight error bounds the realized operators as a whole: for the forward types the relative operator error never exceeds it, and for the recursive integrals it is amplified by a computable condition number. Nothing in the construction is specific to Gr\"unwald--Letnikov weights: every kernel family that is completely monotone in the lag, such as distributed orders with a time-varying density, is realized in the same way, with a common pole set whose size grows like $\ln(1/\eps)\ln(R/\eps)$. An analytic rule sizes the bank, and a DC floor, tested by an exact sign, keeps every inverse stable, also after quantization. In hardware the order and the type become a ROM address that can change at every sample. Streaming multifractional Brownian motion shows that the choice between the A- and B-type is a modelling decision with visible consequences, which the bank makes explicit.
 
 \backmatter
 
@@ -1002,6 +1012,18 @@ is strictly increasing from $-\infty$ to $+\infty$. Hence there is exactly one r
 \Hh(-1)=g_0-\gh_1+\sum_k\frac{c_k\theta_k}{1+\theta_k}\ge g_0-\gh_1+\tfrac12\gh_2 .
 \]
 With $g_1=ag_0$, $g_2=\tfrac12a(1+a)g_0$ and relative errors at most $\delta=\tfrac13$, the right-hand side is at least $g_0(1-a)(6-a)/6>0$. Derivative bank, order $a$: here $\sum_k c_k\theta_k/(1+\theta_k)\ge\gh_2$ because $c_k<0$. Hence $\Hh(-1)\ge g_0-\gh_1+\gh_2$. With $g_1=-ag_0$ and $g_2=-\tfrac12a(1-a)g_0$, this is at least $g_0\big(1+\tfrac23a^2\big)>0$. \qed
+
+\section{B-type step response}\label{app:stepB}
+
+The B-type operator in continuous time processes each input sample with the kernel of its entry order: $y(t)=\int_0^t K(t-\tau,\alpha(\tau))u(\tau)\,\mathrm d\tau$ with $K(s,a)=\partial_sF(s,a)=s^{-a-1}/\Gamma(-a)$, taken in the finite-part sense for $a>0$. For $u=1$, let $G(\tau)=F(t-\tau,\alpha(\tau))$. Then
+\[
+\frac{\mathrm dG}{\mathrm d\tau}=-\partial_sF(t-\tau,\alpha(\tau))+\partial_aF(t-\tau,\alpha(\tau))\,\dot\alpha(\tau),
+\]
+so $y(t)=G(0)-G(t)+\int_0^t\partial_aF\,\dot\alpha\,\mathrm d\tau$. The finite part removes $G(t)=F(0^+,\alpha(t))$, and $G(0)=F(t,\alpha(0))$. This gives~\eqref{eq:stepB}. For a piecewise-constant order, $\dot\alpha$ is a sum of Dirac impulses and the integral becomes the stated finite sum. In the experiments the smooth case was evaluated by adaptive quadrature after the substitution $s=v^m$ with $m(1-\alpha_{\max})\ge2$, which removes the weak singularity at $s=0$.
+
+\section{Large-lag alias term}\label{app:alias}
+
+For large $r$ the integrand of~\eqref{eq:betax} is concentrated at $u=O(1/r)$, where $(1-e^{-u})^a\approx u^a$. Hence $f(x)\approx e^{(1+a)x}e^{-\rho e^x}$ with $\rho=r-a$. Its Fourier transform is $\hat f(\omega)=\Gamma(1+a-\mathrm i\omega)\rho^{-(1+a-\mathrm i\omega)}$, and $\hat f(0)=\Gamma(1+a)\rho^{-(1+a)}$ is the integral itself. The relative error of the infinite trapezoidal rule is $\sum_{k\neq0}\hat f(2\pi k/h)/\hat f(0)$, dominated by $k=\pm1$. Stirling's formula, $|\Gamma(1+a-\mathrm i\omega)|\sim\sqrt{2\pi}\,\omega^{a+1/2}e^{-\pi\omega/2}$, at $\omega=2\pi/h$ gives~\eqref{eq:Eq}. The result does not depend on $r$, which justifies the name large-lag term.
 
 \section{Proof of Theorem~\ref{thm:opnorm}}\label{app:opnorm}
 

@@ -420,6 +420,27 @@ Yorum:
 - Analitik kural en küçük bankayı vermiyor. Karşılığında optimizasyonsuz, kapalı formlu, mühürlü holdout'ta doğrulanmış ve artık işaretlerini yapı gereği koruyan bir tasarım sunuyor.
 - LP ile uydurma, işaret ve DC kısıtları eklenirse kararlılık sertifikasını koruyarak bankayı %20–30 küçültüyor.
 
+### E10: çevrimiçi derece izleme
+
+Model: y = T^α x + v; bilinen AR(1) giriş (kutup 0.98), T_s = 1, n = 2000, literal GL verisi. Derece profili: sabit 0.3 → 0.7'ye rampa → 0.2'ye sıçrama → salınım. SNR 20/40/60 dB, 50 Monte Carlo koşusu. Banka: ε = 1e-5, K = 40, katsayılar kübik spline ile.
+
+| Kestirici (maliyet/örnek) | Veri | 20 dB | 40 dB | 60 dB |
+|---|---|---|---|---|
+| A-ızgara (G = 381, ≈16 000) | A | 0.018 | 0.0040 | 0.0013 |
+| | B (yanlış) | 0.029 | 0.059 | 0.140 |
+| A-EKF (≈3(K+2)/iterasyon) | A | 0.026 | 0.0083 | 0.017 (p90 0.15) |
+| B-EKF (≈7100) | B | 0.027 | 0.015 | 0.012 |
+| | A (yanlış) | 0.032 | 0.054 | 0.238 |
+
+(medyan RMSE, 0.2 ≤ t < 4 s)
+
+Yorum:
+- A-tipinde banka durumu dereceden bağımsız. Bu yüzden ölçüm modeli dereceye göre belleksiz ve G hipotezin tam olabilirliği O(GK). Izgara filtresi bu sayede doğrusallaştırmasız ve sağlam.
+- B-tipinde durum derece geçmişini taşıyor; K+2 boyutlu artırılmış EKF yeterli. Literal GL'de bunun için tüm geçmişi taşımak gerekirdi.
+- Yanlış tanım varsayılırsa yanlılık SNR ile büyüyor. Derece sabitken (t < 1 s) iki tanım çakıştığı için fark yok; derece değişmeye başladığı anda yanlılık ortaya çıkıyor. Yani tanım seçimi kestirimde de bir modelleme kararı.
+- A-EKF bankayla, kesin GL ağırlıklı EKF'yi 9e-6 içinde tekrarlıyor; maliyet O(n) yerine O(K).
+- A-EKF yüksek SNR'de ağır kuyruklu (p90 0.11–0.15): sıçramada tek örnek olabilirliği çok tepeli olduğu için yanlış köke kilitlenebiliyor. Izgara filtresinde bu sorun yok.
+
 ---
 
 ## 8. Sonraki adımlar
