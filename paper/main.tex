@@ -60,7 +60,7 @@
 \author[1]{\fnm{Second} \sur{Author}}\email{second.author@example.org}
 \affil*[1]{\orgdiv{Department}, \orgname{Institution}, \orgaddress{\city{City}, \country{Country}}}
 
-\abstract{Variable-order (VO) fractional operators have several inequivalent definitions, which differ in how past values of the order enter the memory. Practical realizations are finite-dimensional, and when their coefficients are switched as the order varies it is generally unclear which definition they implement. We show that an exact switching state map between two realizations exists only if the realizations are similar, so realizations whose poles move with the order cannot implement the A- or B-type Gr\"unwald--Letnikov definitions under switching. Least-squares state maps narrow the gap in floating point, but they are dense, depend on the input class and lose three to nine orders of magnitude of accuracy in 24-bit fixed point. Instead, a Beta-integral representation realizes the Gr\"unwald--Letnikov weights with order-independent discrete poles. With the order in the output weights this bank is the A-type, and with the order in the input weights the B-type, for every order sequence and up to the frozen-order quadrature error. Inverting the same bank gives the recursive D- and E-types with exact duality at $O(K)$ cost per sample. A fit-free analytic error model sets the bank size and met all 400 specifications of a sealed holdout. A derivative bank has a stable inverse if and only if its realized DC gain is positive, which a small DC floor guarantees. A bit-exact fixed-point Verilog core changes order and type at every sample through a ROM address only. As an application, the bank streams multifractional Brownian motion of Riemann--Liouville type and its B-type variant for $0<H<1$.}
+\abstract{Variable-order (VO) fractional operators have several inequivalent definitions that differ in how past orders enter the memory. When a finite-dimensional realization switches coefficients as the order varies, it is unclear which definition it implements. An exact switching state map exists only between similar realizations, so realizations whose poles move with the order cannot implement the A- or B-type Gr\"unwald--Letnikov definitions under switching. A Beta-integral representation instead realizes the Gr\"unwald--Letnikov weights with order-independent poles. With the order in the output weights the bank is the A-type, and with it in the input weights the B-type, for every order sequence; inverting it gives the recursive D- and E-types with exact duality, at $O(K)$ cost per sample. In the $\ell^1$ and $\ell^\infty$ operator norms the relative error of the forward types never exceeds the relative weight error; the recursive integrals amplify it by the condition number of the inverted derivative. The construction extends to every kernel family that is completely monotone in the lag, including time-varying distributed orders, with $K=O(\ln(1/\eps)\ln(R/\eps))$ common poles for tolerance $\eps$ and memory $R$. A fit-free analytic rule sets the bank size and met all 400 specifications of a sealed holdout, and a DC floor makes every inverse stable. Moving-pole hot swapping stays at errors of 0.2 to 1 under switching at any size; residues fitted by sign-constrained linear programming save about a third of the poles. A bit-exact fixed-point core changes order and type per sample through a ROM address, and the bank streams multifractional Brownian motion.}
 
 \keywords{variable-order fractional calculus, Gr\"unwald--Letnikov, diffusive representation, fixed-pole approximation, duality, fixed-point hardware, multifractional Brownian motion}
 
@@ -88,17 +88,19 @@ This leaves two open questions:
 \item Given an arbitrary order sequence, which VO definition does a finite-dimensional realization implement?
 \item Can the structure of the realization select the definition at no extra cost per sample?
 \end{enumerate}
-This paper answers both for GL operators of order $-1<\alpha<1$. The contributions are:
+This paper answers both for GL operators of order $-1<\alpha<1$ and, more generally, for kernel families that are completely monotone in the lag. The contributions are:
 \begin{enumerate}
 \item \emph{Necessity.} An exact switching state map exists only between similar realizations (Theorem~\ref{thm:necessity}). Realizations with order-dependent poles therefore cannot implement the A- or B-type exactly at a switch, with or without a state map. Least-squares maps reduce the error in floating point. However, they need a dense $S\times S$ matrix per pair of orders, depend on the input class, and lose three to nine orders of magnitude of accuracy in 24-bit fixed point (Sect.~\ref{sec:res-maps}).
 \item \emph{Definition by structure.} Order-independent exponents have already been used for the A-type VO Caputo derivative in fast numerical solvers~\cite{zhang2022esa,zhang2022fast}. We show that, in a fixed-pole structure, the place of the order selects the definition. A Beta-integral representation of the GL weights gives a discrete bank with order-independent poles. With the order in the output weights the bank realizes the A-type, and with the order in the input weights the B-type. This holds for every order sequence, up to the frozen-order quadrature error (Proposition~\ref{prop:structure}); the B-type thus costs $O(K)$ per sample as well. Algebraic inversion of the same bank gives the D- and E-types with exact duality at the same cost, and solves VO relaxation equations of all four types (Proposition~\ref{prop:inverse}). In analog form, a direct realization of the D-type has been considered impractical~\cite{sierociuk2020}.
-\item \emph{Fit-free design.} An analytic error model with three closed-form terms sets the bank size and pole range from the tolerance, the memory length and the order range. On a sealed holdout of 400 random specifications the rule met every tolerance (Sects.~\ref{sec:design} and~\ref{sec:res-rule}).
+\item \emph{Operator-level guarantees.} The weight error bounds the realized operators as a whole, for every order sequence (Theorem~\ref{thm:opnorm}). In the $\ell^1$ and $\ell^\infty$ operator norms the relative error of the A- and B-types never exceeds the relative weight error. The recursive integrals amplify it by the condition number of the inverted derivative, which grows like $N^{|\alpha|}$; one step response of the bank certifies their error a posteriori.
+\item \emph{Completely monotone families.} The structural results hold for every kernel family that is completely monotone in the lag, including time-varying distributed orders and fixed tempering. Under analyticity and power-law conditions on the density, a common pole set of size $K=O(\ln(1/\eps)\ln(R/\eps))$ meets a relative tolerance $\eps$ over a memory $R$ uniformly in the order (Theorem~\ref{thm:cm}).
+\item \emph{Fit-free design.} An analytic error model with three closed-form terms sets the bank size and pole range from the tolerance, the memory length and the order range. On a sealed holdout of 400 random specifications the rule met every tolerance (Sects.~\ref{sec:design} and~\ref{sec:res-rule}). Against moving-pole hot swapping, truncated convolution and fixed poles with residues fitted by linear programming, the fixed-pole structure is the only one that reaches small errors under switching; fitted residues reduce the bank size, but keep a stability certificate only with sign constraints (Sect.~\ref{sec:res-baselines}).
 \item \emph{Inverse stability.} The inverse of a derivative bank is stable if and only if its realized DC gain is positive (Proposition~\ref{prop:stability}). This condition is tested through an exact sign rather than through eigenvalues. A DC floor applied through the delay mode guarantees it, also after coefficient quantization.
 \item \emph{Hardware.} A time-multiplexed fixed-point core realizes all four types. Order and type are per-sample inputs, and changing them only changes a ROM address. The core is bit-exact with its golden model (94\,208 vectors, no mismatch). Word lengths for two operating envelopes and synthesis estimates are reported.
 \item \emph{Application.} The bank streams multifractional Brownian motion (mBm) of Riemann--Liouville type, which is an A-type integral of white noise, and its B-type counterpart, which is the memory-multifractional Brownian motion of~\cite{wang2023mmfbm} up to normalization, for $0<H<1$. One bank suffices because an integer split is exact when placed according to the type (Proposition~\ref{prop:split}).
 \end{enumerate}
 
-Section~\ref{sec:related} reviews related work. Section~\ref{sec:prelim} recalls the definitions and their duality. Section~\ref{sec:bank} builds the continuous- and discrete-time fixed-pole banks, Section~\ref{sec:structure} proves the structural results, and Section~\ref{sec:design} gives the error model, the design rule and the stability result. Section~\ref{sec:results} reports the numerical experiments, Section~\ref{sec:hw} the fixed-point core, and Section~\ref{sec:mbm} the mBm application. Section~\ref{sec:discussion} discusses limitations. All code, seeds and results are available (see the Declarations).
+Section~\ref{sec:related} reviews related work. Section~\ref{sec:prelim} recalls the definitions and their duality. Section~\ref{sec:bank} builds the continuous- and discrete-time fixed-pole banks, Section~\ref{sec:structure} proves the structural results and the operator-norm bounds, and Section~\ref{sec:design} gives the error model, the design rule and the stability result. Section~\ref{sec:cm} extends the construction to completely monotone kernel families. Section~\ref{sec:results} reports the numerical experiments, Section~\ref{sec:hw} the fixed-point core, and Section~\ref{sec:mbm} the mBm application. Section~\ref{sec:discussion} discusses limitations. All code, seeds and results are available (see the Declarations).
 
 \subsection{Related work}\label{sec:related}
 
@@ -408,6 +410,32 @@ The same structure solves $\Op{T}{\alpha}y+\lambda y=u$ for $T\in\{\mathrm{A,B,D
 A direct triangular solve of the GL equations costs $O(N^2)$.
 \end{remark}
 
+Corollary~\ref{cor:bound} bounds each output sample by a weighted sum of past inputs. Because every row of the A-type error matrix and every column of the B-type error matrix holds a single order, the same weight errors also bound the realized operators as a whole, for every order sequence. Let $\|\cdot\|_p$ denote the induced $\ell^p$ norm of an $N\times N$ matrix and $|M|$ the entrywise absolute value.
+
+\begin{theorem}[Operator-norm bounds]\label{thm:opnorm}
+Let $\mathcal S\subset(-1,1)$ be a set of orders, $N\le R$, and $e_r(a)=\gh_r(a)-g_r(a)$ for $1\le r<N$. Put
+\begin{equation}
+\rho_{\mathrm{row}}=\sup_{a\in\mathcal S}\sum_{r=1}^{N-1}|e_r(a)|,\qquad
+\rho_{\mathrm{col}}=\sum_{r=1}^{N-1}\sup_{a\in\mathcal S}|e_r(a)|.\label{eq:rho}
+\end{equation}
+For every order sequence with values in $\mathcal S$, let $E_{\mathrm T}=\hat W_{\mathrm T}-W_{\mathrm T}$ be the error of the realized operator of type T.
+\begin{enumerate}
+\item[(a)] $\|E_{\mathrm A}\|_\infty\le\rho_{\mathrm{row}}$, $\|E_{\mathrm A}\|_1\le\rho_{\mathrm{col}}$, $\|E_{\mathrm B}\|_1\le\rho_{\mathrm{row}}$, $\|E_{\mathrm B}\|_\infty\le\rho_{\mathrm{col}}$, and $\|E_{\mathrm T}\|_2\le(\rho_{\mathrm{row}}\rho_{\mathrm{col}})^{1/2}$ for $\mathrm T\in\{\mathrm A,\mathrm B\}$. If $\mathcal S$ is finite, each of the four bounds is attained by some order sequence.
+\item[(b)] $\|E_{\mathrm T}\|_p\le\eps_R\,\|\,|W_{\mathrm T}|\,\|_p$ for $1\le p\le\infty$ and $\mathrm T\in\{\mathrm A,\mathrm B\}$. In particular, $\|E_{\mathrm T}\|_p\le\eps_R\|W_{\mathrm T}\|_p$ for $p\in\{1,\infty\}$: the relative error of the operator, and hence the worst-case relative output error over all inputs, never exceeds the relative weight error.
+\item[(c)] For $(\mathrm T,\mathrm F)\in\{(\mathrm D,\mathrm A),(\mathrm E,\mathrm B)\}$, let $E^-_{\mathrm F}$ be the error of $\hat W_{\mathrm F}(-\alpha)$ and $q=\|W_{\mathrm T}\|_p\|E^-_{\mathrm F}\|_p$. If $q<1$, then $\|E_{\mathrm T}\|_p\le\frac{q}{1-q}\|W_{\mathrm T}\|_p$. The same holds with $\hat q=\|\hat W_{\mathrm T}\|_p\|E^-_{\mathrm F}\|_p$ and $\|\hat W_{\mathrm T}\|_p$ in place of $q$ and $\|W_{\mathrm T}\|_p$. If all orders are negative and $\gh_1(-\alpha_n)<0$ for all $n$, then $\hat W_{\mathrm T}\ge0$ entrywise, and $\|\hat W_{\mathrm T}\|_\infty$ is the peak of the realized step response.
+\end{enumerate}
+\end{theorem}
+
+The proof is given in Appendix~\ref{app:opnorm}. Part (a) uses the error kernel itself and does not depend on how the order sequence is chosen. Part (c) gives an a-posteriori certificate for the recursive integrals: one step response of the bank ($O(NK)$) and the constants~\eqref{eq:rho} at the opposite orders.
+
+\begin{remark}[Conditioning of the recursive types]\label{rem:kappa}
+By (b), $q\le\eps_R\kappa_p$ with $\kappa_p=\|W_{\mathrm F}(-\alpha)\|_p\|W_{\mathrm F}(-\alpha)^{-1}\|_p$. For a constant order $a\in(0,1)$, the partial sums of $(1-z)^{\pm a}$ give
+\[
+\kappa_\infty=\big(2-w_{N-1}(a-1)\big)\,w_{N-1}(-a-1)\approx\frac{2N^{a}}{\Gamma(1+a)},
+\]
+which is 71 for $a=0.5$ and $N=1000$. For a recursive integral this amplification is real. Its step response is set by the DC gain of the inverted derivative bank, which is small (about $\Ts^{-a}N^{-a}/\Gamma(1-a)$) and carries an absolute error of order $\eps_R\Ts^{-a}$. A recursive integral with relative operator error $\eps$ therefore needs a bank designed for about $\eps/\kappa_\infty$. For recursive derivatives the bound is conservative; the measured errors stay at the level of $\eps_R$ (Sect.~\ref{sec:res-opnorm}).
+\end{remark}
+
 The fixed-pole structure is not only sufficient for definition consistency. Some version of it is also necessary:
 
 \begin{theorem}[Necessity]\label{thm:necessity}
@@ -521,6 +549,60 @@ the part of the density below $\ulo$ not represented by the lumped closure. For 
 
 \begin{remark}[Signs instead of eigenvalues]\label{rem:eig}
 The dominant pole of a derivative-bank inverse lies extremely close to $z=1$, and general eigenvalue solvers are unreliable there. In one holdout design (order $0.95$, $K=35$), a 50-digit bisection places the dominant pole at $1-2.9\times10^{-12}$, while a double-precision eigenvalue routine reports modulus $1+4.5\times10^{-9}$. The signs of $\Hh(1)$ and $\Hh(-1)$, in contrast, are computed to full relative precision, and in fixed point they are evaluated exactly (Sect.~\ref{sec:hw-stab}).
+\end{remark}
+
+%% =====================================================================
+\section{Beyond Gr\"unwald--Letnikov: completely monotone kernel families}\label{sec:cm}
+
+Sections~\ref{sec:bank}--\ref{sec:design} used two properties of the GL weights. For each frozen order they are a superposition of geometric sequences with a density of one sign, and this density is smooth on a logarithmic scale. Both properties hold for a much larger class of kernels.
+
+\begin{definition}[CM family]\label{def:cm}
+A family of causal kernels $\{k_a\}_{a\in\mathcal A}$ is a \emph{completely monotone (CM) family} if $k_a(0)\neq0$ and, for $r\ge1$,
+\begin{equation}
+k_a(r)=\sigma_a\int_0^\infty e^{-(r-1)u}\,m_a(u)\,\mathrm du,\qquad\sigma_a\in\mathbb R,\quad m_a\ge0.\label{eq:cm}
+\end{equation}
+Its A- and B-type operators are~\eqref{eq:A} and~\eqref{eq:B} with $k_a(r)$ in place of $g_r(a)$, and its D- and E-types are defined by the duality~\eqref{eq:duality}.
+\end{definition}
+
+With $\theta=e^{-u}$, \eqref{eq:cm} states that $(k_a(r)/\sigma_a)_{r\ge1}$ is the moment sequence of a nonnegative measure on $(0,1)$. By Hausdorff's theorem these are exactly the completely monotone sequences~\cite{widder1941}; here the measure has a density, and an atom at $\theta=0$ is the delay mode. For the GL weights, Lemma~\ref{lem:beta} gives $\sigma_a=-S_a\Ts^{-a}$ and $m_a(u)=e^{-(1-a)u}(1-e^{-u})^{a}$. The bank of a CM family is built as in Sect.~\ref{sec:bank}: poles $\theta_k=e^{-u_k}$ with $u_k=\ulo e^{kh}$, residues $c_k(a)=\sigma_a h\,u_k m_a(u_k)$, the nodes below the grid lumped onto $\theta_0$ and matched at $r=1$, and the nodes above it collected in the delay mode.
+
+\begin{theorem}[Fixed-pole banks for CM families]\label{thm:cm}
+Let $\{k_a\}$ be a CM family and $\hat k_a$ the weights realized by its bank.
+\begin{enumerate}
+\item[(a)] Propositions~\ref{prop:structure} and~\ref{prop:inverse}, Corollary~\ref{cor:bound} and Theorems~\ref{thm:opnorm} and~\ref{thm:necessity} hold with $k_a(r)$ in place of $g_r(a)$. The parameter $a$ need not be an order. All residues have the sign of $\sigma_a$, so parts (i) and (ii) of Proposition~\ref{prop:stability} apply to every member.
+\item[(b)] Assume that there are constants $0<d<\pi/2$, $0<\beta_-\le\beta_+$, $\gamma>0$, $0<c_-\le c_+$, $C_\infty$ and $u_*>0$ such that, for all $a\in\mathcal A$:
+\begin{itemize}
+\item[(H1)] $f_{a,r}(x)=e^{x}m_a(e^{x})e^{-(r-1)e^{x}}$ is analytic in the strip $|\mathrm{Im}\,x|<d$ and tends to zero as $|\mathrm{Re}\,x|\to\infty$ in it, and
+\[
+L_d=\sup_{a\in\mathcal A,\ r\ge1,\ |y|<d}\ \frac{\int_{\mathbb R}|f_{a,r}(x+\mathrm iy)|\,\mathrm dx}{\int_{\mathbb R}f_{a,r}(x)\,\mathrm dx}<\infty;
+\]
+\item[(H2)] $c_-u^{\beta_a-1}\le m_a(u)\le c_+u^{\beta_a-1}$ on $(0,u_*]$, with $\beta_a\in[\beta_-,\beta_+]$;
+\item[(H3)] $m_a(u)\le C_\infty e^{-\gamma u}$ on $[u_*,\infty)$.
+\end{itemize}
+Let $\vartheta=\min_{\beta_-\le\beta\le\beta_+}\int_0^{u_*}t^{\beta-1}e^{-t}\,\mathrm dt$, $C_{\mathrm{lo}}=c_+/(c_-\beta_-\vartheta)$ and $C_{\mathrm{hi}}=C_\infty/((1+\gamma)c_-\vartheta)$. Then, for $\ulo\le u_*$, $\uhi\ge\max(u_*,1,\beta_+\ln2)$ and $1\le r<R$,
+\begin{equation}
+\Big|\frac{\hat k_a(r)}{k_a(r)}-1\Big|\le\frac{2L_d}{e^{2\pi d/h}-1}+C_{\mathrm{lo}}\big((R-1)\ulo\big)^{1+\beta_a}+C_{\mathrm{hi}}\,e^{-(1+\gamma)\uhi}.\label{eq:cmerr}
+\end{equation}
+\item[(c)] For $0<\eps\le\min(1,4C_{\mathrm{lo}})$ let $h=2\pi d/\ln(1+4L_d/\eps)$, $\ulo=\min\big(u_*,(\eps/4C_{\mathrm{lo}})^{1/(1+\beta_-)}/(R-1)\big)$, $\uhi=\max\big(u_*,1,\beta_+\ln2,\ln(4C_{\mathrm{hi}}/\eps)/(1+\gamma)\big)$ and $K=\lceil\ln(\uhi/\ulo)/h\rceil+1$. Then the relative weight error is at most $\eps$ for every $a\in\mathcal A$ and $1\le r<R$, and
+\begin{equation}
+K=O\big(\ln(1/\eps)\,\ln(R/\eps)\big)\qquad(\eps\to0,\ R\to\infty),\label{eq:Kscaling}
+\end{equation}
+uniformly in $a$.
+\end{enumerate}
+\end{theorem}
+
+The proof is given in Appendix~\ref{app:cm}. Part (a) holds because the earlier proofs use only the state equations of the bank and the form $\hat k_a(r)=\delta_{r1}\cd(a)+\sum_kc_k(a)\theta_k^{\,r-1}$. Part (b) combines the error bound of the trapezoidal rule for functions analytic in a strip~\cite[Thm.~5.1]{trefethen2014} with the two tail residuals of Sect.~\ref{sec:design}. For the GL family, (H1)--(H3) hold for every $d<\pi/2$, with $\beta_a=1+a$, $\gamma=1-\max a$ and $u_*=1$. The constant $L_d$ grows like $(\cos d)^{-(1+\max a)}$ as $d\to\pi/2$ (Sect.~\ref{sec:res-cm}). The quadrature term~\eqref{eq:Eq} of the rule is the sharper limit $d\to\pi/2$ for this family: it has $\pi^2/h$ in the exponent and an algebraic prefactor. With $h\approx\pi^2/\ln(1/\eps)$, \eqref{eq:Kscaling} becomes $K\approx\ln(1/\eps)\ln(R/\eps)/\pi^2$ to leading order. A fit over 35 rule designs gives $0.106$ for this coefficient, against $1/\pi^2=0.101$ (Sect.~\ref{sec:res-cm}).
+
+\begin{example}[Distributed and time-varying distributed order]\label{ex:distributed}
+For a probability measure $\nu$ on orders of one sign, $k(r)=\int g_r(a)\,\mathrm d\nu(a)$ is again a CM kernel, with density $\int\sigma_am_a\,\mathrm d\nu(a)$. Its bank has the same poles and the residues $\int c_k(a)\,\mathrm d\nu(a)$. Because all weights have one sign, the relative weight error is at most $\sup_a\eps_R(a)$. If the distribution $\nu_n$ changes with time, the output schedule weights the whole memory with $\nu_n$ (A-type), and the input schedule weights each sample with the distribution at its entry (B-type). Both still cost $O(K)$ per sample. For distributions of mixed sign the structural statements remain exact, and the error is relative to $\int|g_r(a)|\,\mathrm d\nu(a)$.
+\end{example}
+
+\begin{example}[Tempering]\label{ex:tempered}
+For a fixed $\lambda>0$, the tempered Gr\"unwald weights $e^{-\lambda r}g_r(a)$~\cite{sabzikar2015} (up to a change of the lag-zero weight) have the density $e^{-\lambda}m_a(u-\lambda)$ on $u>\lambda$. The bank with poles $e^{-\lambda}\theta_k$, residues $e^{-\lambda}c_k(a)$ and delay residue $e^{-\lambda}\cd(a)$ realizes $e^{-\lambda r}\gh_r(a)$ exactly. Its relative weight error, its type and its design rule are therefore those of the untempered bank. A tempering parameter that varies in time moves the poles. By Theorem~\ref{thm:necessity}, switching it with a fixed state then cannot give the A- or B-type exactly. A fixed bank for a range of $\lambda$ is possible, but its density has a branch point at $u=\lambda$, (H1) fails, and the trapezoidal rule converges only algebraically.
+\end{example}
+
+\begin{remark}[Continuous time]\label{rem:bernstein}
+By Bernstein's theorem, the completely monotone functions are the Laplace transforms of nonnegative measures~\cite{widder1941}. For kernels $k_a(t)=\sigma_a\int_0^\infty e^{-\xi t}m_a(\xi)\,\mathrm d\xi$ the continuous-time bank of Sect.~\ref{sec:bank} gives the same structural statements, with $e^{Ft}$ in place of $F^n$. Examples are the power laws of~\eqref{eq:diffusive}, their distributed-order mixtures, and the Prabhakar kernels in their completely monotone parameter range~\cite{mainardi2015}.
 \end{remark}
 
 %% =====================================================================
@@ -684,6 +766,47 @@ E & $2.2\times10^{-8}$ to $5.5\times10^{-5}$ & $\le2.8\times10^{-13}$\\
 \caption{(a) Relaxation equation of all four types with one bank; thin lines are the bank, wide light lines the triangular GL solutions. (b) D-type integral of order 0.95 (inverse of the 0.95 derivative bank) on white noise, with and without the DC floor}\label{fig:types}
 \end{figure}
 
+\subsection{Operator-norm error}\label{sec:res-opnorm}
+
+Two rule designs with $R=N=1000$ and $|\alpha|\le0.95$ were used: $\eps=10^{-3}$ ($K=22$) and $\eps=10^{-6}$ ($K=49$). For each, the realized and literal operators of all four types were formed as dense $1000\times1000$ matrices for eleven order sequences:
+\begin{itemize}
+\item the constants $\pm0.5$ and the constant order with the largest error row sum;
+\item three single switches, a random piecewise-constant sequence, an independent uniform order at every sample, and a smooth zero crossing;
+\item two adversarial sequences that take, at every lag, the order with the largest error on a grid of 380 orders.
+\end{itemize}
+The matrices reproduce the streaming bank to rounding. Table~\ref{tab:opnorm} compares the measured norms with Theorem~\ref{thm:opnorm}.
+
+For the A- and B-types no norm exceeded its bound, and the bounds of part (a) were attained to four digits by the constant and the adversarial sequences. The relative operator error in $\ell^1$ and $\ell^\infty$ was at most $0.45\,\eps_R$. The error kernel is much smaller than $\eps_R$ times the weights: at $\eps=10^{-3}$, $\rho_{\mathrm{row}}=0.031$, against $\eps_R\sup_a\sum_r|g_r(a)|=0.27$. The weight error is relatively largest where the weights are small.
+
+For the recursive integrals (the two sequences with only negative orders), the measured $\ell^\infty$ error was 0.23--0.31 of the bound of part (c) at $\eps=10^{-3}$, and the certificate computed from one step response of the bank gave the same values. The amplification predicted by Remark~\ref{rem:kappa} is real: the relative error of the D- and E-types reached 22 times the relative weight error of the design. For recursive derivatives it stayed below $\eps_R$, and the bound was conservative by factors of 14 to $7\times10^4$, which is the condition number $\kappa_\infty$ (71 to 1445 here) times the margin of part (b).
+
+\begin{table}[t]
+\caption{Theorem~\ref{thm:opnorm} on dense operators ($N=1000$, eleven order sequences). Ratios of measured to bounded quantities; $\eps_R$ is taken over the orders of each sequence, except in the last row, where it is the design value}\label{tab:opnorm}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+Types & Quantity & $\eps=10^{-3}$, $K=22$ & $\eps=10^{-6}$, $K=49$\\
+\midrule
+A, B & $\|E\|_p/\text{bound (a)}$, $p=1,\infty$ & 0.28--1.00 & 0.45--1.00\\
+A, B & $\|E\|_2/\text{bound (a)}$ & 0.13--0.87 & 0.16--0.89\\
+A, B & $(\|E\|_p/\|W\|_p)/\eps_R$, $p=1,\infty$ & 0.04--0.39 & 0.03--0.45\\
+D, E, integrals & $\|E\|_\infty/\text{bound (c)}$ & 0.23--0.31 & 0.006--0.23\\
+D, E, all & $\max\,(\|E\|_\infty/\|W\|_\infty)/\eps_R$ & 22 & 17\\
+\botrule
+\end{tabular}
+\end{table}
+
+\subsection{Completely monotone families}\label{sec:res-cm}
+
+\paragraph{Strip constant and quadrature bound.} For the GL family, $L_d$ was evaluated over 13 orders in $[-0.95,0.95]$ and lags $r=1$ to $10^5$. It is 2.0, 7.2, 31.7 and 175 for $d=0.8$, 1.2, 1.4 and 1.5, which follows $(\cos d)^{-1.95}$. Minimized over $d$, the quadrature term of~\eqref{eq:cmerr} exceeded the measured worst error of the infinite trapezoidal rule (13 orders, 10 lags, 8 grid offsets) by factors of 1.9 to 3.7 for $0.3\le h\le1$. The sharper GL term~\eqref{eq:Eq} agreed with the measurement to within 1\,\%. The general theorem thus loses less than a factor of four against the analysis specific to GL, which costs two to three modes at $K\approx40$.
+
+\paragraph{Bank size.} Over 35 rule designs with $R=10^2,\dots,10^6$ and $\eps=10^{-2},\dots,10^{-8}$ ($K$ from 12 to 90), the least-squares fit
+\[
+K\approx0.57+1.06\ln(1/\eps)+0.53\ln R+0.106\,\ln(1/\eps)\ln(R/\eps)
+\]
+reproduces every $K$ to within 0.7 modes. The coefficient of the product term is within 5\,\% of the value $1/\pi^2$ predicted by Theorem~\ref{thm:cm}.
+
+\paragraph{Distributed and tempered kernels.} For three time-varying distributed orders (Example~\ref{ex:distributed}; uniform densities of width 0.3 whose centre moves smoothly in $[0.15,0.75]$ or in $[-0.75,-0.15]$, or switches from $-0.5$ to $0.5$), one bank designed for $\eps=10^{-5}$ ($K=39$) was run with the averaged residues. Its kernel error was below the largest error of its members in all three cases (at most $2.6\times10^{-6}$). The relative operator error of the A- and B-types was at most $1.8\times10^{-7}$, and the streaming bank matched the dense operators to $3\times10^{-16}$. For the tempered weights with $\lambda=0.01$ (Example~\ref{ex:tempered}), the relative weight error equals that of the untempered bank, $3.877\times10^{-6}$, to rounding.
+
 %% =====================================================================
 \section{Fixed-point realization}\label{sec:hw}
 
@@ -841,7 +964,9 @@ fixed-point core A/B/D/E (48/61/25), vs float & A $3.8\times10^{-6}$, B $1.2\tim
 
 \paragraph{Scope of the guarantees.} Proposition~\ref{prop:structure} and Corollary~\ref{cor:bound} hold for every order sequence. Proposition~\ref{prop:stability} is a statement about each \emph{frozen} order. The recursive types under switching form a switched linear system $F-b\,c(\alpha_n)^{\top}/\gh_0$, whose stability under arbitrary switching is not implied by the stability of each member. In all our tests the switched D- and E-types stayed bounded, within the stress envelope of Sect.~\ref{sec:hw}, but we have no proof for arbitrary switching.
 
-\paragraph{Output versus weight error.} The rule guarantees the relative weight error. For derivatives, and even more for the inverses, the output error can exceed it: by up to a factor of seven for the bank of Sect.~\ref{sec:res-types}, and up to six for the D- and E-types at the design point of Sect.~\ref{sec:hw}. An output-level rule would have to account for the input class.
+\paragraph{Output versus weight error.} Theorem~\ref{thm:opnorm} turns the weight guarantee into an operator guarantee: for the A- and B-types, the worst-case relative output error over all inputs, in $\ell^1$ and $\ell^\infty$, is at most $\eps_R$. Particular inputs can still show larger relative errors, because a derivative of a smooth input is much smaller than the input. The relative output error then exceeded $\eps_R$ by up to a factor of seven for the bank of Sect.~\ref{sec:res-types}, and by up to six for the D- and E-types at the design point of Sect.~\ref{sec:hw}. For the recursive integrals the operator error itself is amplified, by up to $\kappa_\infty\approx2N^{a}/\Gamma(1+a)$ (Remark~\ref{rem:kappa}); a guaranteed design for them must use $\eps/\kappa_\infty$, which adds about $K\ln\kappa_\infty/\ln(1/\eps)$ modes.
+
+\paragraph{Size of a common pole set.} Theorem~\ref{thm:cm} gives an upper bound on $K$, not a lower one. We do not know how much a pole set shared by all orders must exceed the best pole set for a single order. In the comparison of Sect.~\ref{sec:res-baselines}, per-order grids reach the same constant-order accuracy with about two thirds of the states, but they cannot be switched without a definitional error.
 
 \paragraph{Order range.} The bank covers $-1<\alpha<1$. Larger orders follow from integer splits such as Proposition~\ref{prop:split}, which must be placed according to the type.
 
@@ -854,7 +979,7 @@ fixed-point core A/B/D/E (48/61/25), vs float & A $3.8\times10^{-6}$, B $1.2\tim
 %% =====================================================================
 \section{Conclusion}\label{sec:conclusion}
 
-For a finite-dimensional realization of a variable-order operator, the definition it implements is a property of its structure. If the poles move with the order, no state map can make a switched realization exact for the A- or B-type. If the poles are fixed and the order sits in the output or input weights, the realization is the A- or B-type for every order sequence, up to the frozen-order quadrature error. Inverting the same bank gives the D- and E-types with exact duality. The Beta-integral representation makes this exact in discrete time. An analytic rule sizes the bank, and a DC floor, tested by an exact sign, keeps every inverse stable, also after quantization. In hardware the order and the type become a ROM address that can change at every sample. Streaming multifractional Brownian motion shows that the choice between the A- and B-type is a modelling decision with visible consequences, which the bank makes explicit.
+For a finite-dimensional realization of a variable-order operator, the definition it implements is a property of its structure. If the poles move with the order, no state map can make a switched realization exact for the A- or B-type. If the poles are fixed and the order sits in the output or input weights, the realization is the A- or B-type for every order sequence, up to the frozen-order quadrature error. Inverting the same bank gives the D- and E-types with exact duality. The Beta-integral representation makes this exact in discrete time. The weight error bounds the realized operators as a whole: for the forward types the relative operator error never exceeds it, and for the recursive integrals it is amplified by a computable condition number. Nothing in the construction is specific to Gr\"unwald--Letnikov weights: every kernel family that is completely monotone in the lag, such as distributed orders with a time-varying density, is realized in the same way, with a common pole set whose size grows like $\ln(1/\eps)\ln(R/\eps)$. An analytic rule sizes the bank, and a DC floor, tested by an exact sign, keeps every inverse stable, also after quantization. In hardware the order and the type become a ROM address that can change at every sample. Streaming multifractional Brownian motion shows that the choice between the A- and B-type is a modelling decision with visible consequences, which the bank makes explicit.
 
 \backmatter
 
@@ -911,6 +1036,32 @@ so $y(t)=G(0)-G(t)+\int_0^t\partial_aF\,\dot\alpha\,\mathrm d\tau$. The finite p
 \section{Large-lag alias term}\label{app:alias}
 
 For large $r$ the integrand of~\eqref{eq:betax} is concentrated at $u=O(1/r)$, where $(1-e^{-u})^a\approx u^a$. Hence $f(x)\approx e^{(1+a)x}e^{-\rho e^x}$ with $\rho=r-a$. Its Fourier transform is $\hat f(\omega)=\Gamma(1+a-\mathrm i\omega)\rho^{-(1+a-\mathrm i\omega)}$, and $\hat f(0)=\Gamma(1+a)\rho^{-(1+a)}$ is the integral itself. The relative error of the infinite trapezoidal rule is $\sum_{k\neq0}\hat f(2\pi k/h)/\hat f(0)$, dominated by $k=\pm1$. Stirling's formula, $|\Gamma(1+a-\mathrm i\omega)|\sim\sqrt{2\pi}\,\omega^{a+1/2}e^{-\pi\omega/2}$, at $\omega=2\pi/h$ gives~\eqref{eq:Eq}. The result does not depend on $r$, which justifies the name large-lag term.
+
+\section{Proof of Theorem~\ref{thm:opnorm}}\label{app:opnorm}
+
+(a) Row $n$ of $E_{\mathrm A}$ is $(e_n(\alpha_n),\dots,e_1(\alpha_n),0,\dots,0)$. It contains a single order, so its absolute sum is at most $\rho_{\mathrm{row}}$. Column $j$ of $E_{\mathrm A}$ contains $e_{n-j}(\alpha_n)$ for $n>j$, one entry per lag, each at most $\sup_a|e_{n-j}(a)|$, so its absolute sum is at most $\rho_{\mathrm{col}}$. In $E_{\mathrm B}$ column $j$ contains the single order $\alpha_j$, and row $n$ contains one entry per lag. This gives the four bounds. The $\ell^2$ bound follows from $\|E\|_2^2\le\|E\|_1\|E\|_\infty$. For a finite $\mathcal S$, let $a^*$ maximize $\sum_r|e_r(a)|$ and $a_r$ maximize $|e_r(a)|$. The constant sequence $a^*$ attains $\rho_{\mathrm{row}}$ in the last row of $E_{\mathrm A}$ and in the first column of $E_{\mathrm B}$. The sequence $\alpha_n=a_n$ attains $\rho_{\mathrm{col}}$ in the first column of $E_{\mathrm A}$, and the reversed sequence $\alpha_n=a_{N-1-n}$ attains it in the last row of $E_{\mathrm B}$.
+
+(b) The off-diagonal entries satisfy $|[E_{\mathrm T}]_{n,j}|\le\eps_R|[W_{\mathrm T}]_{n,j}|$ because $n-j<N\le R$, and the diagonal of $E_{\mathrm T}$ vanishes. For any $x$, $|E_{\mathrm T}x|\le|E_{\mathrm T}|\,|x|\le\eps_R|W_{\mathrm T}|\,|x|$ entrywise, so $\|E_{\mathrm T}x\|_p\le\eps_R\|\,|W_{\mathrm T}|\,\|_p\|x\|_p$. For $p\in\{1,\infty\}$ the induced norm depends only on the absolute values of the entries.
+
+(c) Since $\hat W_{\mathrm T}=\hat W_{\mathrm F}(-\alpha)^{-1}$ and $W_{\mathrm T}=W_{\mathrm F}(-\alpha)^{-1}$,
+\[
+\hat W_{\mathrm T}-W_{\mathrm T}=\hat W_{\mathrm T}\big(W_{\mathrm F}(-\alpha)-\hat W_{\mathrm F}(-\alpha)\big)W_{\mathrm T}=-\hat W_{\mathrm T}E^-_{\mathrm F}W_{\mathrm T}.
+\]
+Hence $\|E_{\mathrm T}\|_p\le\|\hat W_{\mathrm T}\|_p\|E^-_{\mathrm F}\|_p\|W_{\mathrm T}\|_p\le(\|W_{\mathrm T}\|_p+\|E_{\mathrm T}\|_p)\,q$, which rearranges to the first bound. Writing $\|W_{\mathrm T}\|_p\le\|\hat W_{\mathrm T}\|_p+\|E_{\mathrm T}\|_p$ instead gives the second. If all orders are negative, $\hat W_{\mathrm F}(-\alpha)$ is a derivative bank at every sample: its diagonal $\Ts^{\alpha_n}$ is positive, and its off-diagonal entries $\gh_r(-\alpha_n)$, $r\ge1$, are nonpositive, for $r\ge2$ because all $c_k<0$ and for $r=1$ by assumption. (The DC floor changes $\gh_1$ only by about the DC quadrature error; in the 200 discrete-time holdout designs, $\gh_1<0$ at all 4294 checked derivative orders.) Write $\hat W_{\mathrm F}(-\alpha)=\Delta-L$ with $\Delta$ diagonal positive and $L\ge0$ strictly lower triangular. Then $\hat W_{\mathrm T}=\sum_{k=0}^{N-1}(\Delta^{-1}L)^k\Delta^{-1}\ge0$, and for a nonnegative matrix $\|M\|_\infty=\|M\mathbf 1\|_\infty$. \qed
+
+\section{Proof of Theorem~\ref{thm:cm}}\label{app:cm}
+
+Part (a) is stated after the theorem. For (b), fix $a$ and $r$, and write $f=f_{a,r}$ and $I=\int f\,\mathrm dx=k_a(r)/\sigma_a$. The realized weight is $\sigma_a$ times the infinite trapezoidal sum $T_h=h\sum_{j\in\mathbb Z}f(x_j)$, $x_j=\ln\ulo+jh$, minus two residuals. Let $u_j=e^{x_j}$.
+
+\emph{Quadrature.} By (H1) and~\cite[Thm.~5.1]{trefethen2014}, $|T_h-I|\le2M/(e^{2\pi d/h}-1)$ with $M=\sup_{|y|<d}\int|f(x+\mathrm iy)|\,\mathrm dx\le L_dI$.
+
+\emph{Lower bound on $I$.} For $r\ge2$, (H2) gives $I\ge c_-\int_0^{u_*}e^{-(r-1)u}u^{\beta_a-1}\,\mathrm du\ge c_-\vartheta\,(r-1)^{-\beta_a}$.
+
+\emph{Lower tail.} The nodes $j<0$ are replaced by one node at $u_0=\ulo$ with the same total weight. At lag $r$ the residual is $\sum_{j<0}hu_jm_a(u_j)\big(e^{-(r-1)u_j}-e^{-(r-1)u_0}\big)$, which lies between 0 and $(r-1)u_0\sum_{j<0}hu_jm_a(u_j)$. By (H2) this is at most $(r-1)c_+\ulo^{1+\beta_a}\sum_{j\ge1}he^{-j\beta_ah}\le(r-1)c_+\ulo^{1+\beta_a}/\beta_a$. Divided by the lower bound on $I$, it gives the second term of~\eqref{eq:cmerr}. It vanishes at $r=1$.
+
+\emph{Upper tail.} The nodes $j\ge K$ are replaced by the delay mode, which is exact at $r=1$. For $r\ge2$ the residual is $\sum_{j\ge K}hu_jm_a(u_j)e^{-(r-1)u_j}\le C_\infty e^{-(r-2)\uhi}\sum_{j\ge K}hu_je^{-(1+\gamma)u_j}$ by (H3). The function $x\mapsto e^xe^{-(1+\gamma)e^x}$ decreases for $e^x\ge1/(1+\gamma)$, so for $\uhi\ge1$ the sum is at most $\int_{\uhi}^\infty e^{-(1+\gamma)u}\,\mathrm du=e^{-(1+\gamma)\uhi}/(1+\gamma)$. Relative to $I$, this leaves the factor $(r-1)^{\beta_a}e^{-(r-2)\uhi}$. That factor is 1 at $r=2$ and does not increase for $\uhi\ge\beta_+\ln2$, which gives the third term.
+
+For (c), the choices of $h$, $\ulo$ and $\uhi$ make the three terms at most $\eps/2$, $\eps/4$ and $\eps/4$; the second uses $(R-1)\ulo\le1$, so that the exponent $1+\beta_a$ may be replaced by $1+\beta_-$. A grid with $K=\lceil\ln(\uhi/\ulo)/h\rceil+1$ nodes has a spacing at most $h$, and none of the three bounds increases when the spacing decreases. Finally, $1/h=O(\ln(1/\eps))$ and $\ln(\uhi/\ulo)=O(\ln R+\ln(1/\eps))$, which gives~\eqref{eq:Kscaling}. \qed
 
 \end{appendices}
 

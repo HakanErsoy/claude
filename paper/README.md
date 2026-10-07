@@ -20,8 +20,8 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 | Dosya | İçerik |
 |---|---|
 | `main.tex` | Makale metni |
-| `refs.bib` | Kaynaklar (66 girdi, 65'i atıf alıyor; Crossref ile doğrulandı, `litreview/bib_check.csv`) |
-| `make_figures.py` | Altı vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
+| `refs.bib` | Kaynaklar (72 girdi; Crossref ile doğrulandı, `litreview/bib_check.csv`). Son eklenen üçü (Widder 1941, Sabzikar ve ark. 2015, Mainardi–Garrappa 2015) 2026-10-07'de Crossref'te doğrulandı |
+| `make_figures.py` | Yedi vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
 | `figs/` | Üretilen şekiller (PDF) |
 | `sn-jnl.cls`, `sn-mathphys-num.bst` | Resmî Springer Nature şablonundan (değiştirilmedi) |
 | `main.pdf` | Derlenmiş taslak |
@@ -33,23 +33,29 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 | 1 | Giriş, katkılar; 1.1 ilgili çalışmalar ve karşılaştırma tablosu (Tablo 1) | `litreview/` |
 | 2 | A/B/D/E tanımları, matris formu, dualite, CT basamak referansları, difüzif gösterim | — |
 | 3 | CT ve DT sabit kutuplu banka (Beta-integral, Lemma 1), kuyruk kapanışı, OS/IS, Şekil 1 (TikZ) | — |
-| 4 | Önerme 2 (OS→A, IS→B), Sonuç 3 (hata sınırı), Önerme 4 (D/E terslemeyle), Teorem 5 (gereklilik), Sonuç 6 | — |
-| 5 | Hata modeli, tasarım kuralı, Önerme 7 (ters kararlılık), DC tabanı | — |
-| 6.2 | Hangi tanım izleniyor (CT ve DT) | E1, E1b |
-| 6.3 | Durum eşlemesi | E2 |
-| 6.4 | Mühürlü holdout | E3 |
-| 6.5 | Dört tip, ters kararlılık, hot-swap'ın tipi, gevşeme denklemi | E4 |
-| 7 | Sabit nokta, iki zarf, kuantizasyon ve kararlılık, kelime uzunluğu, RTL | E5, E5c |
-| 8 | mBm uygulaması, Önerme 8 (tamsayı bölme) | E6 |
-| 9–10 | Sınırlar, sonuç | — |
-| Ekler | A: Teorem 5 ispatı; B: Önerme 7 ispatı; C: B-tipi basamak yanıtı; D: büyük-r alias terimi | — |
+| 4 | Önerme 2 (OS→A, IS→B), Sonuç 3 (hata sınırı), Önerme 4 (D/E terslemeyle), **Teorem 5 (operatör normu sınırları)**, **Not 2 (özyinelemeli tiplerin koşul sayısı)**, Teorem 6 (gereklilik), Sonuç 7 | E7 |
+| 5 | Hata modeli, tasarım kuralı, Önerme 8 (ters kararlılık), DC tabanı | — |
+| 6 | **Tam monoton (CM) çekirdek aileleri:** Tanım, Teorem 9 (yapı + hata + K = O(ln(1/ε) ln(R/ε))), dağılımlı derece ve temperleme örnekleri, CT/Bernstein notu | E9 |
+| 7.2 | Hangi tanım izleniyor (CT ve DT) | E1, E1b |
+| 7.3 | Durum eşlemesi | E2 |
+| 7.4 | Mühürlü holdout | E3 |
+| 7.5 | Dört tip, ters kararlılık, hot-swap'ın tipi, gevşeme denklemi | E4 |
+| 7.6 | **Operatör normu hatası** (Tablo: sınır/ölçüm oranları) | E7 |
+| 7.7 | **CM aileleri:** şerit sabiti, kuadratür sınırı, K uydurması, dağılımlı ve temperli çekirdekler | E9 |
+| 7.8 | **Maliyet–doğruluk karşılaştırması** (Pareto şekli): sabit kutup (kural, LP, işaret kısıtlı LP), kayan kutup (hot swap), budanmış GL | E8 |
+| 8 | Sabit nokta, iki zarf, kuantizasyon ve kararlılık, kelime uzunluğu, RTL | E5, E5c |
+| 9 | mBm uygulaması, Önerme (tamsayı bölme) | E6 |
+| 10–11 | Sınırlar, sonuç | — |
+| Ekler | A: gereklilik ispatı; B: ters kararlılık ispatı; C: B-tipi basamak yanıtı; D: büyük-r alias terimi; **E: operatör normu ispatı; F: CM teoremi ispatı** | — |
+
+Not: teorem numaraları LaTeX'te paylaşılan sayaçla otomatik veriliyor; yukarıdaki numaralar derlenmiş PDF'e göre.
 
 Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablolar elle yazıldı; sonuçlar değişirse tablolar da güncellenmeli.
 
 ## Taslak sırasında yapılan düzeltmeler
 
-- **Önerme 7'nin tam hali:** İntegral bankasında gecikme kutbu (z = 0) yüzünden bir sıfır negatif eksene düşüyor. Bu yüzden H(−1) > 0 koşulu da gerekiyor. Türev bankasında c_d > 0 ise aynı koşul geçerli. İspat Ek B'de. İlk iki ağırlık 1/3 doğrulukla gerçekleniyorsa H(−1) > 0 kendiliğinden sağlanıyor. Holdout'taki tüm derecelerde H(−1), tam değeri 2^α·g₀'a %0.06 içinde yakın. `vofrac/bank.py` içindeki `inverse_is_stable` artık bu koşulu da kontrol ediyor. E4 sonuçları değişmedi (200/200 ve 101/200).
-- **Özdeğer yerine işaret:** Bir holdout tasarımında (α = 0.95, K = 35) baskın ters kutup 50 basamaklı hesapla 1 − 2.9e-12'de. `numpy.linalg.eigvals` ise 1 + 4.5e-9 veriyor. Bu örnek makalede Remark 3 olarak yer alıyor.
+- **Ters kararlılık önermesinin (şimdi Önerme 8) tam hali:** İntegral bankasında gecikme kutbu (z = 0) yüzünden bir sıfır negatif eksene düşüyor. Bu yüzden H(−1) > 0 koşulu da gerekiyor. Türev bankasında c_d > 0 ise aynı koşul geçerli. İspat Ek B'de. İlk iki ağırlık 1/3 doğrulukla gerçekleniyorsa H(−1) > 0 kendiliğinden sağlanıyor. Holdout'taki tüm derecelerde H(−1), tam değeri 2^α·g₀'a %0.06 içinde yakın. `vofrac/bank.py` içindeki `inverse_is_stable` artık bu koşulu da kontrol ediyor. E4 sonuçları değişmedi (200/200 ve 101/200).
+- **Özdeğer yerine işaret:** Bir holdout tasarımında (α = 0.95, K = 35) baskın ters kutup 50 basamaklı hesapla 1 − 2.9e-12'de. `numpy.linalg.eigvals` ise 1 + 4.5e-9 veriyor. Bu örnek makalede Remark 4 olarak yer alıyor.
 - **E5c (yeni, `experiments/e5c_quantized_stability.py`):** Kuantize ROM satırlarında H_q(±1) işaretleri artık tam rasyonel aritmetikle hesaplanıyor.
   - Sayılar öncekiyle aynı: A/B yapılandırmasında 64/512, A/B/D/E'de 51/512 satır.
   - En kötü satırın baskın kutbu artık tam hesaplanıyor: A/B/D/E'de 1 + 1.9e-9 (önceki özdeğer tahmini 2.5e-9), e-katına çıkma süresi 5.2e8 örnek. A/B'de 1 + 4.8e-6.

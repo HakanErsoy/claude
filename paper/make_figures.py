@@ -245,8 +245,51 @@ def fig_mbm():
     save(fig, "fig_mbm.pdf")
 
 
+# ---------------------------------------------------------------- E8
+def fig_pareto():
+    rows = load("e8_baselines.json")["rows"]
+
+    def series(method):
+        return [r for r in rows if r["method"] == method]
+
+    def mem(r):
+        return r["state_A"] + r["rom"]
+
+    spec = [  # method, label, colour, marker, line style, filled
+        ("FP-rule", "fixed poles, analytic rule (this paper)", C[0], "o", "-", True),
+        ("FP-LPs", "fixed poles, LP residues with sign/DC constraints", C[2], "^", "-", True),
+        ("FP-LP", "fixed poles, unconstrained LP residues", C[2], "v", "--", False),
+        ("MP-rule", "moving poles, hot swap", C[1], "s", "-", True),
+        ("FIR", "truncated GL convolution", C[3], "D", "--", True),
+    ]
+    fig, axes = plt.subplots(1, 2, figsize=(FULL, 2.7), sharey=True)
+    for ax, xkey, xlabel, lab in ((axes[0], "mac", "multiplications per sample", "a"),
+                                  (axes[1], "mem", "memory words (states + coefficient ROM)", "b")):
+        for method, label, col, mk, ls, filled in spec:
+            rs = [r for r in series(method) if r["vo"]["A"] > 0]
+            x = [r["mac"] if xkey == "mac" else mem(r) for r in rs]
+            y = [r["vo"]["A"] for r in rs]
+            ax.plot(x, y, ls, color=col, marker=mk, mfc=col if filled else "white", label=label)
+            if method == "MP-rule":
+                yc = [r["const"] for r in rs]
+                ax.plot(x, yc, ":", color=col, marker=mk, mfc="white", label="moving poles, constant order only")
+        fir_exact = [r for r in series("FIR") if r["vo"]["A"] == 0][0]
+        xe = fir_exact["mac"] if xkey == "mac" else mem(fir_exact)
+        ax.annotate("exact at $L=N$", xy=(xe, 2e-10), xytext=(xe, 2e-10), ha="right", va="bottom",
+                    fontsize=6.5, color=INK2)
+        ax.set_xscale("log")
+        ax.set_xlabel(xlabel)
+        style(ax)
+        ax.set_ylim(1e-10, 3)
+        panel(ax, lab, "A-type, worst over 8 order sequences")
+    axes[0].set_ylabel(r"relative operator error $\|\hat W-W_{\mathrm A}\|_\infty/\|W_{\mathrm A}\|_\infty$")
+    axes[1].legend(loc="lower left", fontsize=6.3)
+    fig.tight_layout()
+    save(fig, "fig_pareto.pdf")
+
+
 if __name__ == "__main__":
     os.makedirs(FIG, exist_ok=True)
-    for f in (fig_definition, fig_rule, fig_maps, fig_types, fig_wordlength, fig_mbm):
+    for f in (fig_definition, fig_rule, fig_maps, fig_types, fig_wordlength, fig_mbm, fig_pareto):
         f()
         print("wrote", f.__name__)

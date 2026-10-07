@@ -1,0 +1,25 @@
+holdout: max g^_1 / g_0 over 4294 derivative orders = -0.001 (must be < 0)
+eps=1e-03 K=22: range eps_R=3.77e-04 rho_row=3.048e-02 rho_col=3.202e-02 (eps_R*gamma: 2.671e-01, 2.744e-01)
+  constant +0.5      eps_R=1.4e-04 max err/bound A:1.00 B:1.00 D:0.07 E:0.07 | rel inf A:3.6e-05 B:3.6e-05 D:2.6e-05 E:2.6e-05
+  constant -0.5      eps_R=1.7e-05 max err/bound A:1.00 B:1.00 D:0.27 E:0.27 | rel inf A:5.8e-06 B:5.8e-06 D:5.7e-04 E:5.7e-04 | cert D 6.4e-04<=2.8e-03 E 6.4e-04<=2.8e-03
+  constant a_row*    eps_R=3.1e-04 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.9e-05 B:2.9e-05 D:4.3e-06 E:4.3e-06
+  switch +0.3->+0.8  eps_R=2.5e-04 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.8e-05 B:2.8e-05 D:7.4e-06 E:1.8e-05
+  switch -0.3->-0.8  eps_R=7.2e-05 max err/bound A:1.00 B:0.38 D:0.28 E:0.30 | rel inf A:2.8e-05 B:1.1e-05 D:5.5e-03 E:4.0e-03 | cert D 7.3e-03<=2.6e-02 E 3.6e-03<=1.2e-02
+  switch -0.5->+0.5  eps_R=1.4e-04 max err/bound A:1.00 B:0.99 D:0.00 E:0.00 | rel inf A:3.6e-05 B:3.5e-05 D:8.2e-05 E:4.0e-04
+  random piecewise   eps_R=3.2e-04 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:1.4e-05 B:1.4e-05 D:1.0e-03 E:1.5e-04
+  iid uniform        eps_R=3.7e-04 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.2e-05 B:2.1e-05 D:6.6e-05 E:6.5e-05
+  smooth crossing    eps_R=1.7e-04 max err/bound A:0.99 B:1.00 D:0.00 E:0.00 | rel inf A:2.9e-05 B:2.9e-05 D:2.1e-05 E:2.1e-05
+  adversarial A      eps_R=3.5e-04 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.3e-05 B:2.7e-05 D:4.3e-03 E:1.8e-05
+  adversarial B      eps_R=3.5e-04 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.3e-05 B:2.7e-05 D:2.6e-04 E:8.1e-03
+eps=1e-06 K=49: range eps_R=4.31e-07 rho_row=3.278e-05 rho_col=3.485e-05 (eps_R*gamma: 3.050e-04, 3.133e-04)
+  constant +0.5      eps_R=1.5e-07 max err/bound A:1.00 B:1.00 D:0.07 E:0.07 | rel inf A:2.9e-08 B:2.9e-08 D:2.0e-08 E:2.0e-08
+  constant -0.5      eps_R=8.9e-09 max err/bound A:1.00 B:1.00 D:0.27 E:0.27 | rel inf A:3.9e-09 B:3.9e-09 D:4.7e-07 E:4.7e-07 | cert D 5.3e-07<=2.3e-06 E 5.3e-07<=2.3e-06
+  constant a_row*    eps_R=4.3e-07 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.3e-08 B:2.3e-08 D:2.6e-09 E:2.6e-09
+  switch +0.3->+0.8  eps_R=3.1e-07 max err/bound A:1.00 B:0.99 D:0.00 E:0.00 | rel inf A:9.9e-09 B:9.9e-09 D:1.1e-08 E:1.8e-08
+  switch -0.3->-0.8  eps_R=2.7e-08 max err/bound A:1.00 B:0.83 D:0.01 E:0.01 | rel inf A:1.1e-08 B:8.5e-09 D:4.3e-08 E:3.0e-08 | cert D 5.7e-08<=8.8e-06 E 2.7e-08<=4.1e-06
+  switch -0.5->+0.5  eps_R=1.5e-07 max err/bound A:1.00 B:0.99 D:0.00 E:0.00 | rel inf A:2.9e-08 B:2.8e-08 D:6.7e-08 E:3.3e-07
+  random piecewise   eps_R=3.8e-07 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:1.2e-08 B:1.2e-08 D:2.8e-07 E:2.6e-07
+  iid uniform        eps_R=4.3e-07 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.4e-08 B:2.2e-08 D:5.4e-08 E:5.0e-08
+  smooth crossing    eps_R=1.9e-07 max err/bound A:0.98 B:1.00 D:0.00 E:0.00 | rel inf A:2.5e-08 B:2.5e-08 D:2.2e-08 E:2.3e-08
+  adversarial A      eps_R=4.3e-07 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.1e-08 B:2.2e-08 D:9.2e-07 E:6.4e-07
+  adversarial B      eps_R=4.3e-07 max err/bound A:1.00 B:1.00 D:0.00 E:0.00 | rel inf A:2.3e-08 B:2.4e-08 D:6.5e-07 E:7.3e-06

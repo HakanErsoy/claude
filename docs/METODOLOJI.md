@@ -373,6 +373,34 @@ Yorum:
 - Donanım notu: A-tipinde akümülatör çekirdeğin önünde ve tam (tamsayı toplam), bu yüzden ucuz çekirdek yetiyor. B-tipinde akümülatör çekirdeğin arkasında ve çekirdeğin düşük frekans yuvarlama hatalarını biriktiriyor; bu da daha geniş bir çekirdek gerektiriyor.
 - Önemli düzeltme: golden model artık girişleri Python tamsayısına çeviriyor. numpy int64 girişler geniş çarpımlarda sessizce taşabiliyordu; E5 sonuçları bundan etkilenmedi.
 
+### E7: operatör normu sınırları (Teorem 5)
+
+İki kural tasarımı (R = N = 1000, |α| ≤ 0.95): ε = 1e-3 (K = 22) ve ε = 1e-6 (K = 49). On bir derece dizisi için dört tipin gerçeklenen ve literal operatörleri yoğun 1000×1000 matris olarak kuruldu. Diziler: sabitler, anahtarlamalar, rastgele parçalı, her örnekte bağımsız, düzgün geçiş ve iki "kötü niyetli" dizi.
+
+| Nicelik | ε = 1e-3 | ε = 1e-6 |
+|---|---|---|
+| A, B: ‖E‖_p / sınır (a), p = 1, ∞ | 0.28–1.00 | 0.45–1.00 |
+| A, B: ‖E‖_2 / sınır (a) | 0.13–0.87 | 0.16–0.89 |
+| A, B: (‖E‖/‖W‖)/ε_R, p = 1, ∞ | 0.04–0.39 | 0.03–0.45 |
+| D, E integral: ‖E‖_∞ / sınır (c) | 0.23–0.31 | 0.006–0.23 |
+| D, E: en büyük göreli ∞-hata / ε_R (tasarım) | 22 | 17 |
+
+Yorum:
+- A/B için sınırlar hiç aşılmadı. Sabit ve kötü niyetli dizilerde dört basamak doğrulukla tam olarak yakalandı.
+- İleri tiplerde göreli operatör hatası ≤ ε_R. Bu, "çıkış düzeyinde kural" eksiğini ℓ1/ℓ∞ en kötü durum anlamında kapatıyor.
+- Özyinelemeli integrallerde hata, ters çevrilen türevin koşul sayısıyla büyüyor; κ ≈ 2N^a/Γ(1+a), burada 71–668. Bu gerçek bir etki (DC kazancı küçük). Garanti için tasarım ε/κ ile yapılmalı.
+- Adım yanıtından tek koşuluk a-posteriori sertifika, ölçülen hatanın 3–4 katı içinde.
+- Türev D/E'de ölçülen hata ε_R düzeyinde kalıyor; sınır κ kadar ihtiyatlı.
+- Holdout'taki 4294 türev derecesinin hepsinde ĝ₁ < 0. Bu, (c)'deki negatif olmama hipotezi.
+
+### E9: tam monoton çekirdek aileleri (Teorem 9)
+
+- Şerit sabiti L_d (GL ailesi): d = 0.8 / 1.2 / 1.4 / 1.5 için 2.0 / 7.2 / 31.7 / 175. Bu, (cos d)^(−1.95) davranışıyla uyumlu.
+- Genel kuadratür sınırı, ölçülen en kötü trapez hatasının 1.9–3.7 katı. GL'ye özgü E_q ölçümle %1 içinde örtüşüyor.
+- K ölçeklemesi: R = 1e2…1e6 ve ε = 1e-2…1e-8 aralığındaki 35 tasarım (K = 12…90), K ≈ 0.57 + 1.06 ln(1/ε) + 0.53 ln R + 0.106 ln(1/ε) ln(R/ε) ile 0.7 kutup içinde açıklanıyor. Çarpım katsayısı 0.106, teorideki 1/π² = 0.101'e çok yakın.
+- Zamanla değişen dağılımlı derece: aynı banka (K = 39) karışım artıklarıyla çalıştırıldı. Çekirdek hatası en kötü bileşenin altında kaldı (≤ 2.6e-6); A/B göreli operatör hatası ≤ 1.8e-7; akış ile yoğun operatör farkı 3e-16.
+- Sabit temperleme (λ = 0.01): kutuplar e^(−λ)θ_k oluyor; göreli hata temperlenmemiş bankayla aynı (3.877e-6).
+
 ---
 
 ## 8. Sonraki adımlar
