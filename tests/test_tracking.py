@@ -49,3 +49,22 @@ def test_matched_filters_track_and_wrong_type_is_biased():
     assert err(grid_on_A) < 0.01
     assert err(b_on_B) < 0.03
     assert err(grid_on_B) > 3 * err(grid_on_A)
+
+
+def test_unscented_gl_filters():
+    from vofrac.tracking import ukf_bank_A, ukf_gl_A, ukf_gl_B
+    bank, x, alpha, rng = _setup()
+    cs = CoeffSpline(bank)
+    late = np.arange(N) >= N // 2 + 50
+    err = lambda a: float(np.sqrt(np.mean((a - alpha)[late] ** 2)))
+    yA = gl_A(x, alpha, TS)
+    sA = 1e-2 * np.std(yA)
+    ya = yA + sA * rng.standard_normal(N)
+    a_gl = ukf_gl_A(x, ya, TS, N, 1e-5, sA ** 2, gate=16.0, p_jump=5e-4)[0]
+    a_bank = ukf_bank_A(cs, x, ya, 1e-5, sA ** 2, gate=16.0, p_jump=5e-4)[0]
+    assert np.max(np.abs(a_gl - a_bank)) < 1e-3          # full GL memory = bank model
+    assert err(a_gl) < 0.03
+    yB = gl_B(x, alpha, TS)
+    sB = 1e-3 * np.std(yB)
+    a_b = ukf_gl_B(x, yB + sB * rng.standard_normal(N), TS, 5, 1e-5, sB ** 2, gate=16.0, p_jump=5e-4)[0]
+    assert err(a_b) < 0.03

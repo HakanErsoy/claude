@@ -441,6 +441,28 @@ Yorum:
 - A-EKF bankayla, kesin GL ağırlıklı EKF'yi 9e-6 içinde tekrarlıyor; maliyet O(n) yerine O(K).
 - A-EKF yüksek SNR'de ağır kuyruklu (p90 0.11–0.15): sıçramada tek örnek olabilirliği çok tepeli olduğu için yanlış köke kilitlenebiliyor. Izgara filtresinde bu sorun yok.
 
+### E11: UFOKF tarzı unscented filtrelerle karşılaştırma
+
+E10 ile aynı veri ve gürültü çekilişleri kullanıldı. Bunlar Sierociuk ve ark.'nın UFOKF'sinin ilkesiyle kurulmuş, bizim uygulamamız olan filtreler: derece filtre durumunda, çıkış doğrudan GL toplamıyla hesaplanıyor, doğrusallaştırma yerine unscented dönüşüm kullanılıyor. Yayımlanmış filtre ayrıca kesirli durum uzayı modelinin durumlarını da kestiriyor; bizim problemimizde böyle bir durum yok.
+
+| Filtre (çarpma/örnek) | Veri | 20 dB | 40 dB | 60 dB |
+|---|---|---|---|---|
+| A-UKF, GL belleği L = 100 (≈600) | A | 0.036 | 0.138 | 0.244 |
+| A-UKF, L = 500 (≈3000) | A | 0.028 | 0.026 | 0.081 |
+| A-UKF, tam bellek (≈3n) | A | 0.027 | 0.016 | 0.039 |
+| Aynı UKF bankada (≈6(K+2)) | A | 0.027 | 0.016 | 0.039 |
+| B-UKF, W = 5 pencere (≈n + 275) | B | 0.028 | 0.014 | 0.012 |
+| karşılaştırma: A-ızgara (bankada) | A | 0.018 | 0.0040 | 0.0013 |
+| karşılaştırma: B-EKF (bankada) | B | 0.027 | 0.015 | 0.012 |
+
+(medyan RMSE)
+
+Yorum:
+- Kısaltılmış GL belleği yanlılık getiriyor.
+- Tam bellekli GL-UKF ile banka-UKF, 150 koşunun 144'ünde 1e-4 içinde aynı (medyan fark 3e-6); diğer 6 koşuda bile RMSE üç basamağa kadar aynı. Yani banka, tam bellek doğruluğunu O(n) yerine O(K) maliyetle veriyor.
+- Yerel filtreler (EKF/UKF) 40–60 dB'de ızgara filtresinden 4–30 kat kötü. Izgara filtresi ise ancak bankanın dereceden bağımsız regresörleri sayesinde uygulanabilir.
+- B-tipinde pencereli UKF, B-EKF ile aynı doğrulukta. Ama tüm giriş geçmişini tutup güncellemesi gerekiyor (örnek başına O(n) işlem ve bellek); bankanın durumu ise K+2 boyutlu.
+
 ---
 
 ## 8. Sonraki adımlar

@@ -200,3 +200,142 @@ def grid_filter_A(bank, x, y, q, r_v, grid=np.linspace(-0.95, 0.95, 381), p_swit
         s[:-1] = th * s[:-1] + x[k]
         s[-1] = x[k]
     return mean, var
+
+
+# ------------------------------------------------- unscented filters on the direct GL sum
+#
+# Baselines in the spirit of the unscented fractional-order Kalman filter
+# (UFOKF) of Sierociuk et al.: the order is a filter state, the measurement
+# is evaluated by the GL sum itself, and the unscented transform replaces
+# linearization. This is our implementation for the direct-operator problem
+# y = T^alpha x + v, which has no hidden state besides the input memory.
+
+
+def _gl_w(a, m):
+    """w_0..w_{m-1} of order a (Ts = 1 weights before the Ts^-a gain)."""
+    w = np.empty(m)
+    w[0] = 1.0
+    if m > 1:
+        j = np.arange(1, m)
+        w[1:] = np.cumprod((j - 1 - a) / j)
+    return w
+
+
+def _ukf_scalar(n, y, model, advance, q, r_v, a0, p0, gate, p_jump, lo, hi, kappa=2.0):
+    """Scalar UKF with 3 sigma points (Julier's kappa = 2) and the jump gating of the EKFs."""
+    a, P = a0, p0
+    ah, Ph = np.empty(n), np.empty(n)
+    w0, wi = kappa / (1 + kappa), 0.5 / (1 + kappa)
+    for k in range(n):
+        P += q
+        for attempt in (0, 1):
+            d = np.sqrt((1 + kappa) * P)
+            pts = np.clip(np.array([a, a + d, a - d]), lo, hi)
+            h = np.array([model(b, k) for b in pts])
+            yhat = w0 * h[0] + wi * (h[1] + h[2])
+            Pyy = w0 * (h[0] - yhat) ** 2 + wi * ((h[1] - yhat) ** 2 + (h[2] - yhat) ** 2) + r_v
+            if attempt == 0 and (y[k] - yhat) ** 2 > gate * Pyy:
+                P += p_jump
+                continue
+            break
+        Pxy = wi * ((pts[1] - a) * (h[1] - yhat) + (pts[2] - a) * (h[2] - yhat))
+        G = Pxy / Pyy
+        a = _clip(a + G * (y[k] - yhat), lo, hi)
+        P = max(P - G * G * Pyy, 1e-12)
+        ah[k], Ph[k] = a, P
+        advance(k)
+    return ah, Ph
+
+
+def ukf_gl_A(x, y, Ts, L, q, r_v, a0=0.0, p0=0.25, gate=25.0, p_jump=0.05, a_min=-0.95, a_max=0.95):
+    """UFOKF-type A-type filter: GL sum over the last L samples, O(L) per sigma point."""
+    lnT = np.log(Ts)
+
+    def model(a, k):
+        m = min(k + 1, L)
+        return np.exp(-a * lnT) * (_gl_w(a, m) @ x[k::-1][:m])
+
+    return _ukf_scalar(len(x), y, model, lambda k: None, q, r_v, a0, p0, gate, p_jump, a_min, a_max)
+
+
+def ukf_bank_A(cs, x, y, q, r_v, a0=0.0, p0=0.25, gate=25.0, p_jump=0.05):
+    """The same scalar UKF on the output-scheduled bank, O(K) per sigma point."""
+    th = cs.bank.theta
+    st = {"s": np.zeros(len(th)), "sd": 0.0}
+
+    def model(b, k):
+        g0, _, cd, _, c, _ = cs(b)
+        return g0 * x[k] + cd * st["sd"] + c @ st["s"]
+
+    def advance(k):
+        st["s"] = th * st["s"] + x[k]
+        st["sd"] = x[k]
+
+    return _ukf_scalar(len(x), y, model, advance, q, r_v, a0, p0, gate, p_jump, cs.a_min, cs.a_max)
+
+
+def ukf_gl_B(x, y, Ts, W, q, r_v, a0=0.0, p0=0.25, gate=25.0, p_jump=0.05, a_min=-0.95, a_max=0.95):
+    """UFOKF-type B-type filter with a fixed-lag window of W past orders in the state.
+
+    In the B-type, alpha_j weights x_j at every later output, so the current
+    order is seen only through later samples (not at all in y_n when Ts = 1).
+    The state is (alpha_n, ..., alpha_{n-W+1}) with a random walk on the newest
+    entry; orders that leave the window are frozen at their estimates, and
+    their contributions to all later outputs are accumulated (the literal
+    B-type sum, O(n) per sample). Unscented transform with 2W + 1 points.
+    """
+    n = len(x)
+    lnT = np.log(Ts)
+    m = np.full(W, a0)                       # mean: m[0] = alpha_n, m[i] = alpha_{n-i}
+    P = np.eye(W) * p0
+    acc = np.zeros(n)                        # contributions of samples that left the window
+    lam = 0.0                                # kappa = 0: weights 0 and 1/(2W)
+    wc = np.full(2 * W + 1, 1.0 / (2 * (W + lam)))
+    wc[0] = lam / (W + lam)
+    ah, Ph = np.empty(n), np.empty(n)
+    for k in range(n):
+        if k > 0:
+            # the oldest order leaves the window: freeze it and add its future contributions
+            j = k - W
+            if j >= 0:
+                aj = m[-1]
+                acc[k:] += np.exp(-aj * lnT) * _gl_w(aj, n - j)[k - j:] * x[j]
+            # shift and random walk on the newest order
+            m = np.concatenate([[m[0]], m[:-1]])
+            Pn = np.empty_like(P)
+            Pn[1:, 1:] = P[:-1, :-1]
+            Pn[0, 1:] = P[0, :-1]
+            Pn[1:, 0] = P[:-1, 0]
+            Pn[0, 0] = P[0, 0] + q
+            P = Pn
+        r = np.arange(min(W, k + 1))         # lags covered by the window at time k
+        xs = x[k - r]
+
+        def h_of(states):
+            # weight of lag l with its own order a_l: w_l(a_l) = prod_{j=1}^{l} (j - 1 - a_l)/j
+            a_w = np.clip(states[:, r], a_min, a_max)            # (points, lags)
+            jj = np.arange(1, len(r))[None, None, :]
+            fac = np.where(jj <= r[None, :, None], (jj - 1 - a_w[:, :, None]) / jj, 1.0)
+            w = fac.prod(axis=2) if len(r) > 1 else np.ones_like(a_w)
+            return (np.exp(-a_w * lnT) * w) @ xs + acc[k]
+
+        for attempt in (0, 1):
+            S = np.linalg.cholesky((W + lam) * P + 1e-15 * np.eye(W))
+            pts = np.vstack([m, m + S.T, m - S.T])
+            h = h_of(pts)
+            yhat = wc @ h
+            dy = h - yhat
+            Pyy = wc @ dy ** 2 + r_v
+            if attempt == 0 and (y[k] - yhat) ** 2 > gate * Pyy:
+                P = P.copy()
+                P[0, 0] += p_jump
+                continue
+            break
+        Pxy = (wc * dy) @ (pts - m)
+        G = Pxy / Pyy
+        m = m + G * (y[k] - yhat)
+        m = np.clip(m, a_min, a_max)
+        P = P - np.outer(G, G) * Pyy
+        P = 0.5 * (P + P.T)
+        ah[k], Ph[k] = m[0], P[0, 0]
+    return ah, Ph

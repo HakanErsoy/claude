@@ -21,7 +21,7 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 
 | Dosya | İçerik |
 |---|---|
-| `main.tex` | Makale metni (41 sayfa) |
+| `main.tex` | Makale metni (42 sayfa) |
 | `supplement.tex` | Ek materyal (8 sayfa, S1–S7): CT anahtarlama tablosu, durum eşlemesi ayrıntıları, hot-swap tip analizi, sabit nokta ayrıntıları ve kelime uzunluğu şekli, mBm ayrıntıları ve tablosu, iki türetme (B-tipi basamak yanıtı, büyük-r alias terimi). Ana metne `xr` paketiyle çapraz referans veriyor |
 | `refs.bib` | Kaynaklar (72 girdi; Crossref ile doğrulandı, `litreview/bib_check.csv`). Son eklenen üçü (Widder 1941, Sabzikar ve ark. 2015, Mainardi–Garrappa 2015) 2026-10-07'de Crossref'te doğrulandı |
 | `make_figures.py` | Sekiz vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
@@ -40,7 +40,7 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 | 5 | Hata modeli, tasarım kuralı, Önerme 8 (ters kararlılık), DC tabanı | — |
 | 6 | Tam monoton çekirdek aileleri: Teorem 9, Lemma 10 (GL sabitleri kapalı formda), örnekler | E9 |
 | 7.2–7.8 | Hangi tanım izleniyor; durum eşlemesi (özet); mühürlü holdout; dört tip; operatör normu; CM aileleri; maliyet–doğruluk (Pareto) | E1, E1b, E2, E3, E4, E7, E9, E8 |
-| 8.1 | **Çevrimiçi derece izleme** (yeni): A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, yanlış tip yanlılığı (Tablo 7, Şekil 6) | E10 |
+| 8.1 | **Çevrimiçi derece izleme** (yeni): A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, yanlış tip yanlılığı, UFOKF tarzı unscented filtrelerle karşılaştırma (Tablo 7, Şekil 6) | E10, E11 |
 | 8.2 | mBm (özet): Önerme 11 (tamsayı bölme), sonuçlar, Şekil 7 | E6 |
 | 9 | Sabit nokta (özet): Algoritma 1, iki zarf, kuantizasyon ve kararlılık, kelime uzunlukları, RTL paritesi ve Tablo 8 | E5, E5c |
 | 10–11 | Sınırlar (tahmin, ortak kutup kümesinin boyutu dahil), sonuç | — |
@@ -67,6 +67,7 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
 - **İkinci tur (2026-10-07):**
   - **Lemma 10:** GL ailesi için (H1)–(H3) sabitleri kapalı formda, L_d ≤ (2/(1−e^{−2}))^ā (cos d)^{−(1+ā)}. Teorem 9(c) böylece GL'ye özgü hata modeli olmadan a priori tasarım veriyor; dört spesifikasyonda ε 13–17 kat payla tutuldu, K kuraldan 1.4–1.6 kat büyük (E9 P5).
   - **Çevrimiçi derece izleme (Bölüm 8.1, E10).** Doğru tipte hata SNR ile azalıyor: 60 dB'de A-ızgara 1.3e-3, B-EKF 1.2e-2. Yanlış tipte hata SNR ile artıyor: 0.14–0.24. A-EKF bankayla kesin GL-EKF'yi 9e-6 içinde tekrarlıyor.
+  - **UFOKF tarzı karşılaştırma (Bölüm 8.1, Tablo 7 alt kısım, E11).** Doğrudan GL toplamı üzerinde unscented filtreler (bizim uygulamamız): kısaltılmış bellek yanlı; tam bellek bankayla aynı sonucu O(n) yerine O(K) maliyetle veriyor; B-tipinde pencereli UKF, B-EKF kadar iyi ama O(n).
   - **Toparlama:** sabit nokta ayrıntıları, durum eşlemesi şekli ve tablosu, mBm tablosu, CT tablosu ve iki türetme eki ek materyale taşındı. Katkı listesi altı maddeye indi, başlık güncellendi.
 - **Üç ekleme (2026-10-07):**
   - **Operatör normu sınırları (Teorem 5, Not 2, Ek E; E7).** İleri tiplerde ℓ1/ℓ∞ göreli operatör hatası her derece dizisi için ≤ ε_R. Schur sabitleri ρ_row/ρ_col hiç aşılmadı ve sabit/kötü niyetli dizilerde tam yakalandı. Özyinelemeli integrallerde koşul sayısıyla (≈ 2N^a/Γ(1+a)) büyüme var; garanti için tasarım ε/κ ile yapılmalı. Adım yanıtından a-posteriori sertifika da verildi.
