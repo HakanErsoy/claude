@@ -17,6 +17,11 @@ Part 3  Time-varying distributed order. The order density at sample n is
         with the dense A- and B-type operators of the averaged kernel.
 Part 4  Fixed tempering: k_a(r) = e^{-lambda r} g_r(a) is realized with the
         poles e^{-lambda} theta_k and the same relative error.
+Part 5  A-priori design: part (c) of the theorem with the closed-form GL
+        constants (lemma) gives h, u_lo, u_hi and K without any GL-specific
+        error model; the bank (no DC floor) is measured against eps.
+Part 1 also reports the closed-form bound on L_d and the quadrature bound
+obtained with it.
 
 Outputs: results/e9_cm_kernels.json
 """
@@ -33,7 +38,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from vofrac import cm  # noqa: E402
 from vofrac.bank import DiscreteFixedPoleBank  # noqa: E402
 from vofrac.baselines import kernel_from  # noqa: E402
-from vofrac.design import design_dt, dt_quadrature  # noqa: E402
+from vofrac.design import design_dt, dt_quadrature, measure_dt  # noqa: E402
 from vofrac.opnorm import bank_table, gl_table, norm, operator_matrix, rel_weight_error  # noqa: E402
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "results")
@@ -74,13 +79,15 @@ def strip_ratio(a, r, y, dx=0.01):
 
 def part1():
     ds = (0.6, 0.8, 1.0, 1.2, 1.3, 1.4, 1.45, 1.5, 1.53)
-    L = {}
+    L, L_an = {}, {}
     for d in ds:
         L[d] = max(strip_ratio(a, r, d) for a in A_GRID for r in R_GRID)
-        print(f"P1 d={d:.2f} L_d={L[d]:.3e}", flush=True)
+        L_an[d] = float(cm.gl_strip_bound(0.95, d))
+        print(f"P1 d={d:.2f} L_d={L[d]:.3e} (closed-form bound {L_an[d]:.3e})", flush=True)
     rows = []
     for h in (0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0):
         gen = min(2 * L[d] / np.expm1(2 * np.pi * d / h) for d in ds)
+        gen_an = min(2 * cm.gl_strip_bound(0.95, d) / np.expm1(2 * np.pi * d / h) for d in np.linspace(0.3, 1.55, 126))
         meas = 0.0
         for a in A_GRID:
             if a == 0:
@@ -97,10 +104,12 @@ def part1():
                     if err > meas:
                         meas, where = err, (float(a), int(r), float(off))
         sharp = max(dt_quadrature(a, h) for a in A_GRID if a != 0)
-        rows.append({"h": h, "measured": meas, "at": where, "gl_estimate": sharp, "general_bound": gen})
-        print(f"P1 h={h:.2f} measured={meas:.2e} at {where} GL estimate={sharp:.2e} general bound={gen:.2e}",
-              flush=True)
-    return {"L_d": {str(k): v for k, v in L.items()}, "rows": rows}
+        rows.append({"h": h, "measured": meas, "at": where, "gl_estimate": sharp, "general_bound": gen,
+                     "general_bound_closed_form": float(gen_an)})
+        print(f"P1 h={h:.2f} measured={meas:.2e} at {where} GL estimate={sharp:.2e} general bound={gen:.2e} "
+              f"(closed-form L_d: {gen_an:.2e})", flush=True)
+    return {"L_d": {str(k): v for k, v in L.items()}, "L_d_closed_form": {str(k): v for k, v in L_an.items()},
+            "rows": rows}
 
 
 def part2():
@@ -177,9 +186,24 @@ def part4():
     return {"lambda": lam, "eps_R_tempered": e_temp, "eps_R_plain": e_plain}
 
 
+def part5():
+    """A-priori bank from part (c) of the CM theorem with the closed-form GL constants."""
+    rows = []
+    for eps, R in ((1e-3, 10 ** 3), (1e-5, 10 ** 3), (1e-5, 10 ** 5), (1e-7, 10 ** 4)):
+        t = cm.theorem_design(eps, R, 0.95)
+        b = DiscreteFixedPoleBank(TS, t["u_lo"] / TS, t["u_hi"] / TS, t["K"], dc_floor=False)
+        meas = measure_dt(b, R, -0.95, 0.95)
+        K_rule = design_dt(TS, R, -0.95, 0.95, eps)["K"]
+        rows.append({"eps": eps, "R": R, "K_theorem": t["K"], "d": t["d"], "u_lo": t["u_lo"], "u_hi": t["u_hi"],
+                     "measured": meas, "K_rule": K_rule})
+        print(f"P5 eps={eps:.0e} R={R:.0e}: theorem K={t['K']} (d={t['d']:.2f}) measured {meas:.2e} <= eps; "
+              f"rule K={K_rule}", flush=True)
+    return {"constants": cm.gl_constants(0.95), "rows": rows}
+
+
 def main():
     rng = np.random.default_rng(9)
-    res = {"part1": part1(), "part2": part2(), "part3": part3(rng), "part4": part4()}
+    res = {"part1": part1(), "part2": part2(), "part3": part3(rng), "part4": part4(), "part5": part5()}
     with open(os.path.join(OUT, "e9_cm_kernels.json"), "w") as f:
         json.dump(res, f, indent=1)
 

@@ -398,6 +398,8 @@ Yorum:
 - Şerit sabiti L_d (GL ailesi): d = 0.8 / 1.2 / 1.4 / 1.5 için 2.0 / 7.2 / 31.7 / 175. Bu, (cos d)^(−1.95) davranışıyla uyumlu.
 - Genel kuadratür sınırı, ölçülen en kötü trapez hatasının 1.9–3.7 katı. GL'ye özgü E_q ölçümle %1 içinde örtüşüyor.
 - K ölçeklemesi: R = 1e2…1e6 ve ε = 1e-2…1e-8 aralığındaki 35 tasarım (K = 12…90), K ≈ 0.57 + 1.06 ln(1/ε) + 0.53 ln R + 0.106 ln(1/ε) ln(R/ε) ile 0.7 kutup içinde açıklanıyor. Çarpım katsayısı 0.106, teorideki 1/π² = 0.101'e çok yakın.
+- **GL sabitleri kapalı formda (Lemma 10, Ek F).** L_d ≤ (2/(1−e^{−2}))^ā (cos d)^{−(1+ā)}; (H2)–(H3) sabitleri de açık. Sayısal L_d her (a, r, d) için bu sınırın altında (en sıkı oran 0.99). Kapalı form sınırla kuadratür sınırı, ölçülenin 4.3–7.6 katı.
+- **Teoremden a priori tasarım (P5).** Teorem 9(c) + Lemma, GL'ye özgü hiçbir hata modeli kullanmadan K veriyor: (ε, R) = (1e-3, 1e3), (1e-5, 1e3), (1e-5, 1e5), (1e-7, 1e4) için K = 36 / 58 / 67 / 90; kural 22 / 39 / 47 / 66. Ölçülen hata ε'nin 13–17 kat altında. Yani genel teori garantili ama 1.4–1.6 kat daha büyük banka veriyor.
 - Zamanla değişen dağılımlı derece: aynı banka (K = 39) karışım artıklarıyla çalıştırıldı. Çekirdek hatası en kötü bileşenin altında kaldı (≤ 2.6e-6); A/B göreli operatör hatası ≤ 1.8e-7; akış ile yoğun operatör farkı 3e-16.
 - Sabit temperleme (λ = 0.01): kutuplar e^(−λ)θ_k oluyor; göreli hata temperlenmemiş bankayla aynı (3.877e-6).
 

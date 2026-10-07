@@ -52,3 +52,19 @@ def test_fixed_tempering_keeps_the_relative_error():
         e_t = rel_weight_error(gh[None, :], (g * damp)[None, :])
         e_0 = rel_weight_error(bank_table(bank, [a], N), g[None, :])
         assert abs(e_t - e_0) <= 1e-9 * max(e_0, 1e-300) + 1e-13
+
+
+def test_closed_form_strip_bound_dominates_numerical_ratio():
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "experiments"))
+    from e9_cm_kernels import strip_ratio
+    for d in (0.8, 1.3):
+        for a in (-0.9, -0.3, 0.4, 0.9):
+            for r in (1, 3, 100):
+                assert strip_ratio(a, r, d) <= cm.gl_strip_bound(0.9, d)
+
+
+def test_theorem_design_meets_tolerance():
+    from vofrac.design import measure_dt
+    t = cm.theorem_design(1e-3, 300, 0.9)
+    b = DiscreteFixedPoleBank(TS, t["u_lo"] / TS, t["u_hi"] / TS, t["K"], dc_floor=False)
+    assert measure_dt(b, 300, -0.9, 0.9) <= 1e-3
