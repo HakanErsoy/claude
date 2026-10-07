@@ -401,6 +401,23 @@ Yorum:
 - Zamanla değişen dağılımlı derece: aynı banka (K = 39) karışım artıklarıyla çalıştırıldı. Çekirdek hatası en kötü bileşenin altında kaldı (≤ 2.6e-6); A/B göreli operatör hatası ≤ 1.8e-7; akış ile yoğun operatör farkı 3e-16.
 - Sabit temperleme (λ = 0.01): kutuplar e^(−λ)θ_k oluyor; göreli hata temperlenmemiş bankayla aynı (3.877e-6).
 
+### E8: maliyet–doğruluk karşılaştırması
+
+Ts = 1 ms, R = N = 1000, P = 39 derece seviyesi (−0.95:0.05:0.95). Doğruluk ölçütü ℓ∞ göreli operatör hatası; bu, sınırlı girişler üzerinden en kötü göreli çıkış hatası demek. Hata 39 sabit derece ve 8 değişken derece dizisi üzerinden alındı. Maliyet: örnek başına çarpma sayısı ve bellek (durum + katsayı ROM'u).
+
+| Yöntem | Anahtarlamada (A / B) | Not |
+|---|---|---|
+| Sabit kutup, analitik kural (bu çalışma) | K = 39: 2.7e-7 / 2.6e-7 (80 çarpma, ~1700 kelime) | VO hatası ≤ ε_R; 19/19 türev seviyesi sertifikalı |
+| Sabit kutup, işaret kısıtlı LP | K = 24: 3.2e-6 (kural K = 30); K = 28: 2.0e-7 (kural K = 39) | %20–30 daha az kutup, 19/19 sertifikalı |
+| Sabit kutup, kısıtsız LP | K = 20: 5.1e-7 (kural K = 34 → 1.2e-6) | %40–50 daha az kutup; 19 seviyenin 11'ine kadarında karışık işaret, 5'ine kadarında H(1) ≤ 0 (ters kararsız) |
+| Kayan kutup (seviye başına kural ızgarası, hot swap) | 0.72–1.1 / 0.17–0.23, K = 10…42 | Sabit derecede kuralın ~2/3 durumuyla aynı doğruluk; anahtarlamada K ile azalmıyor (gereklilik teoremi) |
+| Budanmış GL (L tap) | L = 512: 0.41 / 0.22 | Yalnızca L = N'de tam (1000 çarpma, 39 000 ROM kelimesi) |
+
+Yorum:
+- Tanım tutarlılığını sağlayan şey artık katsayılarının nasıl seçildiği değil, sabit kutuplu yapının kendisi.
+- Analitik kural en küçük bankayı vermiyor. Karşılığında optimizasyonsuz, kapalı formlu, mühürlü holdout'ta doğrulanmış ve artık işaretlerini yapı gereği koruyan bir tasarım sunuyor.
+- LP ile uydurma, işaret ve DC kısıtları eklenirse kararlılık sertifikasını koruyarak bankayı %20–30 küçültüyor.
+
 ---
 
 ## 8. Sonraki adımlar

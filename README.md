@@ -31,7 +31,7 @@ tests/                pytest
 
 ```bash
 pip install -r requirements.txt
-python3 -m pytest -q tests                      # ~1 s
+python3 -m pytest -q tests                      # ~1 dk
 python3 experiments/e1_definition_consistency.py  # ~50 s, results/e1_*.json + fig_e1_*.png
 python3 experiments/e1b_discrete_gl.py            # ~40 s, results/e1b_discrete.json
 python3 experiments/e2_state_map.py               # ~15 dk, results/e2_*.json + fig_e2_*.png
@@ -58,4 +58,5 @@ python3 litreview/search.py && python3 litreview/screen_stage1.py && python3 lit
 - **E5:** Sabit noktalı Verilog çekirdek, golden modelle bit-tam eşleşiyor (94 208 örnek, 0 uyumsuzluk); derece ve tip her örnekte değişebiliyor; örnek başına 136 çevrim. En küçük yapılandırmalar: A/B için 36/49/16 bit, A/B/D/E için 48/61/25 bit (sinyal / durum / mantis). Yosys xc7 tahmini 4–6 bin LUT, 11–29 DSP. Kuantizasyonun bozduğu ters kararlılık, kuantizasyona duyarlı DC tabanıyla geri kazanılıyor. Kart ölçümleri bekliyor.
 - **E6:** Tek banka, 1/2 − H derecesinde ve tam tamsayı bölmeyle (A: integratör önce, B: sonra) 0 < H < 1 için RL-mBm'yi (A-tipi) ve B-tipi varyantını örnek başına ~50 MAC ile akış halinde üretiyor. Yollar GL'ye 1e-6, varyans ve kovaryans tam formüle ≤3e-5 yakın; yerel Hurst kestirimi H(t)'yi izliyor. H sıçramasında A-tipi yol sıçrıyor, B-tipi sürekli kalıyor. E5 çekirdeğiyle bit-tam üretimde A-tipi hata 1.8e-5.
 - **E7:** Ağırlık hatası operatörü bütün olarak sınırlıyor (Teorem 5). A/B tiplerinin ℓ1/ℓ∞ göreli operatör hatası her derece dizisi için ≤ ε_R; Schur sınırları sabit ve kötü niyetli dizilerde tam yakalanıyor. Özyinelemeli integraller hatayı koşul sayısıyla (≈ 2N^a/Γ(1+a)) büyütüyor: ölçülen en fazla 22 ε_R. Adım yanıtından a-posteriori sertifika 3–4 kat içinde.
+- **E8:** Karşılaştırma (N = 1000, 39 seviye): kayan kutuplu hot swap anahtarlamada 0.2–1 hatada kalıyor (K'dan bağımsız). Budanmış GL tam bellek ister. Sabit kutuplu banka her dizide ε_R altında kalıyor. LP ile uydurulmuş artıklar kutup sayısını %40–50 (kısıtsız; bazı seviyelerde ters kararsız) veya %20–30 (işaret/DC kısıtlı; tümü sertifikalı) azaltıyor.
 - **E9:** Yapı sonuçları tam monoton her çekirdek ailesine genelleşiyor (Teorem 9). K ≈ ln(1/ε) ln(R/ε)/π²: 35 tasarımda uydurulan katsayı 0.106, teoride 0.101. Zamanla değişen dağılımlı derece ve sabit temperleme aynı bankayla gerçekleniyor.

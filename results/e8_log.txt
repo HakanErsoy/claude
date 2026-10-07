@@ -1,0 +1,47 @@
+structure check (simulated vs table operator): 5.0e-18
+FP-rule eps=1e-02 K=15 eps_R=3.5e-03 const=1.2e-03 vo A/B=4.0e-04/4.0e-04
+MP-rule eps=1e-02 K=10 eps_R=2.9e-02 const=1.3e-03 vo A/B=7.3e-01/1.7e-01
+FP-rule eps=3e-03 K=18 eps_R=1.3e-03 const=3.6e-04 vo A/B=1.4e-04/1.4e-04
+MP-rule eps=3e-03 K=13 eps_R=9.7e-03 const=3.9e-04 vo A/B=7.2e-01/1.8e-01
+FP-rule eps=1e-03 K=22 eps_R=3.8e-04 const=1.2e-04 vo A/B=3.6e-05/3.5e-05
+MP-rule eps=1e-03 K=15 eps_R=2.9e-03 const=1.2e-04 vo A/B=7.4e-01/1.8e-01
+FP-rule eps=3e-04 K=26 eps_R=1.1e-04 const=3.6e-05 vo A/B=8.5e-06/8.4e-06
+MP-rule eps=3e-04 K=17 eps_R=5.9e-04 const=3.7e-05 vo A/B=7.7e-01/1.9e-01
+FP-rule eps=1e-04 K=30 eps_R=3.5e-05 const=1.2e-05 vo A/B=2.8e-06/2.8e-06
+MP-rule eps=1e-04 K=19 eps_R=1.2e-04 const=1.3e-05 vo A/B=8.1e-01/2.0e-01
+FP-rule eps=3e-05 K=34 eps_R=1.4e-05 const=3.6e-06 vo A/B=1.2e-06/1.2e-06
+MP-rule eps=3e-05 K=22 eps_R=2.6e-05 const=4.0e-06 vo A/B=8.5e-01/2.0e-01
+FP-rule eps=1e-05 K=39 eps_R=3.9e-06 const=1.2e-06 vo A/B=2.7e-07/2.6e-07
+MP-rule eps=1e-05 K=25 eps_R=7.1e-06 const=1.4e-06 vo A/B=9.0e-01/2.1e-01
+FP-rule eps=1e-06 K=49 eps_R=4.3e-07 const=1.2e-07 vo A/B=2.9e-08/2.8e-08
+MP-rule eps=1e-06 K=33 eps_R=7.8e-07 const=1.3e-07 vo A/B=1.0e+00/2.2e-01
+FP-rule eps=1e-07 K=60 eps_R=4.8e-08 const=1.2e-08 vo A/B=2.2e-09/2.7e-09
+MP-rule eps=1e-07 K=42 eps_R=1.0e-07 const=1.3e-08 vo A/B=1.1e+00/2.3e-01
+FP-LP   K= 6 u=[3.2e-04,2] eps_R=1.0e-01 const=5.1e-02 vo A/B=5.1e-02/6.0e-02 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LP   K= 8 u=[3.2e-04,2] eps_R=2.0e-02 const=9.9e-03 vo A/B=9.9e-03/1.2e-02 | mixed-sign 0, H(1)<=0 2, certified 17 of 19
+FP-LP   K=10 u=[3.2e-04,2] eps_R=4.1e-03 const=2.0e-03 vo A/B=2.0e-03/2.4e-03 | mixed-sign 3, H(1)<=0 2, certified 16 of 19
+FP-LP   K=12 u=[3.2e-04,3] eps_R=6.9e-04 const=3.4e-04 vo A/B=3.4e-04/3.9e-04 | mixed-sign 0, H(1)<=0 1, certified 18 of 19
+FP-LP   K=14 u=[3.2e-04,3] eps_R=2.2e-04 const=1.1e-04 vo A/B=1.1e-04/1.3e-04 | mixed-sign 9, H(1)<=0 0, certified 10 of 19
+FP-LP   K=16 u=[3.2e-04,6] eps_R=4.0e-05 const=2.0e-05 vo A/B=2.0e-05/2.3e-05 | mixed-sign 4, H(1)<=0 0, certified 15 of 19
+FP-LP   K=20 u=[3.2e-04,6] eps_R=1.0e-06 const=5.1e-07 vo A/B=5.1e-07/6.0e-07 | mixed-sign 6, H(1)<=0 1, certified 13 of 19
+FP-LP   K=24 u=[3.2e-04,6] eps_R=1.1e-07 const=6.9e-08 vo A/B=3.6e-08/2.5e-08 | mixed-sign 8, H(1)<=0 0, certified 11 of 19
+FP-LP   K=28 u=[1.0e-04,6] eps_R=2.8e-08 const=1.3e-08 vo A/B=7.7e-09/5.4e-09 | mixed-sign 11, H(1)<=0 5, certified 6 of 19
+FP-LPs  K= 6 u=[3.2e-04,2] eps_R=1.0e-01 const=5.1e-02 vo A/B=3.3e-02/3.9e-02 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LPs  K= 8 u=[1.0e-04,2] eps_R=3.6e-02 const=1.7e-02 vo A/B=1.2e-02/1.4e-02 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LPs  K=10 u=[1.0e-04,2] eps_R=8.3e-03 const=4.9e-03 vo A/B=2.2e-03/2.2e-03 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LPs  K=12 u=[3.2e-05,2] eps_R=4.3e-03 const=1.8e-03 vo A/B=1.3e-03/1.5e-03 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LPs  K=14 u=[3.2e-05,3] eps_R=1.2e-03 const=5.5e-04 vo A/B=4.5e-04/4.5e-04 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LPs  K=16 u=[3.2e-05,3] eps_R=3.1e-04 const=1.4e-04 vo A/B=1.4e-04/1.6e-04 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LPs  K=20 u=[3.2e-05,6] eps_R=2.8e-05 const=1.4e-05 vo A/B=1.4e-05/1.6e-05 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LPs  K=24 u=[1.0e-05,6] eps_R=6.4e-06 const=3.2e-06 vo A/B=3.2e-06/3.7e-06 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FP-LPs  K=28 u=[1.0e-05,6] eps_R=4.2e-07 const=2.0e-07 vo A/B=2.0e-07/2.4e-07 | mixed-sign 0, H(1)<=0 0, certified 19 of 19
+FIR     L=   2 const=1.0e+00 vo A/B=9.9e-01/9.0e-01
+FIR     L=   4 const=9.9e-01 vo A/B=9.9e-01/9.0e-01
+FIR     L=   8 const=9.9e-01 vo A/B=9.8e-01/8.9e-01
+FIR     L=  16 const=9.8e-01 vo A/B=9.6e-01/8.7e-01
+FIR     L=  32 const=9.6e-01 vo A/B=9.4e-01/8.4e-01
+FIR     L=  64 const=9.3e-01 vo A/B=8.9e-01/7.8e-01
+FIR     L= 128 const=8.6e-01 vo A/B=8.1e-01/6.8e-01
+FIR     L= 256 const=7.3e-01 vo A/B=6.6e-01/5.1e-01
+FIR     L= 512 const=4.7e-01 vo A/B=4.1e-01/2.2e-01
+FIR     L=1000 const=0.0e+00 vo A/B=0.0e+00/0.0e+00

@@ -66,12 +66,13 @@ TITLE-ABS-KEY( "multifractional Brownian motion" AND (simulation OR synthesis OR
    - 2. tur: S31–S42; Sierociuk ve ark. 2020, Arıcıoğlu 2025, Jia ve ark. 2022 ve Ślęzak–Metzler 2023'ün kaynakçalarından
    - 3. tur: S43–S44; tam metin kontrolü sırasında bulundu (FULLTEXT.md)
 5. **Tam metin kontrolü** (`fulltext.py`, `fulltext_log.csv`, `FULLTEXT.md`): yalnızca özetten veya ikincil kaynaktan sınıflandırılan kayıtlar için Unpaywall ve arXiv ile açık erişim yeri arandı.
-6. **Kaynak doğrulama** (`verify_bib.py`): `paper/refs.bib` içindeki her girdi Crossref ile karşılaştırıldı (`bib_check.csv`). Son durum (69 girdi): 54 OK, 11 CHECK, 3 bulunamadı, 1 atlandı.
+6. **Kaynak doğrulama** (`verify_bib.py`): `paper/refs.bib` içindeki her girdi Crossref ile karşılaştırıldı (`bib_check.csv`). Son durum (72 girdi, 2026-10-07): 56 OK, 12 CHECK, 3 bulunamadı, 1 atlandı.
    - CHECK satırlarının hepsi beklenen farklar:
      - 8 satırda Crossref çevrimiçi-ilk yılı veriyor; `refs.bib`'de cilt yılı kullanıldı.
      - `philippe2008`: Crossref Rusça özgün baskıyla (2007) eşleşiyor; `refs.bib`'de İngilizce çeviri (2008) var.
      - `peltier1995` için Crossref'in eşleştirdiği kayıt farklı bir çalışma (Ayache–Lévy Véhel 1999). Doğrusu INRIA RR-2645 (1995).
      - `wood1994` kaydında Crossref'te yalnızca ilk sayfa var.
+     - `widder1941`: başlık araması başka bir çalışmaya (1945 tarihli bir dergi yazısı) eşleşiyor. Kitabın DOI'si (10.1515/9781400876457, Princeton University Press, PMS-6) doğrudan DOI sorgusuyla doğrulandı. Crossref dijital baskıyı 1942 tarihiyle listeliyor; özgün baskı 1941.
    - Bulunamayanlar (Podlubny 1999 ve Kailath 1980 kitapları, Vinagre ve ark. 2000 FCAA) web aramasıyla doğrulandı.
    - Atlanan: TCAS-I yer tutucusu.
 

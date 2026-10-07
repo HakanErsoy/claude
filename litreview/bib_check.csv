@@ -68,3 +68,6 @@ mozyrska2019,OK,1.0,,"Fractional-, variable-order PID controller implementation 
 oziablo2020,OK,1.0,,"Discrete-Time Fractional, Variable-Order PID Controller for a Plant with Delay",Entropy,2020,22,771,10.3390/e22070771
 philippe2006,OK,1.0,,Invariance principle for a class of non stationary processes with long memory,Comptes Rendus. Mathématique,2006,342,269--274,10.1016/j.crma.2005.12.001
 philippe2008,CHECK,1.0,year: bib=2008 crossref=2007; pages: bib=651--673 crossref=768--792; doi: bib=10.1137/S0040585X97983304 crossref=10.4213/tvp1533,Time-Varying Fractionally Integrated Processes with Nonstationary Long Memory,Теория вероятностей и ее применения Teoriya Veroyatnostei i ee Primeneniya,2007,52,768--792,10.4213/tvp1533
+widder1941,CHECK,0.864,year: bib=1941 crossref=1945; volume: bib=6 crossref=52; pages missing (crossref=419--425); doi: bib=10.1515/9781400876457 crossref=10.1080/00029890.1945.11991601,What is the Laplace Transform?,The American Mathematical Monthly,1945,52,419--425,10.1080/00029890.1945.11991601
+sabzikar2015,OK,1.0,,Tempered fractional calculus,Journal of Computational Physics,2015,293,14--28,10.1016/j.jcp.2014.04.024
+mainardi2015,OK,1.0,,On complete monotonicity of the Prabhakar function and non-Debye relaxation in dielectrics,Journal of Computational Physics,2015,293,70--80,10.1016/j.jcp.2014.08.006

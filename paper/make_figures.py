@@ -262,7 +262,7 @@ def fig_pareto():
         ("MP-rule", "moving poles, hot swap", C[1], "s", "-", True),
         ("FIR", "truncated GL convolution", C[3], "D", "--", True),
     ]
-    fig, axes = plt.subplots(1, 2, figsize=(FULL, 2.7), sharey=True)
+    fig, axes = plt.subplots(1, 2, figsize=(FULL, 3.1), sharey=True)
     for ax, xkey, xlabel, lab in ((axes[0], "mac", "multiplications per sample", "a"),
                                   (axes[1], "mem", "memory words (states + coefficient ROM)", "b")):
         for method, label, col, mk, ls, filled in spec:
@@ -275,16 +275,20 @@ def fig_pareto():
                 ax.plot(x, yc, ":", color=col, marker=mk, mfc="white", label="moving poles, constant order only")
         fir_exact = [r for r in series("FIR") if r["vo"]["A"] == 0][0]
         xe = fir_exact["mac"] if xkey == "mac" else mem(fir_exact)
-        ax.annotate("exact at $L=N$", xy=(xe, 2e-10), xytext=(xe, 2e-10), ha="right", va="bottom",
-                    fontsize=6.5, color=INK2)
+        # the convolution is exact only at L = N; mark it on the bottom edge
+        ax.plot([xe], [1.6e-10], "v", color=C[3], ms=5, clip_on=False)
+        ax.annotate("exact at $L=N$", xy=(xe, 1.6e-10), xytext=(-4, 3), textcoords="offset points",
+                    ha="right", va="bottom", fontsize=6.5, color=INK2)
         ax.set_xscale("log")
+        ax.set_xlim(right=xe * 1.6)
         ax.set_xlabel(xlabel)
         style(ax)
         ax.set_ylim(1e-10, 3)
         panel(ax, lab, "A-type, worst over 8 order sequences")
-    axes[0].set_ylabel(r"relative operator error $\|\hat W-W_{\mathrm A}\|_\infty/\|W_{\mathrm A}\|_\infty$")
-    axes[1].legend(loc="lower left", fontsize=6.3)
-    fig.tight_layout()
+    axes[0].set_ylabel(r"relative operator error in $\ell^\infty$")
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=6.5, bbox_to_anchor=(0.5, 0.0))
+    fig.tight_layout(rect=(0, 0.13, 1, 1))
     save(fig, "fig_pareto.pdf")
 
 

@@ -65,6 +65,12 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
   - **Katkı iddiaları daraltıldı.** VO Caputo için dereceden bağımsız üsler Zhang–Fang–Sun 2021'de zaten var; mBm'de A/B ayrımı Wang ve ark. 2023'te (MMFBM) var. Yenilik artık şu noktalarda: yapı ⇔ tanım bağı, A ve B tek bankada, ayrık-zaman GL tamlığı, D/E terslemesi, tasarım kuralı, kararlılık ve donanım.
   - **Hatalı bir atıf düzeltildi.** Arıcıoğlu 2025, hot-swap örneği değil; LTI (üçüncü) tanımı tek transfer fonksiyonuyla gerçekliyor.
 
+- **Üç ekleme (2026-10-07):**
+  - **Operatör normu sınırları (Teorem 5, Not 2, Ek E; E7).** İleri tiplerde ℓ1/ℓ∞ göreli operatör hatası her derece dizisi için ≤ ε_R. Schur sabitleri ρ_row/ρ_col hiç aşılmadı ve sabit/kötü niyetli dizilerde tam yakalandı. Özyinelemeli integrallerde koşul sayısıyla (≈ 2N^a/Γ(1+a)) büyüme var; garanti için tasarım ε/κ ile yapılmalı. Adım yanıtından a-posteriori sertifika da verildi.
+  - **Tam monoton çekirdek aileleri (Bölüm 6, Teorem 9, Ek F; E9).** Yapı, tersleme ve gereklilik sonuçları her CM aileye taşınıyor. Şerit analitikliği ve kuvvet yasası koşullarıyla hata terimleri ve K = O(ln(1/ε) ln(R/ε)) elde edildi; 35 tasarımda uydurulan katsayı 0.106, teoride 1/π² = 0.101. Örnekler: zamanla değişen dağılımlı derece, sabit temperleme. CT için Bernstein notu var.
+  - **Karşılaştırma ve Pareto (Bölüm 7.8, Şekil 7; E8).** Kayan kutup (hot swap), budanmış GL, kısıtsız ve işaret kısıtlı LP artıkları karşılaştırıldı. Kural en küçük bankayı vermiyor: işaret kısıtlı LP %20–30, kısıtsız LP %40–50 daha az kutupla aynı doğruluğa ulaşıyor. Ancak kısıtsız LP ters kararlılık sertifikasını kaybediyor. Bu bulgu makalede açıkça yazıldı.
+  - Yeni kaynaklar: Widder 1941, Sabzikar ve ark. 2015, Mainardi–Garrappa 2015 (Crossref ile doğrulandı).
+
 ## Yapılacaklar (gönderimden önce)
 
 1. **Yazarlar:** isimler, kurumlar, e-postalar (`main.tex` başı, şu an yer tutucu).
@@ -79,8 +85,11 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
 5. **Literatür taraması:** Crossref + arXiv üzerinde yapıldı (`litreview/`: PROTOKOL.md, SENTEZ.md, FULLTEXT.md; 131 dahil kayıt). §1.1 ve Tablo 1 buna dayanıyor. Tam metin kontrolleri yapıldı; dört ifade düzeltildi ve bir öncül eklendi. **Kalan:** aynı dizgelerle Scopus/WoS tekrarı (§9'daki kırmızı TODO) ve FULLTEXT.md'de "okunamadı" diye işaretlenen 11 kaydın kurumsal erişimle okunması.
 6. **Beyanlar:** finansman, çıkar çatışması, kod erişimi (depo URL'si veya Zenodo DOI), yazar katkıları, teşekkür.
 7. **Kapak mektubu:** TCAS-I çalışmasıyla ilişki açıkça yazılmalı. Springer'in eşzamanlı gönderim politikası kontrol edilmeli.
-8. **CSSP yazım kuralları:** özet 249 kelime (sınır 250 kabul edildi). Anahtar kelime sayısı (şu an 7) ve sayfa/şekil sınırları dergi sayfasından doğrulanmalı.
+8. **Dergi yazım kuralları:** özet 249 kelime (sınır 250 kabul edildi). Hedef Signal Processing olursa elsarticle şablonuna geçiş gerekecek. Anahtar kelime sayısı (şu an 7) ve sayfa/şekil sınırları dergi sayfasından doğrulanmalı.
 9. **İsteğe bağlı:**
-   - D/E tiplerinin keyfi anahtarlamada kararlılığı için bir sonuç (şu an §9'da açık sınır olarak duruyor)
-   - çıkış düzeyinde hata kuralı
+   - D/E tiplerinin keyfi anahtarlamada kararlılığı için bir sonuç (şu an tartışma bölümünde açık sınır olarak duruyor)
+   - ~~çıkış düzeyinde hata kuralı~~ → Teorem 5 ile ℓ1/ℓ∞ en kötü durum anlamında yapıldı; özyinelemeli integraller için ε/κ kuralı Not 2'de
+   - K için alt sınır (ortak kutup kümesi tek dereceye göre ne kadar büyük olmalı; açık soru olarak tartışmada)
+   - işaret kısıtlı LP'yi kurala alternatif bir tasarım yolu olarak kütüphaneye eklemek (şu an `vofrac/baselines.py` içinde)
+   - VO derece kestirimi (EKF, O(K) Jacobian) uygulaması
    - boru hatlı çekirdek
