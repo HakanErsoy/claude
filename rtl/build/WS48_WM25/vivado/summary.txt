@@ -1,0 +1,7 @@
+cfg WS48_WM25
+part xc7z020clg400-1
+vivado 2026.1
+period_ns 25.50
+wns_ns 0.040
+whs_ns 0.156
+fmax_mhz 39.27729772191673

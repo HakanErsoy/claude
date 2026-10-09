@@ -1,0 +1,7 @@
+cfg WS36_WM16
+part xc7z020clg400-1
+vivado 2026.1
+fclk_requested_mhz 40
+clk_fpga_0_period_ns 25.000
+wns_ns 0.397
+whs_ns 0.043

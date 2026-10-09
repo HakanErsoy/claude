@@ -1,0 +1,3 @@
+# trial period_ns wns_ns whs_ns fmax_mhz (OOC, default directives)
+1 5.0 -20.498 0.161 39.218762255863204
+2 25.50 0.040 0.156 39.27729772191673

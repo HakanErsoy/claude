@@ -1,0 +1,37 @@
+{
+ "config": "WS36_WM16",
+ "bitstream_sha256_host": "c09b1f915c921606cd66893c5e34a01691edb1faa772b9ad20f88a192e1196fa",
+ "bitstream_sha256": "c09b1f915c921606cd66893c5e34a01691edb1faa772b9ad20f88a192e1196fa",
+ "params": {
+  "K": 32,
+  "WS": 36,
+  "WST": 49,
+  "WM": 16
+ },
+ "clock": {
+  "timing_closed_mhz": 40.0,
+  "pll_src_mhz": 1000.0,
+  "div0": 1,
+  "div1": 25,
+  "set_mhz": 40.0,
+  "fclk0_mhz_pynq": 40.0,
+  "fclk0_mhz_measured": 40.000081332815846,
+  "measure_s": 2.0021439789998112
+ },
+ "vectors": 31744,
+ "nsamp_counter": 31744,
+ "latency_cycles": {
+  "last": 135,
+  "min": 135,
+  "max": 135
+ },
+ "extra_status_polls": 29531,
+ "host_elapsed_s": 1.3911066069999833,
+ "parity": {
+  "vectors": 31744,
+  "received": 31744,
+  "mismatches": 0,
+  "byte_identical_to_out_txt": true,
+  "first_mismatch": null
+ }
+}
