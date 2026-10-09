@@ -319,8 +319,56 @@ def fig_tracking():
     save(fig, "fig_tracking.pdf")
 
 
+# ---------------------------------------------------------------- E12
+BAT_GROUPS = [("25degC", "25"), ("10degC", "10"), ("0degC", "0"), ("n10degC", "$-$10"), ("n20degC", "$-$20"),
+              ("10degC_trise", "10$\\to$25"), ("n20degC_trise", "$-$20$\\to$13")]
+BAT_MODELS = [  # model, label, colour, marker, line style
+    ("1RC", "1RC", GREY, "v", ":"),
+    ("2RC", "2RC", INK2, "^", ":"),
+    ("RC+FO const", "RC + constant order", C[2], "D", "--"),
+    ("RC+FO VO-A", "RC + VO, A-type", C[0], "o", "-"),
+    ("RC+FO VO-B", "RC + VO, B-type", C[1], "s", "-"),
+]
+
+
+def fig_battery():
+    d = load("e12_battery.json")
+    G = d["groups"]
+    fig, axes = plt.subplots(1, 3, figsize=(FULL, 2.5), gridspec_kw={"width_ratios": [1.5, 1, 1]})
+    ax = axes[0]
+    x = np.arange(len(BAT_GROUPS))
+    for k, (m, label, col, mk, _) in enumerate(BAT_MODELS):
+        y = [G[g]["summary"][m]["test_mean"] for g, _ in BAT_GROUPS]
+        ax.plot(x + 0.08 * (k - 2), y, mk, color=col, mfc=col, label=label, ls="none")
+    for m, col, mk, label in (("RC+FO VO-A", C[0], "o", "A-type model run as B-type"),
+                              ("RC+FO VO-B", C[1], "s", "B-type model run as A-type")):
+        y = [G[g]["summary"][m]["test_swapped_mean"] for g, _ in BAT_GROUPS]
+        ax.plot(x + (0.08 if m.endswith("A") else 0.16), y, mk, color=col, mfc="white", label=label, ls="none")
+    ax.set_xticks(x)
+    ax.set_xticklabels([t for _, t in BAT_GROUPS], fontsize=6.5)
+    ax.set_xlabel(r"chamber temperature [$^\circ$C]")
+    ax.set_ylabel("held-out RMSE [mV]")
+    style(ax)
+    panel(ax, "a", "simulation of the held-out cycle")
+    for ax, m, lab in ((axes[1], "RC+FO VO-A", "b"), (axes[2], "RC+FO VO-B", "c")):
+        for (g, t), col, mk in zip([BAT_GROUPS[i] for i in (0, 2, 4)], [RAMP[1], RAMP[2], RAMP[3]], ["o", "s", "^"]):
+            P = G[g]["all"][m]
+            ax.plot(P["beta_knots_z"], P["beta_knots"], "-", color=col, marker=mk, label=f"{t} $^\\circ$C")
+        ax.set_xlabel("state of charge $z$")
+        ax.set_ylim(0, 1)
+        style(ax, logy=False)
+        panel(ax, lab, f"order law, {m[-1]}-type")
+    axes[1].set_ylabel(r"identified order $\beta(z)$")
+    axes[2].legend(loc="upper right", fontsize=6.3)
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, loc="lower center", ncol=4, fontsize=6.3, bbox_to_anchor=(0.5, 0.0))
+    fig.tight_layout(rect=(0, 0.14, 1, 1))
+    save(fig, "fig_battery.pdf")
+
+
 if __name__ == "__main__":
     os.makedirs(FIG, exist_ok=True)
-    for f in (fig_definition, fig_rule, fig_maps, fig_types, fig_wordlength, fig_mbm, fig_pareto, fig_tracking):
+    for f in (fig_definition, fig_rule, fig_maps, fig_types, fig_wordlength, fig_mbm, fig_pareto, fig_tracking,
+              fig_battery):
         f()
         print("wrote", f.__name__)
