@@ -919,7 +919,32 @@ $-20\,^\circ$C, warming & 34.4 & \textbf{33.1} & 36.8 & 38.1 & 40.4 & 94 & 109\\
 \end{itemize}
 The low-temperature errors are not a matter of the order. We linearized each model at the state of charge of the impedance sweeps in the same data set and compared it with the measured impedance between 1.4\,mHz and 0.1\,Hz. Every model's impedance magnitude was about 0.9 of the measured one at 25 and $10\,^\circ$C, 0.7 at $0\,^\circ$C, 0.6 at $-10\,^\circ$C and 0.4 at $-20\,^\circ$C (medians over 8 to 12 sweeps). The models fitted to the drive cycles thus have a lower impedance than the cell under small-signal excitation, increasingly so at low temperature. This is consistent with a charge-transfer resistance that falls with the current amplitude, and with self-heating during the cycles, and neither effect is in a model that is linear in the current.
 
-The experiment therefore does not show that a variable order improves battery models in general. It shows that, on measured data, the definition is a modelling choice with a large effect, and that one bank fits and runs both definitions at the same cost.
+\paragraph{Other realizations.} The fitted VO models were also run with the fractional term realized in other ways, with the same gains and order laws (Table~\ref{tab:battreal}):
+\begin{itemize}
+\item the literal GL sum of the model's type, with full memory;
+\item the GL sum truncated to 60 lags (about the bank's multiplications) or 600 lags;
+\item moving poles: one rule-designed bank per order level of the 0.01 grid, at the same $\eps$ and $R$ ($K=22$), switched with the state kept whenever the level of the order changes (output weights for the A-type model, input weights for B).
+\end{itemize}
+
+\begin{table}[t]
+\caption{Battery data: the fitted VO models with the fractional term realized in other ways. Held-out RMSE in mV, mean over all 28 folds, and the median ratio to the bank over the folds. The last column is the largest deviation of the fractional term from the literal GL sum of the model's type, relative to its peak}\label{tab:battreal}
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Realization & mult./sample & A-type & B-type & ratio to bank & deviation from GL\\
+\midrule
+Fixed-pole bank ($K=29$) & 60 & 47.5 & 46.9 & 1 & $3.2\times10^{-6}$\\
+GL, full memory & $n/2$ on average & 47.5 & 46.9 & 1.00 & 0\\
+GL, 600 lags & 600 & 251 & 245 & 6.4--7.7 & 0.74\\
+GL, 60 lags & 60 & 347 & 358 & 10.3--11.5 & 0.89\\
+Moving poles, hot swap ($K=22$) & 46 & 48.3 & 47.5 & 1.01 & 0.10\\
+\botrule
+\end{tabular}
+\end{table}
+
+The bank reproduced the literal GL sum to $3.2\times10^{-6}$ at a fixed cost, where the GL sum costs $O(n)$ per sample. Truncating the memory multiplied the error by 6 to 11: the cell remembers its current far beyond 600\,s. Moving poles did almost as well as the bank here (median ratio 1.01, fold differences from $-18$ to $+24$\,mV): the order laws are smooth, the level changed between neighbouring grid values (1 to 174 times per record), and the fractional term deviated from its definition by up to 10\,\%. A moving-pole realization fails at large order steps (Sect.~\ref{sec:res-baselines}), not at small ones. On these data, the definition and the memory length decide the error; the pole structure matters little.
+
+The experiment therefore does not show that a variable order improves battery models in general. It shows that, on measured data, the definition is a modelling choice with a large effect, that the long memory cannot be truncated, and that one bank fits and runs both definitions at the cost of a short filter.
 
 \subsection{Streaming multifractional Brownian motion}\label{sec:mbm}
 

@@ -508,6 +508,20 @@ Yorum:
 - Bu deney değişken derecenin pil modellerini genel olarak iyileştirdiğini göstermiyor. Gösterdiği şey: ölçülmüş veride tanım etkisi büyük bir modelleme seçimi, ve tek banka iki tanımı da aynı maliyetle uyduruyor ve çalıştırıyor.
 - Süre: 63 uydurma (5 model) 4 çekirdekte 15 dk; E12b ~1 dk.
 
+**E12c: aynı modeller başka gerçeklemelerle** (`experiments/e12c_realizations.py`). Uydurulmuş VO modelleri (aynı kazançlar, aynı derece yasası) dışarıda bırakılan çevrimi şu gerçeklemelerle simüle etti (28 katın ortalaması, mV):
+
+| Gerçekleme | çarpma/örnek | A-tipi | B-tipi | banka oranı (medyan) | GL'den sapma |
+|---|---|---|---|---|---|
+| Sabit kutuplu banka (K = 29) | 60 | 47.5 | 46.9 | 1 | 3.2e-6 |
+| Literal GL, tam bellek | ~n/2 | 47.5 | 46.9 | 1.00 | 0 |
+| GL, 600 gecikme | 600 | 251 | 245 | 6.4–7.7 | 0.74 |
+| GL, 60 gecikme | 60 | 347 | 358 | 10.3–11.5 | 0.89 |
+| Kayan kutup, hot swap (K = 22) | 46 | 48.3 | 47.5 | 1.01 | 0.10 |
+
+- Banka gerçek veride literal GL'yi 3.2e-6 içinde veriyor; GL'nin maliyeti O(n).
+- Bellek kısaltılamıyor (6–11 kat kötü).
+- Kayan kutup burada neredeyse banka kadar iyi: derece yasaları yumuşak, seviye komşu değerler arasında değişiyor (kayıt başına 1–174 kez), kesirli terim tanımdan en çok %10 sapıyor. Kayan kutup büyük derece adımlarında başarısız (E8), küçüklerde değil. Bu veride hatayı tanım ve bellek uzunluğu belirliyor; kutup yapısının etkisi küçük. Bu sonuç makaleye olduğu gibi yazıldı.
+
 ---
 
 ## 8. Sonraki adımlar

@@ -41,14 +41,14 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 | 6 | Tam monoton çekirdek aileleri: Teorem 9, Lemma 10 (GL sabitleri kapalı formda), örnekler | E9 |
 | 7.2–7.8 | Hangi tanım izleniyor; durum eşlemesi (özet); mühürlü holdout; dört tip; operatör normu; CM aileleri; maliyet–doğruluk (Pareto) | E1, E1b, E2, E3, E4, E7, E9, E8 |
 | 8.1 | **Çevrimiçi derece izleme** (yeni): A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, yanlış tip yanlılığı, UFOKF tarzı unscented filtrelerle karşılaştırma (Tablo 7, Şekil 6) | E10, E11 |
-| 8.2 | **Ölçülmüş pil verisi** (yeni): SOC'ye bağlı RC + kesirli integral modeli, birini dışarıda bırak doğrulaması, tip takası, derece yasaları, EIS karşılaştırması (Tablo 8, Şekil 7) | E12, E12b |
+| 8.2 | **Ölçülmüş pil verisi** (yeni): SOC'ye bağlı RC + kesirli integral modeli, birini dışarıda bırak doğrulaması, tip takası, derece yasaları, EIS karşılaştırması, başka gerçeklemeler (Tablo 8–9, Şekil 7) | E12, E12b, E12c |
 | 8.3 | mBm (özet): Önerme 11 (tamsayı bölme), sonuçlar, Şekil 8 | E6 |
-| 9 | Sabit nokta (özet): Algoritma 1, iki zarf, kuantizasyon ve kararlılık, kelime uzunlukları, RTL paritesi ve Tablo 9 | E5, E5c |
+| 9 | Sabit nokta (özet): Algoritma 1, iki zarf, kuantizasyon ve kararlılık, kelime uzunlukları, RTL paritesi, kart ölçümleri ve Tablo 10 | E5, E5c |
 | 10–11 | Sınırlar (tahmin, ortak kutup kümesinin boyutu, pil modeli dahil), sonuç | — |
 | Ekler | A: gereklilik; B: ters kararlılık; C: operatör normu; D: CM teoremi ve Lemma 10 | — |
 | Ek materyal | S1 CT tablosu; S2 durum eşlemeleri; S3 hot-swap tipi; S4 sabit nokta; S5 mBm; S6 B-tipi basamak yanıtı; S7 alias terimi | E1, E2, E4, E5, E6 |
 
-Not: teorem numaraları LaTeX'te paylaşılan sayaçla otomatik veriliyor; yukarıdaki numaralar derlenmiş PDF'e göre (Algoritma 1, Tablo 7–9, Şekil 6–8 dahil).
+Not: teorem numaraları LaTeX'te paylaşılan sayaçla otomatik veriliyor; yukarıdaki numaralar derlenmiş PDF'e göre (Algoritma 1, Tablo 7–10, Şekil 6–8 dahil).
 
 Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablolar elle yazıldı; sonuçlar değişirse tablolar da güncellenmeli.
 
