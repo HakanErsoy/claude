@@ -1,0 +1,172 @@
+{
+ "board": "PYNQ-Z1 (Digilent)",
+ "part": "xc7z020clg400-1",
+ "date": "2026-10-09",
+ "configs": {
+  "WS36_WM16": {
+   "ooc": {
+    "clock_constraint_ns": 22.63,
+    "wns_ns": 0.075,
+    "whs_ns": 0.156,
+    "fmax_mhz": 44.336067390822436,
+    "lut": 3214,
+    "ff": 1882,
+    "dsp48": 11,
+    "bram36_equiv": 46.0,
+    "lutram": 0,
+    "trials": [
+     {
+      "period_ns": 5.0,
+      "wns_ns": -17.63,
+      "fmax_mhz": 44.18912947414936
+     },
+     {
+      "period_ns": 22.63,
+      "wns_ns": 0.075,
+      "fmax_mhz": 44.336067390822436
+     }
+    ],
+    "flow": "non-project, synth_design -mode out_of_context, opt/place/route default directives, clock on reg-to-reg paths only (no I/O delays)"
+   },
+   "board": {
+    "clock_mhz": 40.0,
+    "clock_mhz_measured": 40.000081332815846,
+    "clock_constraint_ns": 25.0,
+    "wns_ns": 0.397,
+    "whs_ns": 0.043,
+    "bitstream_sha256": "c09b1f915c921606cd66893c5e34a01691edb1faa772b9ad20f88a192e1196fa",
+    "design_utilization": {
+     "lut": 4973,
+     "ff": 3611,
+     "dsp48": 15,
+     "bram36_equiv": 54.0,
+     "lutram": 58
+    },
+    "parity": {
+     "vectors": 31744,
+     "mismatches": 0,
+     "byte_identical_to_out_txt": true,
+     "first_mismatch": null
+    },
+    "latency_cycles": {
+     "last": 135,
+     "min": 135,
+     "max": 135
+    },
+    "cycles_per_sample": 135,
+    "samples_per_s_theoretical": 326000.4955207532,
+    "samples_per_s_theoretical_135": 328415.3140060921,
+    "samples_per_s_at_board_clock": 296296.2962962963,
+    "parity_host_elapsed_s": 1.3911066069999833
+   }
+  },
+  "WS48_WM25": {
+   "ooc": {
+    "clock_constraint_ns": 25.5,
+    "wns_ns": 0.04,
+    "whs_ns": 0.156,
+    "fmax_mhz": 39.27729772191673,
+    "lut": 4278,
+    "ff": 2337,
+    "dsp48": 15,
+    "bram36_equiv": 64.0,
+    "lutram": 0,
+    "trials": [
+     {
+      "period_ns": 5.0,
+      "wns_ns": -20.498,
+      "fmax_mhz": 39.218762255863204
+     },
+     {
+      "period_ns": 25.5,
+      "wns_ns": 0.04,
+      "fmax_mhz": 39.27729772191673
+     }
+    ],
+    "flow": "non-project, synth_design -mode out_of_context, opt/place/route default directives, clock on reg-to-reg paths only (no I/O delays)"
+   },
+   "board": {
+    "clock_mhz": 34.482759,
+    "clock_mhz_measured": 34.4826989265833,
+    "clock_constraint_ns": 28.571,
+    "wns_ns": 0.863,
+    "whs_ns": 0.042,
+    "bitstream_sha256": "46f192066d45ef9c05af279e8caa5fb226e2825d7b7c518918c1f3fc9c742fdb",
+    "design_utilization": {
+     "lut": 6123,
+     "ff": 4113,
+     "dsp48": 24,
+     "bram36_equiv": 73.5,
+     "lutram": 58
+    },
+    "parity": {
+     "vectors": 62464,
+     "mismatches": 0,
+     "byte_identical_to_out_txt": true,
+     "first_mismatch": null
+    },
+    "latency_cycles": {
+     "last": 135,
+     "min": 135,
+     "max": 135
+    },
+    "cycles_per_sample": 135,
+    "samples_per_s_theoretical": 288803.659719976,
+    "samples_per_s_theoretical_135": 290942.9460882721,
+    "samples_per_s_at_board_clock": 255427.84444444443,
+    "parity_host_elapsed_s": 2.745919719000085,
+    "period_cycles": {
+     "last": 135,
+     "min": 135,
+     "max": 135
+    },
+    "samples_per_s_theoretical_measured_period": 290942.9460882721,
+    "samples_per_s_measured": 255426.69435606088
+   },
+   "long_run": {
+    "type": "D",
+    "aidx": 51,
+    "row": 972,
+    "alpha_effective": 0.8552785923753666,
+    "samples": 16777216,
+    "input": "LFSR32 Galois mask=0x80200003 (x^32+x^22+x^2+x+1), seed=0x9E3779B9, 32 steps/sample, x = (signed state) >> 10, |x| <= 0.25 at F=23",
+    "block": 65536,
+    "max_abs_y": 85.6989096403122,
+    "max_abs_y_int": 718894559,
+    "rms_first_block": 7.6918384942145455,
+    "rms_last_block": 79.01651398644891,
+    "rms_min_block": 2.144104903598993,
+    "rms_max_block": 79.01651398644891,
+    "guard_threshold": "|y| >= 2^46 LSB (= 2^23)",
+    "guard_hits": 0,
+    "overflow": false,
+    "golden_prefix_samples": 131072,
+    "golden_prefix_block_mismatches": 0,
+    "golden_capture_samples": 4096,
+    "golden_capture_mismatches": 0,
+    "lr_cycles": 2264924196,
+    "cycles_per_sample_avg": 135.0000021457672,
+    "wall_s": 65.70137750200001,
+    "bitstream_sha256_host": "46f192066d45ef9c05af279e8caa5fb226e2825d7b7c518918c1f3fc9c742fdb",
+    "golden_full_length": {
+     "samples": 16777216,
+     "block_mismatches": 0,
+     "first_bad_block": null,
+     "golden_peak_state_bits": 51.28810281256152,
+     "golden_peak_signal_bits": 29.42120494572996
+    }
+   }
+  }
+ },
+ "vivado_version": "2026.1",
+ "clock_source_mhz": "PS FCLK_CLK0 (IO PLL 1000 MHz / integer dividers, set by PYNQ from the .hwh)",
+ "notes": [
+  "Cycles: accept -> out_valid is 135 cycles on the board and in xsim, and back-to-back samples (in_valid held high) follow every 135 cycles, i.e. 4K+7. The 136 = 4K+8 of rtl/README.md is the testbench period, which raises in_valid one cycle after it sees out_valid. samples_per_s_theoretical uses 136 as BOARD_SESSION.md asks; samples_per_s_theoretical_135 uses the measured 135.",
+  "Board clock: Vivado's PS7 configuration assumed an IO PLL of 1600 MHz (WS36) / 1400 MHz (WS48) for the 50 MHz crystal, the PYNQ-Z1 IO PLL runs at 1000 MHz. board_runner.py therefore sets FCLK0 to the fastest 1000/(d0*d1) not above the frequency timing was closed at: 40 MHz (exact) for WS36_WM16, 1000/29 = 34.48 MHz for WS48_WM25 (closed at 35 MHz). Both are confirmed by the 64-bit cycle counter against the ARM clock (clock_mhz_measured).",
+  "OOC Fmax is register-to-register inside vo_bank_core; the board designs add the AXI interconnect and board_top and were closed only at the board clock, not searched for their own Fmax.",
+  "Parity is run through AXI4-Lite from the PS, one soft reset at the start, then all vectors in one stream; the outputs are byte-identical to the committed out.txt.",
+  "Long run: the overflow flag is an output-range guard (|y| >= 2^(WS-2)) because the unmodified core does not expose its state or saturate. Internal overflow is excluded by the golden model instead: run(check=True) over all 2^24 samples raised nothing (peak state 51.3 of 61 bits, peak signal 29.4 of 48 bits), and all 256 block records (CRC-32, max|y|, sum y^2) are identical to the board's.",
+  "Long-run RMS does not stay flat and does not grow monotonically: block RMS ranges 2.14 (block 131) to 79.0 (block 255), first block 7.69. max|y| = 85.7 against a 2^24 full scale. With the quantized DC floor the row is stable; the output wanders as a fractional integral of order 0.855 of white noise does.",
+  "The float-floor instability of this row has an e-folding time of 5.2e8 samples (e5c), so over 2^24 = 1.68e7 samples it would grow by only exp(1.68e7/5.2e8) = 1.03: this run shows boundedness and bit-exactness on hardware, it cannot by itself separate the quantized floor from the float floor."
+ ]
+}

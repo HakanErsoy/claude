@@ -9,7 +9,7 @@
 | Kart | Digilent PYNQ-Z1, PYNQ 3.0.1 imajı |
 | FPGA | `xc7z020clg400-1` (Zynq-7020) |
 | Vivado | 2026.1 (Windows) |
-| Saat kaynağı | PS `FCLK_CLK0` (IO PLL 1000 MHz / tam sayı bölücüler). Frekans `.hwh`'den PYNQ tarafından ayarlanır, ayrıca kartta çevrim sayacıyla ölçülür. Çekirdek, AXI arayüzü ve sayaçlar aynı saatte. |
+| Saat kaynağı | PS `FCLK_CLK0` = IO PLL (1000 MHz) / (d0·d1). Çekirdek, AXI arayüzü ve sayaçlar aynı saatte. `board_runner.py`, zamanlamanın kapatıldığı frekansı (`.hwh`'deki `PCW_ACT_FPGA0_PERIPHERAL_FREQMHZ`) aşmayan en hızlı bölücüyü kendisi kurar. Gerekçe: Vivado PS7'yi 50 MHz kristalle 1400–1600 MHz IO PLL varsayarak yapılandırdı; `.hwh` bölücüleri olduğu gibi uygulanınca kartta başka bir frekans çıkıyor (ilk denemede 40 yerine 25 MHz). Kurulan frekans 64-bit çevrim sayacı ile ARM saatine karşı ölçülüp kaydedilir. |
 | Bilgisayar bağlantısı | Gigabit Ethernet (PC 192.168.2.1 ↔ kart 192.168.2.99), SSH/scp. |
 | Çekirdek erişimi | AXI4-Lite, `M_AXI_GP0` → AXI Interconnect → `board_top` @ `0x43C0_0000`. Vektörleri kartın ARM'ında çalışan `board_runner.py` (PYNQ `MMIO`) sürer. |
 | Pin eşlemesi | Dış pin yok: tüm trafik PS–PL AXI üzerinden. UART kullanılmadı: kartın USB-UART'ı PS'ye (MIO) bağlı, PL'den erişilemiyor; PL UART ek Pmod adaptörü gerektiriyordu (kullanıcıyla kararlaştırıldı). |
@@ -107,3 +107,18 @@ Bu, testbench'teki gibi tek reset ve kesintisiz bir akış demek: örnekler aras
 - |y| ≥ 2^(WS−2) olan çıkış sayısı.
 
 **Taşma bayrağı hakkında.** Çekirdek doyurmuyor; taşarsa sarar ve iç durumu dışarı açmıyor. Çekirdeğe dokunulmadığı için bayrak ancak çıkış üzerinden tanımlanabildi: |y|, tam ölçeğin yarısına (2^(WS−2)) ulaşırsa işaretlenir. Golden önek koşusu ise (`FixedPointBank.run(check=True)`) iç durum ve sinyal taşmasını doğrudan denetliyor.
+
+## Sonuç özeti (2026-10-09)
+
+Tüm sayılar `results/e5_board.json`'da. Ham dosyalar `rtl/build/<cfg>/{vivado,board}/`; bitstream ve `.hwh` dosyaları da `board/` altında.
+
+| | WS36_WM16 | WS48_WM25 |
+|---|---|---|
+| OOC Fmax (kısıt / WNS) | 44.34 MHz (22.63 ns / +0.075) | 39.28 MHz (25.50 ns / +0.040) |
+| OOC LUT / FF / DSP48 / BRAM36 | 3214 / 1882 / 11 / 46 | 4278 / 2337 / 15 / 64 |
+| Kart saati (kapatılan / kurulan, ölçülen) | 40 / 40.0001 MHz | 35 / 34.4827 MHz |
+| Kart paritesi | 31 744 vektör, 0 uyumsuzluk, `out.txt` ile bayt bayt aynı | 62 464 vektör, 0 uyumsuzluk, bayt bayt aynı |
+| Kabul → `out_valid` | 135 çevrim | 135 çevrim (arka arkaya periyot da 135) |
+| Uzun koşu | — | 2²⁴ örnek, D, aidx 51 (α = +0.8553): 256 bloğun hepsi golden ile aynı, taşma yok, max\|y\| = 85.7, blok RMS 2.14–79.0 (ilk 7.69, son 79.0) |
+
+Talimattaki 136 çevrim, testbench'in bir çevrimlik el sıkışma gecikmesini de içeriyor; çekirdeğin kendi periyodu 4K+7 = 135. Ayrıntılar `results/e5_board.json` → `notes`.

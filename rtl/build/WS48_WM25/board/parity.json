@@ -1,0 +1,37 @@
+{
+ "config": "WS48_WM25",
+ "bitstream_sha256_host": "46f192066d45ef9c05af279e8caa5fb226e2825d7b7c518918c1f3fc9c742fdb",
+ "bitstream_sha256": "46f192066d45ef9c05af279e8caa5fb226e2825d7b7c518918c1f3fc9c742fdb",
+ "params": {
+  "K": 32,
+  "WS": 48,
+  "WST": 61,
+  "WM": 25
+ },
+ "clock": {
+  "timing_closed_mhz": 35.0,
+  "pll_src_mhz": 1000.0,
+  "div0": 1,
+  "div1": 29,
+  "set_mhz": 34.48275862068966,
+  "fclk0_mhz_pynq": 34.482759,
+  "fclk0_mhz_measured": 34.4826989265833,
+  "measure_s": 2.002161726000395
+ },
+ "vectors": 62464,
+ "nsamp_counter": 62464,
+ "latency_cycles": {
+  "last": 135,
+  "min": 135,
+  "max": 135
+ },
+ "extra_status_polls": 62153,
+ "host_elapsed_s": 2.745919719000085,
+ "parity": {
+  "vectors": 62464,
+  "received": 62464,
+  "mismatches": 0,
+  "byte_identical_to_out_txt": true,
+  "first_mismatch": null
+ }
+}
