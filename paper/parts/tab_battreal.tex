@@ -1,0 +1,17 @@
+%% Battery realizations table: main text of the TSP version, supplement of the SP version.
+\begin{table}[t]
+\caption{Battery data: fitted VO models with the fractional term realized in other ways (held-out RMSE in mV, mean over 28 folds; median ratio to the bank; largest deviation of the fractional term from the literal GL sum, relative to its peak)}\label{tab:battreal}
+\centering\scriptsize\setlength{\tabcolsep}{2.2pt}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Realization & mult./sample & A & B & ratio & dev.\ from GL\\
+\midrule
+bank, $K=29$ & 60 & 47.5 & 46.9 & 1 & $3.2\times10^{-6}$\\
+GL, full memory & $n/2$ (mean) & 47.5 & 46.9 & 1.00 & 0\\
+GL, 600 lags & 600 & 251 & 245 & 6.4--7.7 & 0.74\\
+GL, 60 lags & 60 & 347 & 358 & 10.3--11.5 & 0.89\\
+moving poles, hot swap, $K=22$ & 46 & 48.3 & 47.5 & 1.01 & 0.10\\
+\bottomrule
+\end{tabular}
+\end{table}
+

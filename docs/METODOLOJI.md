@@ -4,7 +4,7 @@
 **Çalışma başlığı (taslak):**
 *Definition-Consistent Realization of Variable-Order Fractional Operators with Fixed-Pole Banks: Theory, Discrete-Time Exactness, and Sample-Rate Order Scheduling*
 
-Durum: **Aşama 6: makale taslağı başladı** (`paper/`, Springer `sn-jnl`, bkz. [`paper/README.md`](../paper/README.md)). **Aşama 5 tamamlandı (E1–E6).** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu (simülasyonda ve PYNQ-Z1 kartında) ve kaynaklarını, E6 gerçek zamanlı multifraksiyonel Brown hareketi sentezini gösterdi (bkz. §7).
+Durum: **Aşama 6: makale taslağı hazır, iki sürüm** (ortak metin; Signal Processing sürümü `paper/`, elsarticle, 29 + 15 sayfa; IEEE TSP sürümü `paper_tsp/`, IEEEtran, 11 + 11 sayfa; bkz. [`paper/README.md`](../paper/README.md)). **Aşama 5 tamamlandı (E1–E6).** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu (simülasyonda ve PYNQ-Z1 kartında) ve kaynaklarını, E6 gerçek zamanlı multifraksiyonel Brown hareketi sentezini gösterdi (bkz. §7).
 
 ---
 
@@ -189,7 +189,7 @@ Dördü de O(K) maliyetli. Dualite banka içinde yuvarlama düzeyinde korunuyor;
 9. Conclusion
 Ekler: ispatlar, referans formüllerin GL ile doğrulanması
 
-CSSP formatı: Springer `sn-jnl` şablonu; Data Availability ve Conflict of Interest beyanları.
+CSSP formatı: Springer `sn-jnl` şablonu; Data Availability ve Conflict of Interest beyanları. (İlk plan; hedef sonra Signal Processing ve IEEE TSP oldu, bkz. `paper/README.md`.)
 
 ---
 

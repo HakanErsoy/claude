@@ -24,7 +24,7 @@ vofrac/battery.py     Panasonic 18650PF verisi: okuma, OCV, SOC'ye bağlı kazan
 vofrac/crb.py         Derece izleme için Bayesçi Cramér–Rao sınırı: GL türevleri, Jacobian'lar, filtreleme/düzleştirme sınırları (E13)
 rtl/                  Verilog çekirdek, testbench, kart test paketi (E5), bkz. rtl/README.md
 experiments/          E1 (CT), E1b (DT, GL + tanımsal hata), E2 (durum eşlemesi), E3 (tasarım kuralı), E4 (D/E tipleri), E5 (sabit nokta, RTL), E5c (kuantize kararlılık), E6 (mBm), E7 (operatör normu), E8 (karşılaştırma), E9 (CM aileleri), E10 (derece izleme), E11 (UFOKF tarzı karşılaştırma), E12 (pil verisi), E12b (EIS karşılaştırması), E12c (başka gerçeklemeler), E13 (Bayesçi CRB)
-paper/                Makale taslağı ve ek materyal (LaTeX, sn-jnl; Signal Processing sürümü), şekil betiği, derlenmiş PDF'ler; bkz. paper/README.md
+paper/                Signal Processing sürümü (elsarticle, 29 sayfa + 15 sayfa ek materyal), iki sürümün ortak metni (body.tex, supp_body.tex), şekil betiği, derlenmiş PDF'ler; bkz. paper/README.md
 paper_tsp/            IEEE TSP sürümü (IEEEtran, 11 sayfa + 11 sayfa ek materyal); şekiller ve kaynaklar paper/ ile ortak; bkz. paper_tsp/README.md
 litreview/            Sistematik literatür taraması: protokol, sorgular, eleme kararları, veri çıkarma, kaynak doğrulama; bkz. litreview/SENTEZ.md
 results/              JSON çıktıları, şekiller, loglar

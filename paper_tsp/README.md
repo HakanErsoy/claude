@@ -1,6 +1,21 @@
 # IEEE TSP sürümü
 
-Bu klasör makalenin IEEE Transactions on Signal Processing sürümünü içeriyor. Tam metinli Signal Processing (Elsevier) sürümü `../paper/` altında; iki sürüm aynı sonuç dosyalarını, şekilleri (`../paper/figs/`) ve kaynakçayı (`../paper/refs.bib`) kullanıyor.
+Bu klasör makalenin IEEE Transactions on Signal Processing sürümünü içeriyor. Signal Processing (Elsevier) sürümü `../paper/` altında.
+
+İki sürümün metni ortak:
+
+- ana metin `../paper/body.tex`,
+- ek materyal `../paper/supp_body.tex`,
+- makrolar `../paper/macros.tex`,
+- ayrı parçalar `../paper/parts/`.
+
+Bu klasördeki dosyalar yalnızca sarmalayıcı. TSP'ye özgü kısımlar şunlar:
+
+- ön kısım (başlık, yazarlar, özet, IEEE anahtar kelimeleri),
+- IEEEtran biçimi,
+- `\spfalse`.
+
+Şekiller (`../paper/figs/`), kaynakça (`../paper/refs.bib`) ve sonuç dosyaları da ortak. Ayrıntılar `../paper/README.md` içinde.
 
 | Dosya | İçerik |
 |---|---|
@@ -11,9 +26,29 @@ Bu klasör makalenin IEEE Transactions on Signal Processing sürümünü içeriy
 
 ## SP sürümünden farklar
 
-- Ana metin: teori (gereklilik, yapı ⇔ tanım, operatör normu, CM ailesi), tasarım kuralı ve kararlılık, sayısal sonuçlar (tanım tutarlılığı, mühürlü holdout, operatör normu, maliyet–doğruluk), derece izleme (Bayesçi CRB dahil), pil verisi, sabit nokta ve kart ölçümlerinin özeti. İspatlar ekte (A–D).
-- Ek materyale taşınanlar: sürekli zaman bankası ve hata terimleri, sürekli zaman anahtarlama sonuçları, durum eşlemeleri, dört tip ve gevşeme denklemleri, sabit nokta ayrıntıları ve RTL tablosu, mBm.
-- Kısaltılanlar: ilgili çalışmalar (metin kısaldı, tablo aynı), CM örnekleri, tasarım kuralının ayrıntıları.
+İçerik iki sürümde aynı; yalnızca yerleşim farklı.
+
+**TSP ana metninde olup SP'de ek materyalde olanlar:**
+
+- ispatlar (TSP'de Ek A–D),
+- ilgili çalışmalar tablosu,
+- tasarım kuralı ve holdout şekli,
+- sıçramalı izleme şekli,
+- pil verisinde başka gerçeklemeler tablosu,
+- sabit nokta ve kart ölçümlerinin uzun özeti.
+
+**SP'de kısaltılanlar:** bazı kaynak listeleri.
+
+**İki sürümde de ek materyalde olanlar:**
+
+- sürekli zaman bankası ve hata terimleri,
+- sürekli zaman anahtarlama sonuçları,
+- durum eşlemeleri,
+- hot-swap tipi,
+- dört tip ve gevşeme denklemleri,
+- sabit nokta ayrıntıları ve RTL tablosu,
+- mBm,
+- iki türetme.
 
 ## Gönderimden önce
 

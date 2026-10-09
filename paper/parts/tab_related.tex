@@ -1,0 +1,21 @@
+%% Related-work table: main text of the TSP version, supplement of the SP version.
+\begin{table*}[t]
+\caption{How existing realizations treat a varying order. ``Inferred'' marks entries obtained by applying Proposition~\mref{prop:structure} or Theorem~\mref{thm:necessity} to the structure described in the cited work}\label{tab:related}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.26\textwidth}>{\raggedright\arraybackslash}p{0.2\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}@{}}
+\toprule
+Work & Structure & Definition & Order changes & Cost per sample\\
+\midrule
+serial switching~\cite{sierociuk2015amm} & analog; complementary-order block added at each switch & B & any number of switches & grows with switches\\
+recursive, parallel schemes~\cite{sierociuk2015cssp,sierociuk2018amc,sierociuk2020} & analog; switched constant-order ladders & D; B; B$\leftrightarrow$D & a few switches & ---\\
+\cite{aricioglu2025} & analog; one transfer function & LTI (third) type of~\cite{lorenzo2002} & smooth $\alpha(t)$ & fixed\\
+tunable elements, filters~\cite{tsirimokou2017,charef2012,tseng2006,charef2012sivp} & order as a design parameter & FIR with current-order coefficients: A (inferred) & re-tuning & ---\\
+programmable ladder~\cite{yu2022} & element values change with the order (moving poles) & compared with B; approximate (Thm.~\mref{thm:necessity}) & jumps, continuous & fixed\\
+FPGA GL~\cite{tolba2020}; VO PID~\cite{oziablo2020} & direct GL convolution & A (inferred~\cite{tolba2020}; stated~\cite{oziablo2020}) & at run time & $O(L)$, $L$ = memory\\
+hot-swapped Oustaloup (Sect.~\mref{sec:results}) & moving poles, state kept & none exactly (Thm.~\mref{thm:necessity}) & any & $O(S)$\\
+exponential sums~\cite{zhang2022esa,zhang2022fast} & fixed exponents, continuous-time Caputo & A & any $\alpha(t)\in(0,1)$ & $O(\log^2 n)$\\
+hidden memory~\cite{jia2022} & Taylor / hierarchical matrices & B-like (Caputo) & any & $O(N\log N)$ in total\\
+this work & discrete fixed-pole bank & A, B; D, E by inversion & every sample & $O(K)$, $K\approx20$--$50$\\
+\bottomrule
+\end{tabular}
+\end{table*}

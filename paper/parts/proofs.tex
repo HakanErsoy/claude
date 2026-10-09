@@ -1,0 +1,68 @@
+%% Proofs: appendix of the TSP version, supplement of the SP version.
+\section{Proof of Theorem~\mref{thm:necessity}}\label{app:necessity}
+
+Write $\mathcal C_i=[b_i,F_ib_i,\dots,F_i^{S-1}b_i]$ and $\mathcal O_i=[c_i,F_i^{\top}c_i,\dots,(F_i^{\top})^{S-1}c_i]^{\top}$, both invertible by minimality~\cite{kailath1980}.
+
+(a) For $n\ge m$ the switched output is $d_2v_n+c_2^{\top}F_2^{\,n-m}\Phi x_1[m]+c_2^{\top}\sum_{m\le j<n}F_2^{\,n-1-j}b_2v_j$. The response of $\Sigma_2$ to the whole input differs from it only by $\Phi x_1[m]$ being replaced by $x_2[m]=\sum_{j<m}F_2^{\,m-1-j}b_2v_j$. Equality for all inputs and all $n\ge m$ means $c_2^{\top}F_2^{\,k}(\Phi x_1[m]-x_2[m])=0$ for all $k\ge0$. By observability this holds if and only if $\Phi x_1[m]=x_2[m]$ for every input history, that is, if and only if $\Phi F_1^{\,k}b_1=F_2^{\,k}b_2$ for $k=0,\dots,m-1$. Since $m\ge S+1$, this gives $\Phi\mathcal C_1=\mathcal C_2$, so $\Phi$ is invertible. It also gives $(\Phi F_1-F_2\Phi)F_1^{\,k}b_1=\Phi F_1^{\,k+1}b_1-F_2^{\,k+1}b_2=0$ for $k=0,\dots,S-1$, hence $(\Phi F_1-F_2\Phi)\mathcal C_1=0$ and $F_2=\Phi F_1\Phi^{-1}$. Conversely, if $F_2=\Phi F_1\Phi^{-1}$ and $b_2=\Phi b_1$, then $\Phi F_1^{\,k}b_1=F_2^{\,k}b_2$ for all $k$.
+
+(b) The B-type behaviour requires that the stored state continue as in $\Sigma_1$: $c_2^{\top}F_2^{\,k}\Phi x=c_1^{\top}F_1^{\,k}x$ for all $k\ge0$ and every reachable $x$. By controllability every $x$ is reachable within $S\le m-1$ samples, so $\mathcal O_2\Phi=\mathcal O_1$. Then $\Phi$ is invertible, $c_2^{\top}=c_1^{\top}\Phi^{-1}$, and $\mathcal O_2(F_2\Phi-\Phi F_1)=0$ follows in the same way, so $F_2=\Phi F_1\Phi^{-1}$. The converse is immediate. \qed
+
+\section{Proof of Proposition~\mref{prop:stability}}\label{app:stability}
+
+$N$ has degree $K+1$. If $\cd=0$, then $z=0$ is a root of $N$; it cancels the delay pole and lies inside the disc. We give the argument for $\cd\neq0$; the case $\cd=0$ is the same with the pole at 0 removed.
+
+(i) All residues are positive, so $\Hh$ decreases from $+\infty$ to $-\infty$ between consecutive poles of $\{0,\theta_0,\dots,\theta_{K-1}\}$. This gives $K$ roots in $(0,\max_k\theta_k)$. On $(\max_k\theta_k,\infty)$, $\Hh$ decreases from $+\infty$ to $g_0>0$, so there is no root there. On $(-\infty,0)$, $\Hh$ decreases from $g_0>0$ to $-\infty$, so there is exactly one root $z_*$. It lies in $(-1,0)$ if and only if $\Hh(-1)>0$.
+
+(ii) Between consecutive $\theta_k$ the negative residues make $\Hh$ rise from $-\infty$ to $+\infty$, which gives $K-1$ roots. For $z>\max_k\theta_k$,
+\[
+z\Hh(z)=g_0z+\cd+\sum_k c_k\big(1+\theta_k/(z-\theta_k)\big)
+\]
+is strictly increasing from $-\infty$ to $+\infty$. Hence there is exactly one root there, and it is smaller than 1 if and only if $\Hh(1)>0$. If $\cd<0$, then $z\Hh(z)$ rises from $\cd<0$ at $z=0$ to $+\infty$ at $\min_k\theta_k^-$, giving the last root in $(0,\min_k\theta_k)$. If $\cd>0$, then $z\Hh(z)$ rises from $-\infty$ at $z\to-\infty$ to $\cd>0$ at $z=0$. Counting shows there is exactly one root $z_*<0$, with $z\Hh(z)<0$ for $z<z_*$. Hence $z_*>-1$ if and only if $-\Hh(-1)<0$, that is, $\Hh(-1)>0$. In all cases the $K+1$ roots are real, so no complex root can lie outside the disc.
+
+(iii) Integral bank, order $-a$ with $0<a<1$. Since $\gh_1=\cd+\sum_kc_k$ and $\gh_2=\sum_kc_k\theta_k$,
+\[
+\Hh(-1)=g_0-\gh_1+\sum_k\frac{c_k\theta_k}{1+\theta_k}\ge g_0-\gh_1+\tfrac12\gh_2 .
+\]
+With $g_1=ag_0$, $g_2=\tfrac12a(1+a)g_0$ and relative errors at most $\delta=\tfrac13$, the right-hand side is at least $g_0(1-a)(6-a)/6>0$. Derivative bank, order $a$: here $\sum_k c_k\theta_k/(1+\theta_k)\ge\gh_2$ because $c_k<0$. Hence $\Hh(-1)\ge g_0-\gh_1+\gh_2$. With $g_1=-ag_0$ and $g_2=-\tfrac12a(1-a)g_0$, this is at least $g_0\big(1+\tfrac23a^2\big)>0$. \qed
+
+\section{Proof of Theorem~\mref{thm:opnorm}}\label{app:opnorm}
+
+(a) Row $n$ of $E_{\mathrm A}$ is $(e_n(\alpha_n),\dots,e_1(\alpha_n),0,\dots,0)$. It contains a single order, so its absolute sum is at most $\rho_{\mathrm{row}}$. Column $j$ of $E_{\mathrm A}$ contains $e_{n-j}(\alpha_n)$ for $n>j$, one entry per lag, each at most $\sup_a|e_{n-j}(a)|$, so its absolute sum is at most $\rho_{\mathrm{col}}$. In $E_{\mathrm B}$ column $j$ contains the single order $\alpha_j$, and row $n$ contains one entry per lag. This gives the four bounds. The $\ell^2$ bound follows from $\|E\|_2^2\le\|E\|_1\|E\|_\infty$. For a finite $\mathcal S$, let $a^*$ maximize $\sum_r|e_r(a)|$ and $a_r$ maximize $|e_r(a)|$. The constant sequence $a^*$ attains $\rho_{\mathrm{row}}$ in the last row of $E_{\mathrm A}$ and in the first column of $E_{\mathrm B}$. The sequence $\alpha_n=a_n$ attains $\rho_{\mathrm{col}}$ in the first column of $E_{\mathrm A}$, and the reversed sequence $\alpha_n=a_{N-1-n}$ attains it in the last row of $E_{\mathrm B}$.
+
+(b) The off-diagonal entries satisfy $|[E_{\mathrm T}]_{n,j}|\le\eps_R|[W_{\mathrm T}]_{n,j}|$ because $n-j<N\le R$, and the diagonal of $E_{\mathrm T}$ vanishes. For any $x$, $|E_{\mathrm T}x|\le|E_{\mathrm T}|\,|x|\le\eps_R|W_{\mathrm T}|\,|x|$ entrywise, so $\|E_{\mathrm T}x\|_p\le\eps_R\|\,|W_{\mathrm T}|\,\|_p\|x\|_p$. For $p\in\{1,\infty\}$ the induced norm depends only on the absolute values of the entries.
+
+(c) Since $\hat W_{\mathrm T}=\hat W_{\mathrm F}(-\alpha)^{-1}$ and $W_{\mathrm T}=W_{\mathrm F}(-\alpha)^{-1}$,
+\[
+\hat W_{\mathrm T}-W_{\mathrm T}=\hat W_{\mathrm T}\big(W_{\mathrm F}(-\alpha)-\hat W_{\mathrm F}(-\alpha)\big)W_{\mathrm T}=-\hat W_{\mathrm T}E^-_{\mathrm F}W_{\mathrm T}.
+\]
+Hence $\|E_{\mathrm T}\|_p\le\|\hat W_{\mathrm T}\|_p\|E^-_{\mathrm F}\|_p\|W_{\mathrm T}\|_p\le(\|W_{\mathrm T}\|_p+\|E_{\mathrm T}\|_p)\,q$, which rearranges to the first bound. Writing $\|W_{\mathrm T}\|_p\le\|\hat W_{\mathrm T}\|_p+\|E_{\mathrm T}\|_p$ instead gives the second. If all orders are negative, $\hat W_{\mathrm F}(-\alpha)$ is a derivative bank at every sample: its diagonal $\Ts^{\alpha_n}$ is positive, and its off-diagonal entries $\gh_r(-\alpha_n)$, $r\ge1$, are nonpositive, for $r\ge2$ because all $c_k<0$ and for $r=1$ by assumption. (The DC floor changes $\gh_1$ only by about the DC quadrature error; in the 200 discrete-time holdout designs, $\gh_1<0$ at all 4294 checked derivative orders.) Write $\hat W_{\mathrm F}(-\alpha)=\Delta-L$ with $\Delta$ diagonal positive and $L\ge0$ strictly lower triangular. Then $\hat W_{\mathrm T}=\sum_{k=0}^{N-1}(\Delta^{-1}L)^k\Delta^{-1}\ge0$, and for a nonnegative matrix $\|M\|_\infty=\|M\mathbf 1\|_\infty$. \qed
+
+\section{Proof of Theorem~\mref{thm:cm} and Lemma~\mref{lem:glconst}}\label{app:cm}
+
+Part (a) is stated after the theorem. For (b), fix $a$ and $r$, and write $f=f_{a,r}$ and $I=\int f\,\mathrm dx=k_a(r)/\sigma_a$. The realized weight is $\sigma_a$ times the infinite trapezoidal sum $T_h=h\sum_{j\in\mathbb Z}f(x_j)$, $x_j=\ln\ulo+jh$, minus two residuals. Let $u_j=e^{x_j}$.
+
+\emph{Quadrature.} By (H1) and~\cite[Thm.~5.1]{trefethen2014}, $|T_h-I|\le2M/(e^{2\pi d/h}-1)$ with $M=\sup_{|y|<d}\int|f(x+\mathrm iy)|\,\mathrm dx\le L_dI$.
+
+\emph{Lower bound on $I$.} For $r\ge2$, (H2) gives $I\ge c_-\int_0^{u_*}e^{-(r-1)u}u^{\beta_a-1}\,\mathrm du\ge c_-\vartheta\,(r-1)^{-\beta_a}$.
+
+\emph{Lower tail.} The nodes $j<0$ are replaced by one node at $u_0=\ulo$ with the same total weight. At lag $r$ the residual is $\sum_{j<0}hu_jm_a(u_j)\big(e^{-(r-1)u_j}-e^{-(r-1)u_0}\big)$, which lies between 0 and $(r-1)u_0\sum_{j<0}hu_jm_a(u_j)$. By (H2) this is at most $(r-1)c_+\ulo^{1+\beta_a}\sum_{j\ge1}he^{-j\beta_ah}\le(r-1)c_+\ulo^{1+\beta_a}/\beta_a$. Divided by the lower bound on $I$, it gives the second term of~\meqref{eq:cmerr}. It vanishes at $r=1$.
+
+\emph{Upper tail.} The nodes $j\ge K$ are replaced by the delay mode, which is exact at $r=1$. For $r\ge2$ the residual is $\sum_{j\ge K}hu_jm_a(u_j)e^{-(r-1)u_j}\le C_\infty e^{-(r-2)\uhi}\sum_{j\ge K}hu_je^{-(1+\gamma)u_j}$ by (H3). The function $x\mapsto e^xe^{-(1+\gamma)e^x}$ decreases for $e^x\ge1/(1+\gamma)$, so for $\uhi\ge1$ the sum is at most $\int_{\uhi}^\infty e^{-(1+\gamma)u}\,\mathrm du=e^{-(1+\gamma)\uhi}/(1+\gamma)$. Relative to $I$, this leaves the factor $(r-1)^{\beta_a}e^{-(r-2)\uhi}$. That factor is 1 at $r=2$ and does not increase for $\uhi\ge\beta_+\ln2$, which gives the third term.
+
+For (c), the choices of $h$, $\ulo$ and $\uhi$ make the three terms at most $\eps/2$, $\eps/4$ and $\eps/4$; the second uses $(R-1)\ulo\le1$, so that the exponent $1+\beta_a$ may be replaced by $1+\beta_-$. A grid with $K=\lceil\ln(\uhi/\ulo)/h\rceil+1$ nodes has a spacing at most $h$, and none of the three bounds increases when the spacing decreases. Finally, $1/h=O(\ln(1/\eps))$ and $\ln(\uhi/\ulo)=O(\ln R+\ln(1/\eps))$, which gives the scaling of part (c). \qed
+
+\emph{Proof of Lemma~\mref{lem:glconst}.} With $u=e^x$, $c=\cos y$ and $z=ue^{\mathrm iy}$,
+\[
+\begin{aligned}
+|f_{a,r}(x+\mathrm iy)|&=u\,e^{-(r-a)cu}\,|1-e^{-z}|^{a},\\
+\int_{\mathbb R}|f_{a,r}(x+\mathrm iy)|\,\mathrm dx&=\int_0^\infty e^{-(r-a)cu}\,|1-e^{-z}|^{a}\,\mathrm du,
+\end{aligned}
+\]
+and $I=\int_0^\infty e^{-(r-a)u}(1-e^{-u})^a\,\mathrm du$. For $\mathrm{Re}\,z>0$, $1-e^{-z}$ lies in the disc $|w-1|<1$, so $f_{a,r}$ is analytic in the strip. Two bounds hold for $|y|<\pi/2$:
+\begin{itemize}
+\item $|1-e^{-z}|\le\min(u,2)\le(1-e^{-u})/\kappa_0$ with $\kappa_0=(1-e^{-2})/2$, because $(1-e^{-u})/\min(u,2)$ is smallest at $u=2$;
+\item $|1-e^{-z}|\ge1-e^{-cu}\ge c\,(1-e^{-u})$, by concavity of $1-e^{-u}$.
+\end{itemize}
+Hence $|1-e^{-z}|^a\le\kappa_0^{-a}(1-e^{-u})^a$ for $a\ge0$ and $\le c^{a}(1-e^{-u})^a$ for $a<0$. Substituting $v=cu$ and using $1-e^{-v}\le1-e^{-v/c}\le(1-e^{-v})/c$ gives $\int_0^\infty e^{-(r-a)cu}(1-e^{-u})^a\,\mathrm du\le c^{-1-\max(a,0)}I$. The ratio in (H1) is therefore at most $\kappa_0^{-a}c^{-1-a}$ for $a\ge0$ and $c^{-1-|a|}$ for $a<0$, for every $r$, which gives the bound on $L_d$. The same bounds show that $|f_{a,r}|$ vanishes at both ends of the strip, since $1+a>0$ and $r-a>0$. For (H2), $e^{-(1-a)u}\in[e^{-2},1]$ and $(1-e^{-u})/u\in[1-e^{-1},1]$ on $(0,1]$. For (H3), $(1-e^{-u})^a\le(1-e^{-1})^{-1}$ and $e^{-(1-a)u}\le e^{-(1-\bar a)u}$ on $[1,\infty)$. \qed
+
+

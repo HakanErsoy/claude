@@ -1,10 +1,10 @@
-# Makale taslağı ve ek materyal
+# Makale taslağı ve ek materyal (Signal Processing sürümü)
 
-Springer Nature `sn-jnl` şablonu (pdflatex, `sn-mathphys-num` numaralı kaynak stili). Taslak İngilizce; bu not Türkçe. Hedef dergi Signal Processing (Elsevier) olursa elsarticle'a geçiş gerekecek.
+Elsevier `elsarticle` şablonu, `review` seçeneği (tek sütun, 12 pt, 1.5 satır aralığı; pdflatex, `elsarticle-num` numaralı kaynak stili). Taslak İngilizce; bu not Türkçe. Hedef dergi Signal Processing (Elsevier).
 
-**Başlık (2026-10-07'de güncellendi):** *Definition-Consistent Variable-Order Fractional Operators from Fixed-Pole Banks: Structure, Error Guarantees, and Order Tracking*
+**Sayfa sınırı:** araştırma makaleleri şekiller, tablolar ve kaynaklar dahil en çok 30 sayfa (tek sütun, çift aralık). Bu bilgi derginin yazar kılavuzunun arama sonucundaki alıntısından alındı; kılavuz sayfası doğrudan açılamadı (403). Gönderimden önce [kılavuzdan](https://www.elsevier.com/journals/signal-processing/0165-1684/guide-for-authors) son kez kontrol edilmeli.
 
-Önceki başlık: *... from a Single Fixed-Pole Bank: Structure, Design Rule, and Fixed-Point Realization*. Donanım ayrıntıları ek materyale taşındığı ve izleme uygulaması eklendiği için başlık değişti; istenirse eskisine dönülebilir.
+**Başlık:** *Variable-Order Fractional Operators from Fixed-Pole Banks: Definition by Structure, Error Guarantees, and Order Tracking* (TSP sürümüyle aynı).
 
 ## Derleme
 
@@ -17,42 +17,77 @@ make clean      # LaTeX ara dosyalarını siler
 
 Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) ve Python 3 (numpy, matplotlib).
 
+## Ortak metin: SP ve TSP sürümleri
+
+İki sürümün metni tek kaynaktan derleniyor; bir düzeltme iki sürüme birden geçiyor.
+
+- `body.tex`: ana metin (Giriş'ten Sonuç'a).
+- `supp_body.tex`: ek materyal.
+- `macros.tex`: teorem ortamları ve makrolar.
+- `parts/`: SP sürümünün sayfa sınırı yüzünden ek materyale taşıdığı parçalar.
+
+Sürüm farkları `\ifsp` anahtarıyla seçiliyor. `paper/main.tex` bunu `\sptrue`, `../paper_tsp/main.tex` ise `\spfalse` yapıyor. Bazı yardımcı makrolar her sürümde farklı tanımlı:
+
+- `\proofref`: ispatın yeri (SP'de ek materyal, TSP'de Ek A–D).
+- `\citesp{uzun}{kısa}`: SP'de kısaltılmış kaynak listeleri.
+- `\tabfont`, `\colfigwidth`, `\partsdir`: biçim ve dosya yolu.
+- `\mref`/`\meqref`: ek materyalde ana metne `M-` önekli referans (`xr` paketi).
+
+SP sürümünde ek materyale taşınanlar:
+
+- dört ispat (gereklilik, ters kararlılık, operatör normu, CM teoremi ve Lemma 2);
+- ilgili çalışmalar tablosu;
+- tasarım kuralı terimleri ve holdout şekli;
+- sıçramalı izleme senaryosunun şekli;
+- pil modelinin başka gerçeklemelerle karşılaştırma tablosu.
+
+SP sürümünde kısaltılanlar:
+
+- sabit nokta, kart ölçümleri ve mBm paragrafı (ayrıntılar ek materyalde);
+- bazı kaynak listeleri.
+
+TSP metni bu yeniden düzenlemeden etkilenmedi (pdftotext çıktısı önceki sürümle aynı).
+
+Kısaltmadan önceki 48 sayfalık uzun sürüm (sn-jnl şablonu) git geçmişinde duruyor: `git show 8518915:paper/main.tex`.
+
 ## Dosyalar
 
 | Dosya | İçerik |
 |---|---|
-| `main.tex` | Makale metni (48 sayfa) |
-| `supplement.tex` | Ek materyal (8 sayfa, S1–S7): CT anahtarlama tablosu, durum eşlemesi ayrıntıları, hot-swap tip analizi, sabit nokta ayrıntıları ve kelime uzunluğu şekli, mBm ayrıntıları ve tablosu, iki türetme (B-tipi basamak yanıtı, büyük-r alias terimi). Ana metne `xr` paketiyle çapraz referans veriyor |
-| `refs.bib` | Kaynaklar (78 girdi; Crossref ile doğrulandı, `litreview/bib_check.csv`). Son eklenen Tichavský ve ark. 1998 (PCRB) ve ondan önceki beşi (Panasonic veri seti DataCite ile; Zou ve ark. 2018, Lu ve ark. 2018, Wang ve ark. 2022, Mao ve ark. 2023 Crossref ile) 2026-10-09'da doğrulandı |
+| `main.tex` | SP sarmalayıcısı: ön kısım (başlık, yazarlar, özet, anahtar kelimeler), `body.tex`, beyanlar, kaynakça. **29 sayfa** (kaynaklar dahil) |
+| `supplement.tex` | SP ek materyal sarmalayıcısı, `supp_body.tex`'i derliyor. **15 sayfa**: S1–S4 ispatlar, S5 ilgili çalışmalar tablosu, S6 tasarım kuralı ve holdout, S7 sıçramalı izleme, S8 pil verisinde başka gerçeklemeler, S9 sürekli zaman bankası, S10 sürekli zaman anahtarlama sonuçları, S11 durum eşlemeleri, S12 hot-swap tipi, S13 tek bankadan dört tip, S14 sabit nokta ve kart ölçümleri, S15 mBm, S16 B-tipi basamak yanıtı, S17 alias terimi |
+| `body.tex`, `supp_body.tex`, `macros.tex`, `parts/` | İki sürümün ortak metni (yukarıya bakın) |
+| `refs.bib` | Kaynaklar (78 girdi; Crossref ile doğrulandı, `litreview/bib_check.csv`). En son eklenen Tichavský ve ark. 1998 (PCRB). Ondan önceki beş kaynak 2026-10-09'da doğrulandı: Panasonic veri seti DataCite ile; Zou ve ark. 2018, Lu ve ark. 2018, Wang ve ark. 2022, Mao ve ark. 2023 Crossref ile |
 | `make_figures.py` | On vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
-| `figs/` | Üretilen şekiller (PDF) |
-| `sn-jnl.cls`, `sn-mathphys-num.bst` | Resmî Springer Nature şablonundan (değiştirilmedi) |
+| `figs/` | Üretilen şekiller (PDF); TSP sürümü de bunları kullanıyor |
+| `elsarticle.cls`, `elsarticle-num.bst` | Resmî elsarticle paketinden (CTAN; `.cls`, `elsarticle.ins`'ten üretildi; değiştirilmedi) |
 | `main.pdf`, `supplement.pdf` | Derlenmiş taslak ve ek materyal |
 
 ## Bölümler ve dayandıkları deneyler
 
+Numaralar SP sürümünün derlenmiş PDF'ine göre. TSP sürümünde aynı bölümler, ispatlar Ek A–D'de.
+
 | Bölüm | İçerik | Kaynak |
 |---|---|---|
-| 1 | Giriş, altı maddelik katkı listesi; 1.1 ilgili çalışmalar ve Tablo 1 | `litreview/` |
-| 2 | A/B/D/E tanımları, matris formu, dualite, CT basamak referansları, difüzif gösterim | — |
-| 3 | CT ve DT sabit kutuplu banka (Beta-integral, Lemma 1), kuyruk kapanışı, OS/IS, Şekil 1 (TikZ) | — |
-| 4 | Önerme 2 (OS→A, IS→B), Sonuç 3, Önerme 4 (D/E terslemeyle), Teorem 5 (operatör normu), Not 2 (koşul sayısı), Teorem 6 (gereklilik), Sonuç 7 | E7 |
-| 5 | Hata modeli, tasarım kuralı, Önerme 8 (ters kararlılık), DC tabanı | — |
-| 6 | Tam monoton çekirdek aileleri: Teorem 9, Lemma 10 (GL sabitleri kapalı formda), örnekler | E9 |
-| 7.2–7.8 | Hangi tanım izleniyor; durum eşlemesi (özet); mühürlü holdout; dört tip; operatör normu; CM aileleri; maliyet–doğruluk (Pareto) | E1, E1b, E2, E3, E4, E7, E9, E8 |
-| 8.1 | **Çevrimiçi derece izleme**: A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, yanlış tip yanlılığı, UFOKF tarzı unscented filtrelerle karşılaştırma, Bayesçi CRB (Tablo 7–8, Şekil 6–7) | E10, E11, E13 |
-| 8.2 | **Ölçülmüş pil verisi** (yeni): SOC'ye bağlı RC + kesirli integral modeli, birini dışarıda bırak doğrulaması, tip takası, derece yasaları, EIS karşılaştırması, başka gerçeklemeler (Tablo 9–10, Şekil 8) | E12, E12b, E12c |
-| 8.3 | mBm (özet): Önerme 11 (tamsayı bölme), sonuçlar, Şekil 9 | E6 |
-| 9 | Sabit nokta (özet): Algoritma 1, iki zarf, kuantizasyon ve kararlılık, kelime uzunlukları, RTL paritesi, kart ölçümleri ve Tablo 11 | E5, E5c |
-| 10–11 | Sınırlar (tahmin, ortak kutup kümesinin boyutu, pil modeli dahil), sonuç | — |
-| Ekler | A: gereklilik; B: ters kararlılık; C: operatör normu; D: CM teoremi ve Lemma 10 | — |
-| Ek materyal | S1 CT tablosu; S2 durum eşlemeleri; S3 hot-swap tipi; S4 sabit nokta; S5 mBm; S6 B-tipi basamak yanıtı; S7 alias terimi | E1, E2, E4, E5, E6 |
+| 1 | Giriş, katkı listesi, ilgili çalışmalar (tablo ek materyalde, S5) | `litreview/` |
+| 2 | A/B/D/E tanımları, matris formu, dualite | — |
+| 3 | Sabit kutuplu banka (Beta-integral, Lemma 1), OS/IS, Şekil 1 (TikZ) | — |
+| 4 | Önerme 1 (OS→A, IS→B), Önerme 2 (D/E terslemeyle), Teorem 1 (operatör normu), Teorem 2 (gereklilik), Sonuç 1 | E7 |
+| 5 | Tam monoton çekirdek aileleri: Teorem 3, Lemma 2 (GL sabitleri kapalı formda) | E9 |
+| 6 | Hata modeli, tasarım kuralı, Önerme 3 (ters kararlılık), DC tabanı | — |
+| 7 | Sayısal sonuçlar: tanım tutarlılığı, mühürlü holdout, operatör normu, maliyet–doğruluk (Tablo 1–2, Şekil 2) | E1, E1b, E2, E3, E4, E7, E8, E9 |
+| 8 | Çevrimiçi derece izleme: A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, UFOKF tarzı karşılaştırma, Bayesçi CRB (Tablo 3–4, Şekil 3) | E10, E11, E13 |
+| 9 | Ölçülmüş pil verisi: SOC'ye bağlı RC + kesirli integral modeli, birini dışarıda bırak doğrulaması, tip takası, EIS, başka gerçeklemeler (Tablo 5, Şekil 4) | E12, E12b, E12c |
+| 10 | Sabit nokta, kart ölçümleri ve mBm (kısa özet; ayrıntılar S14–S15) | E5, E5c, E6 |
+| 11 | Sonuç ve sınırlar | — |
 
-Not: teorem numaraları LaTeX'te paylaşılan sayaçla otomatik veriliyor; yukarıdaki numaralar derlenmiş PDF'e göre (Algoritma 1, Tablo 7–11, Şekil 6–9 dahil).
+Not: teorem numaraları elsarticle'da tür başına ayrı sayaçla veriliyor; TSP sürümünde numaralar farklı.
 
 Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablolar elle yazıldı; sonuçlar değişirse tablolar da güncellenmeli.
 
 ## Taslak sırasında yapılan düzeltmeler
+
+Bu bölümdeki bölüm, teorem, tablo ve şekil numaraları o tarihteki uzun sürüme (sn-jnl) göre verildi; güncel numaralar yukarıdaki tabloda.
 
 - **Ters kararlılık önermesinin (şimdi Önerme 8) tam hali:** İntegral bankasında gecikme kutbu (z = 0) yüzünden bir sıfır negatif eksene düşüyor. Bu yüzden H(−1) > 0 koşulu da gerekiyor. Türev bankasında c_d > 0 ise aynı koşul geçerli. İspat Ek B'de. İlk iki ağırlık 1/3 doğrulukla gerçekleniyorsa H(−1) > 0 kendiliğinden sağlanıyor. Holdout'taki tüm derecelerde H(−1), tam değeri 2^α·g₀'a %0.06 içinde yakın. `vofrac/bank.py` içindeki `inverse_is_stable` artık bu koşulu da kontrol ediyor. E4 sonuçları değişmedi (200/200 ve 101/200).
 - **Özdeğer yerine işaret:** Bir holdout tasarımında (α = 0.95, K = 35) baskın ters kutup 50 basamaklı hesapla 1 − 2.9e-12'de. `numpy.linalg.eigvals` ise 1 + 4.5e-9 veriyor. Bu örnek makalede Remark 4 olarak yer alıyor.
@@ -84,14 +119,14 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
 
 ## Yapılacaklar (gönderimden önce)
 
-1. **Yazarlar:** isimler, kurumlar, e-postalar (`main.tex` başı, şu an yer tutucu).
-2. ~~Kart ölçümleri~~ → yapıldı (2026-10-09, PYNQ-Z1; Bölüm 9 ve Tablo 9 güncellendi; `results/e5_board.json`). Önceki makalenin hiçbir ölçümü kullanılmadı.
+1. **Yazarlar:** isimler, kurumlar, e-postalar (`main.tex` ön kısmı ve `../paper_tsp/main.tex`; şu an yer tutucu).
+2. ~~Kart ölçümleri~~ → yapıldı (2026-10-09, PYNQ-Z1; SP'de Bölüm 10 özet ve S14, TSP'de ana metin; `results/e5_board.json`). Önceki makalenin hiçbir ölçümü kullanılmadı.
 3. **Önceki makalenin referansı:** `refs.bib` → `tcas_submission`. TCAS-I editörü önceki makaleyi kapsam dışı buldu; makale AEÜ'de incelemede. Başlık ve yazarlar eklenecek, karar gelince durum güncellenecek. TCAS-I bu makale için hedef değil; önerilen hedef Signal Processing (Elsevier).
 4. **Kaynak doğrulama:** yapıldı (`litreview/verify_bib.py`). `montseny1998` doğrulandı ve DOI eklendi. Crossref'te olmayan kitaplar, INRIA raporu ve FCAA 2000 web üzerinden kontrol edildi. Yalnızca TCAS-I yer tutucusu kaldı.
-5. **Literatür taraması:** Crossref + arXiv üzerinde yapıldı (`litreview/`: PROTOKOL.md, SENTEZ.md, FULLTEXT.md; 131 dahil kayıt). §1.1 ve Tablo 1 buna dayanıyor. Tam metin kontrolleri yapıldı; dört ifade düzeltildi ve bir öncül eklendi. **Kalan:** aynı dizgelerle Scopus/WoS tekrarı (Bölüm 10'daki kırmızı TODO) ve FULLTEXT.md'de "okunamadı" diye işaretlenen 11 kaydın kurumsal erişimle okunması.
+5. **Literatür taraması:** Crossref + arXiv üzerinde yapıldı (`litreview/`: PROTOKOL.md, SENTEZ.md, FULLTEXT.md; 131 dahil kayıt). §1.1 ve Tablo 1 buna dayanıyor. Tam metin kontrolleri yapıldı; dört ifade düzeltildi ve bir öncül eklendi. **Kalan:** aynı dizgelerle Scopus/WoS tekrarı (metindeki kırmızı TODO kısaltmada çıkarıldı, burada takip ediliyor) ve FULLTEXT.md'de "okunamadı" diye işaretlenen 11 kaydın kurumsal erişimle okunması.
 6. **Beyanlar:** finansman, çıkar çatışması, kod erişimi (depo URL'si veya Zenodo DOI), yazar katkıları, teşekkür.
-7. **Kapak mektubu:** TCAS-I çalışmasıyla ilişki açıkça yazılmalı. Springer'in eşzamanlı gönderim politikası kontrol edilmeli.
-8. **Dergi yazım kuralları:** özet 248 kelime (sınır 250 kabul edildi). Hedef Signal Processing olursa elsarticle şablonuna geçiş gerekecek. Anahtar kelime sayısı (şu an 8) ve sayfa/şekil sınırları dergi sayfasından doğrulanmalı.
+7. **Kapak mektubu:** TCAS-I çalışmasıyla ilişki açıkça yazılmalı. Derginin eşzamanlı gönderim politikası kontrol edilmeli.
+8. **Dergi yazım kuralları:** elsarticle'a geçildi (2026-10-09); ana metin 29 sayfa, sınır 30. Özet yaklaşık 245 kelime (sınır 250 kabul edildi). Anahtar kelime sayısı (şu an 7), sayfa sınırı ve ek materyal kuralları kılavuzdan doğrulanmalı. Highlights (3–5 madde, her biri ≤ 85 karakter) ve grafik özet istenip istenmediği de kontrol edilmeli.
 9. **İsteğe bağlı:**
    - D/E tiplerinin keyfi anahtarlamada kararlılığı için bir sonuç (şu an tartışma bölümünde açık sınır olarak duruyor)
    - ~~çıkış düzeyinde hata kuralı~~ → Teorem 5 ile ℓ1/ℓ∞ en kötü durum anlamında yapıldı; özyinelemeli integraller için ε/κ kuralı Not 2'de

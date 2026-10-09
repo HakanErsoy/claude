@@ -1,0 +1,33 @@
+%% Macros and theorem environments shared by the SP (elsarticle) and TSP (IEEEtran) versions.
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+
+\newcommand{\Ts}{T_{\mathrm{s}}}
+\newcommand{\cd}{c_{\mathrm{d}}}
+\newcommand{\sd}{s_{\mathrm{d}}}
+\newcommand{\ulo}{u_{\mathrm{lo}}}
+\newcommand{\uhi}{u_{\mathrm{hi}}}
+\newcommand{\xlo}{\xi_{\mathrm{lo}}}
+\newcommand{\xhi}{\xi_{\mathrm{hi}}}
+\newcommand{\gh}{\hat g}
+\newcommand{\Hh}{\hat H}
+\newcommand{\Op}[2]{{}^{\mathrm{#1}}\!\Delta^{#2}}
+\newcommand{\WA}{W_{\mathrm A}}
+\newcommand{\WB}{W_{\mathrm B}}
+\newcommand{\WD}{W_{\mathrm D}}
+\newcommand{\WE}{W_{\mathrm E}}
+\newcommand{\Beta}{\mathrm{B}}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\pending}[1]{\textcolor{red}{[#1]}}
+
+
+%% References to labels of the main text: plain in the main text, prefixed M- in a supplement
+\providecommand{\mref}[1]{\ref{#1}}
+\providecommand{\meqref}[1]{\eqref{#1}}
+%% Citation lists: the full list in the TSP version, a shorter one in the SP version (page limit)
+\providecommand{\citesp}[2]{\ifsp\cite{#2}\else\cite{#1}\fi}
