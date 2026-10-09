@@ -53,16 +53,16 @@ xsim tb -R          # out.txt üretir (dosya adları varsayılan: coef.mem, upol
 diff out.txt <(git show HEAD:rtl/build/WS48_WM25/out.txt)
 ```
 
-## Kartta yapılması önerilen ölçümler (henüz yapılmadı)
+## Kart ölçümleri
 
-Bu ortamda Vivado ve kart yok. Aşağıdaki ölçümler senin akışında yapılmalı ve **TCAS-I ölçümleri yeniden kullanılmamalı**:
+**Yapıldı (2026-10-09):** PYNQ-Z1, Vivado 2026.1; sonuçlar `results/e5_board.json`, akış ve protokol `board/README.md`. Aşağıdaki liste ölçüm planıydı:
 1. Bitstream üzerinde bit-tam parite: `stim.mem` → kart → `out.txt` ile karşılaştırma (hedef: 0 uyumsuzluk)
 2. Vivado kaynak raporu ve Fmax (Yosys tahmini aşağıda; Vivado sonuçları farklı olabilir)
 3. Örnek hızı: Fmax / 136
 4. Her örnekte derece değişimi: vektörlerdeki `per-sample` vakaları; yeniden yükleme yok, derece yalnızca ROM adresi
 5. Uzun koşu kararlılığı: D-tipi, α = −0.855 (en kötü kuantize giriş), ≥ 1e7 örnek
 
-## Yosys tahmini (xc7, `synth_xilinx -flatten`)
+## Yosys tahmini (xc7, `synth_xilinx -flatten`; Vivado sonuçları için `board/README.md`)
 
 | `<cfg>` | LUT | FF | DSP48E1 | BRAM (RAMB36 eşdeğeri) |
 |---|---|---|---|---|

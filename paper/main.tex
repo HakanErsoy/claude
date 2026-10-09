@@ -95,7 +95,7 @@ This paper answers both for GL operators of order $-1<\alpha<1$ and, more genera
 \item \emph{Operator-level guarantees.} The weight error bounds the realized operators as a whole, for every order sequence (Theorem~\ref{thm:opnorm}). In the $\ell^1$ and $\ell^\infty$ operator norms the relative error of the A- and B-types never exceeds the relative weight error. The recursive integrals amplify it by the condition number of the inverted derivative, which grows like $N^{|\alpha|}$; one step response of the bank certifies their error a posteriori.
 \item \emph{Completely monotone families.} The structural results hold for every kernel family that is completely monotone in the lag, including time-varying distributed orders and fixed tempering. Under analyticity and power-law conditions on the density, a common pole set of size $K=O(\ln(1/\eps)\ln(R/\eps))$ meets a relative tolerance $\eps$ over a memory $R$ uniformly in the order (Theorem~\ref{thm:cm}). For the GL weights all constants are explicit (Lemma~\ref{lem:glconst}), which gives a fully a-priori design.
 \item \emph{Design and stability.} An analytic error model with three closed-form terms sets the bank size from the tolerance, the memory length and the order range; it met every tolerance of a sealed holdout of 400 random specifications (Sects.~\ref{sec:design} and~\ref{sec:res-rule}). The inverse of a derivative bank is stable if and only if its realized DC gain is positive (Proposition~\ref{prop:stability}). This is tested through an exact sign and guaranteed by a DC floor, also after quantization. Against moving-pole hot swapping, truncated convolution and fixed poles with residues fitted by linear programming, only the fixed-pole structure reaches small errors under switching; fitted residues reduce the bank by 20 to 50\,\%, but keep the stability certificate only with sign constraints (Sect.~\ref{sec:res-baselines}).
-\item \emph{Applications.} In online tracking of a time-varying order, the A-type bank gives regressors that do not depend on the order, so an extended Kalman filter costs $O(K)$ and an exact grid filter $O(GK)$ per sample; the B-type bank gives a finite state for an augmented filter. Assuming the wrong definition biases the estimate by 0.14 to 0.24 at high SNR. Against unscented filters on the direct GL sum, the bank gives the full-memory accuracy at $O(K)$ instead of $O(n)$ operations per sample, and a truncated GL memory biases the estimate (Sect.~\ref{sec:track}). On measured drive cycles of a lithium-ion cell, running a fitted VO model with the operator of the other type increased its held-out error in 51 of 56 cases, by a median factor of 4.4 for B-type models (Sect.~\ref{sec:battery}). The bank also streams multifractional Brownian motion of both types (Sect.~\ref{sec:mbm}), and a bit-exact fixed-point core changes order and type at every sample through a ROM address (Sect.~\ref{sec:hw}).
+\item \emph{Applications.} In online tracking of a time-varying order, the A-type bank gives regressors that do not depend on the order, so an extended Kalman filter costs $O(K)$ and an exact grid filter $O(GK)$ per sample; the B-type bank gives a finite state for an augmented filter. Assuming the wrong definition biases the estimate by 0.14 to 0.24 at high SNR. Against unscented filters on the direct GL sum, the bank gives the full-memory accuracy at $O(K)$ instead of $O(n)$ operations per sample, and a truncated GL memory biases the estimate (Sect.~\ref{sec:track}). On measured drive cycles of a lithium-ion cell, running a fitted VO model with the operator of the other type increased its held-out error in 51 of 56 cases, by a median factor of 4.4 for B-type models (Sect.~\ref{sec:battery}). The bank also streams multifractional Brownian motion of both types (Sect.~\ref{sec:mbm}), and a fixed-point core, bit-exact on an FPGA board, changes order and type at every sample through a ROM address (Sect.~\ref{sec:hw}).
 \end{enumerate}
 
 Section~\ref{sec:related} reviews related work. Section~\ref{sec:prelim} recalls the definitions and their duality. Section~\ref{sec:bank} builds the continuous- and discrete-time fixed-pole banks, Section~\ref{sec:structure} proves the structural results and the operator-norm bounds, and Section~\ref{sec:design} gives the error model, the design rule and the stability result. Section~\ref{sec:cm} extends the construction to completely monotone kernel families. Section~\ref{sec:results} reports the numerical experiments, and Section~\ref{sec:apps} three applications: order tracking, identification on measured battery data and multifractional Brownian motion. Section~\ref{sec:hw} summarizes the fixed-point core, and Section~\ref{sec:discussion} discusses limitations. Secondary results and implementation details are in the Supplementary Material. All code, seeds and results are available (see the Declarations).
@@ -992,23 +992,28 @@ A configuration was accepted if every type stayed within $0.1\eps$ of the floati
 
 \paragraph{RTL, parity and resources.}
 
-The core (\texttt{vo\_bank\_core.v}) is a non-pipelined, time-multiplexed state machine with synchronous coefficient, pole and gain ROMs. It takes $4K+8=136$ clock cycles per sample. Order index and type are inputs with every sample. An order change only changes a ROM address: there is no reload and no extra cycle.
+The core (\texttt{vo\_bank\_core.v}) is a non-pipelined, time-multiplexed state machine with synchronous coefficient, pole and gain ROMs. It produces one sample every $4K+7=135$ clock cycles. Order index and type are inputs with every sample. An order change only changes a ROM address: there is no reload and no extra cycle.
 
-The test vectors cover constant, piecewise and per-sample orders, sign-changing switches, full-scale inputs, and type changes at run time. The type changes exercise the datapath; a type change is not itself a VO operation. Icarus Verilog simulation matched the golden model bit for bit on all 94\,208 vectors (31\,744 for A/B, 62\,464 for A/B/D/E). Verilator lint reported only intentional width extensions and truncations. Table~\ref{tab:rtl} lists Yosys estimates for a 7-series FPGA.
+The test vectors cover constant, piecewise and per-sample orders, sign-changing switches, full-scale inputs, and type changes at run time. The type changes exercise the datapath; a type change is not itself a VO operation. Icarus Verilog and Vivado simulation matched the golden model bit for bit on all 94\,208 vectors (31\,744 for A/B, 62\,464 for A/B/D/E). Table~\ref{tab:rtl} gives the Vivado results for a Zynq-7020 (xc7z020clg400-1, Vivado 2026.1, out-of-context implementation of the core).
 
 \begin{table}[t]
-\caption{RTL configurations: bit-exact parity with the golden model and Yosys \texttt{synth\_xilinx} (xc7) resource estimates. Vivado results and $f_{\max}$ are pending}\label{tab:rtl}
-\begin{tabular}{@{}lcccccc@{}}
+\caption{The two configurations on a Zynq-7020: resources and $f_{\max}$ of the core (Vivado, out of context), and bit-exact parity on the board (PYNQ-Z1). Sample rates are $f/135$}\label{tab:rtl}
+\footnotesize\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccccccccc@{}}
 \toprule
-Envelope & $W_S/W_{ST}/W_M$ & vectors (mismatches) & LUT & FF & DSP48E1 & RAMB36 eq.\\
+ & & \multicolumn{5}{c}{core, out of context} & \multicolumn{3}{c}{board}\\
+\cmidrule(lr){3-7}\cmidrule(l){8-10}
+Types & $W_S/W_{ST}/W_M$ & LUT & FF & DSP & BRAM & $f_{\max}$/MHz & clock/MHz & vectors (mism.) & MS/s\\
 \midrule
-A/B & 36/49/16 & 31\,744 (0) & 4\,171 & 1\,882 & 11 & 22\\
-A/B/D/E & 48/61/25 & 62\,464 (0) & 6\,009 & 2\,360 & 29 & 29.5\\
+A/B & 36/49/16 & 3\,214 & 1\,882 & 11 & 46 & 44.3 & 40.0 & 31\,744 (0) & 0.296\\
+A/B/D/E & 48/61/25 & 4\,278 & 2\,337 & 15 & 64 & 39.3 & 34.5 & 62\,464 (0) & 0.255\\
 \botrule
 \end{tabular}
 \end{table}
 
-\pending{Board measurements (to be added): bitstream-level parity on the same vectors, Vivado utilization and $f_{\max}$, sample rate $f_{\max}/136$, per-sample order changes, and a long run ($\ge10^7$ samples) of the D-type at the worst quantized row. These will be measured with the new core; no measurement from~\cite{tcas_submission} is reused.}
+\paragraph{Board measurements.} Each configuration ran on a PYNQ-Z1 board behind an AXI4-Lite wrapper driven by the on-chip processor, with one reset and then all vectors in one stream. Both were bit-exact: the outputs were byte-identical to the simulation, with 0 mismatches (Table~\ref{tab:rtl}). A cycle counter confirmed 135 cycles from input acceptance to output and between back-to-back samples. The critical path runs from the coefficient ROM through the multipliers and the state adder in one cycle (43 logic levels for A/B/D/E); pipelining it would raise the clock.
+
+For the long run, the D-type ran at the worst quantized row above ($\alpha=-0.855$, whose inverse is the derivative row of order $0.855$) on $2^{24}\approx1.7\times10^7$ samples of an on-chip 32-bit LFSR input with $|x|\le0.25$. The board kept, for every block of $2^{16}$ outputs, the maximum $|y|$, the sum of $y^2$ and a CRC-32. All 256 block records were identical to the golden model over the whole run. The golden model saw no overflow (peak state 51.3 of 61 bits, peak signal 29.4 of 48 bits), and the largest output, $|y|=85.7$, was far below full scale ($2^{24}$). The block RMS ranged from 2.1 to 79, as a fractional integral of order 0.855 of white noise wanders. This run shows bit-exactness and boundedness in hardware; it cannot by itself separate the two floors, because the floating-point floor's unstable pole would grow by only a factor of 1.03 over $2^{24}$ samples. Stability rests on the exact sign test above. The measurements were made with the new core; none is taken from~\cite{tcas_submission}.
 
 %% =====================================================================
 %% =====================================================================
@@ -1024,7 +1029,7 @@ A/B/D/E & 48/61/25 & 62\,464 (0) & 6\,009 & 2\,360 & 29 & 29.5\\
 
 \paragraph{Fixed point.} We used a single Q format per signal. Block floating point could reduce the D/E word lengths, which are dominated by the switching envelope.
 
-\paragraph{Hardware.} The core is not pipelined. A pipelined version could approach $K$ plus a few cycles per sample. Resources are synthesis estimates, and the board measurements are pending.
+\paragraph{Hardware.} The core is not pipelined and takes $4K+7$ cycles per sample at about 40\,MHz on a Zynq-7020. A pipelined version could approach $K$ plus a few cycles per sample and a higher clock.
 
 \paragraph{Estimation.} The tracking experiment assumes a known input and a known noise level. Joint estimation of the state or the input, as in dual and triple estimation with unscented fractional-order Kalman filters~\cite{sierociuk2016cssp}, can use the same $O(K)$ model but was not tested here.
 
@@ -1048,7 +1053,7 @@ For a finite-dimensional realization of a variable-order operator, the definitio
 \item \textbf{Funding:} \pending{TODO.}
 \item \textbf{Competing interests:} The authors declare no competing interests. \pending{TODO: confirm.}
 \item \textbf{Data availability:} All results reported in this paper are produced by the scripts in the accompanying repository, with fixed seeds; the result files are included. The battery measurements of Sect.~\ref{sec:battery} are public (Mendeley Data, doi:10.17632/wykht8y7tg.1, CC BY 4.0~\cite{kollmeyer2018data}); a script in the repository downloads them and checks their SHA-256 sums.
-\item \textbf{Code availability:} \pending{TODO: public repository URL or archive DOI.} The repository contains the Python library, the experiments, the Verilog core, the testbench and the board test bundle.
+\item \textbf{Code availability:} \pending{TODO: public repository URL or archive DOI.} The repository contains the Python library, the experiments, the Verilog core, the testbench, the board wrapper and host scripts, and the bitstreams with their SHA-256 sums.
 \item \textbf{Author contributions:} \pending{TODO.}
 \item \textbf{Relation to other work:} A constant-order FPGA approximation by the same authors is under review at AE{\"U} -- International Journal of Electronics and Communications~\cite{tcas_submission}. The present paper uses different structures (order-independent poles), a different design rule (analytic, fit-free) and a new core. It reuses no figure, table, text or measurement from that work.
 \end{itemize}

@@ -4,7 +4,7 @@
 **Çalışma başlığı (taslak):**
 *Definition-Consistent Realization of Variable-Order Fractional Operators with Fixed-Pole Banks: Theory, Discrete-Time Exactness, and Sample-Rate Order Scheduling*
 
-Durum: **Aşama 6: makale taslağı başladı** (`paper/`, Springer `sn-jnl`, bkz. [`paper/README.md`](../paper/README.md)). **Aşama 5 tamamlandı (E1–E6).** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu ve kaynak tahminini, E6 gerçek zamanlı multifraksiyonel Brown hareketi sentezini gösterdi (bkz. §7). Kart ölçümleri bekliyor.
+Durum: **Aşama 6: makale taslağı başladı** (`paper/`, Springer `sn-jnl`, bkz. [`paper/README.md`](../paper/README.md)). **Aşama 5 tamamlandı (E1–E6).** E1/E1b tanım tutarlılığını, E2 durum eşlemesi alternatifinin sınırlarını, E3 analitik tasarım kuralını, E4 dört VO tipinin (A/B/D/E) tek bankadan gerçeklenmesini, E5 sabit noktalı RTL'nin bit-tam doğruluğunu (simülasyonda ve PYNQ-Z1 kartında) ve kaynaklarını, E6 gerçek zamanlı multifraksiyonel Brown hareketi sentezini gösterdi (bkz. §7).
 
 ---
 
@@ -339,7 +339,7 @@ Ayrıca float bankanın kendi çıkış hatası D/E'de 6e-4'e kadar çıkıyor (
 
 En kötü girişte (α = 0.855) baskın ters kutup 1 + 1.9e-9 (E5c, tam rasyonel aritmetik; önceki özdeğer tahmini 2.5e-9 idi). e-katına çıkması 5.2e8 örnek alıyor, 1 MS/s'de ~520 s. A/B yapılandırmasında en kötü satır α = 0.931, kutup 1 + 4.8e-6. Kuantizasyona duyarlı taban (c_delay'i mantis LSB'si adımlarıyla artırarak H_q(1) ≥ H_float(1) yapmak) bunu 0/512'ye indiriyor. Doğruluk maliyeti yok.
 
-**RTL** (`rtl/vo_bank_core.v`, zaman paylaşımlı, örnek başına 4K + 8 = 136 çevrim):
+**RTL** (`rtl/vo_bank_core.v`, zaman paylaşımlı, örnek başına 4K + 7 = 135 çevrim; testbench periyodu 136). Simülasyon paritesi ve Yosys tahmini:
 
 | Zarf | Yapılandırma | Örnek | Uyumsuzluk | LUT | FF | DSP48E1 | BRAM36 eşd. |
 |---|---|---|---|---|---|---|---|
@@ -351,7 +351,19 @@ En kötü girişte (α = 0.855) baskın ters kutup 1 + 1.9e-9 (E5c, tam rasyonel
 - Derece değişimi yalnızca bir ROM adresi: yeniden yükleme yok, ek çevrim yok.
 - Karşılaştırma: E2'deki durum eşlemesi yaklaşımı yalnızca komşu dereceler için 2(P−1) yoğun 33×33 matris ister. Bu yaklaşık 56 Mbit; katsayı tablosu ise 0.78–1.08 Mbit, yani ~50–70 kat daha az.
 
-**Açık / sınırlar:** Fmax ve kart ölçümleri yok (Vivado + kart gerekli, paket `rtl/README.md`'de). Boru hattısız durum makinesi; boru hattıyla örnek başına ~K + birkaç çevrime inilebilir. Sabit nokta tek ölçekli Q formatında, D/E için block-floating denenmedi.
+**Kart ölçümleri (2026-10-09, `fpga/board-measurements` dalından birleştirildi; ayrıntı `rtl/board/README.md`, sayılar `results/e5_board.json`):** PYNQ-Z1 (xc7z020clg400-1), Vivado 2026.1, AXI4-Lite sarmalayıcı.
+
+| Zarf | LUT | FF | DSP | BRAM36 | OOC Fmax | Kart saati | Kart paritesi | MS/s (kart) |
+|---|---|---|---|---|---|---|---|---|
+| A/B (36/49/16) | 3 214 | 1 882 | 11 | 46 | 44.3 MHz | 40.0 MHz | 31 744 vektör, **0** | 0.296 |
+| A/B/D/E (48/61/25) | 4 278 | 2 337 | 15 | 64 | 39.3 MHz | 34.5 MHz | 62 464 vektör, **0** | 0.255 |
+
+- Çıktılar `out.txt` ile bayt bayt aynı. Kabulden çıkışa ve ardışık örnekler arası 135 çevrim (4K+7); README'deki 136, testbench'in bir çevrimlik el sıkışmasını içeriyor.
+- Kritik yol: katsayı ROM'u → çarpıcılar → durum toplayıcısı, tek çevrimde (A/B/D/E'de 43 mantık seviyesi). Boru hattıyla saat yükselir.
+- Uzun koşu: D-tipi, aidx 51 (α = −0.855, tersi 0.855 türev satırı), 2²⁴ LFSR örneği. 256 blok kaydının hepsi (CRC-32, max|y|, Σy²) tüm koşu boyunca golden modelle aynı; taşma yok (golden: durum 51.3/61 bit, sinyal 29.4/48 bit); max|y| = 85.7 (tam ölçek 2²⁴). Blok RMS 2.1–79: 0.855 dereceli kesirli integralin beyaz gürültüde dolaşması.
+- Dürüst sınır: kayan noktalı tabanın kararsız kutbu bu koşuda yalnızca 1.03 kat büyürdü; yani koşu bit-tamlığı ve sınırlılığı gösteriyor, iki tabanı tek başına ayırt edemiyor. Kararlılık iddiası tam rasyonel işaret testine dayanıyor.
+
+**Açık / sınırlar:** Boru hattısız durum makinesi; boru hattıyla örnek başına ~K + birkaç çevrime ve daha yüksek saate inilebilir. Sabit nokta tek ölçekli Q formatında, D/E için block-floating denenmedi.
 
 ### E6: gerçek zamanlı multifraksiyonel Brown hareketi
 
@@ -500,7 +512,7 @@ Yorum:
 
 ## 8. Sonraki adımlar
 
-1. Kart ölçümleri (`rtl/README.md`): bit-tam parite, Vivado kaynak ve Fmax, uzun koşu kararlılığı (isteğe bağlı: kartta gürültü üretecili mBm demosu)
+1. ~~Kart ölçümleri~~ → yapıldı (PYNQ-Z1, §7 E5). İsteğe bağlı: kartta gürültü üretecili mBm demosu
 2. Teoremin, ters-kararlılık önermesinin ve bileşim önermesinin tam ispatı; DT hata modelinin küçük-r terimi için kapalı form
 3. Sistematik literatür taraması: Crossref + arXiv ile yapıldı (§2). Kalan: Scopus/WoS tekrarı
 4. Makale taslağı: **başladı** (`paper/main.tex`, 29 sayfa, 6 şekil + TikZ şema, 8 tablo, 4 ek). Açık maddeler `paper/README.md`'de
