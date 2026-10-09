@@ -12,3 +12,12 @@ paper/*.log
 paper/*.out
 paper/*Notes.bib
 paper/*.synctex.gz
+paper_tsp/*.aux
+paper_tsp/*.bbl
+paper_tsp/*.blg
+paper_tsp/*.fdb_latexmk
+paper_tsp/*.fls
+paper_tsp/*.log
+paper_tsp/*.out
+paper_tsp/*Notes.bib
+paper_tsp/*.synctex.gz
