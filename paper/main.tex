@@ -95,7 +95,7 @@ This paper answers both for GL operators of order $-1<\alpha<1$ and, more genera
 \item \emph{Operator-level guarantees.} The weight error bounds the realized operators as a whole, for every order sequence (Theorem~\ref{thm:opnorm}). In the $\ell^1$ and $\ell^\infty$ operator norms the relative error of the A- and B-types never exceeds the relative weight error. The recursive integrals amplify it by the condition number of the inverted derivative, which grows like $N^{|\alpha|}$; one step response of the bank certifies their error a posteriori.
 \item \emph{Completely monotone families.} The structural results hold for every kernel family that is completely monotone in the lag, including time-varying distributed orders and fixed tempering. Under analyticity and power-law conditions on the density, a common pole set of size $K=O(\ln(1/\eps)\ln(R/\eps))$ meets a relative tolerance $\eps$ over a memory $R$ uniformly in the order (Theorem~\ref{thm:cm}). For the GL weights all constants are explicit (Lemma~\ref{lem:glconst}), which gives a fully a-priori design.
 \item \emph{Design and stability.} An analytic error model with three closed-form terms sets the bank size from the tolerance, the memory length and the order range; it met every tolerance of a sealed holdout of 400 random specifications (Sects.~\ref{sec:design} and~\ref{sec:res-rule}). The inverse of a derivative bank is stable if and only if its realized DC gain is positive (Proposition~\ref{prop:stability}). This is tested through an exact sign and guaranteed by a DC floor, also after quantization. Against moving-pole hot swapping, truncated convolution and fixed poles with residues fitted by linear programming, only the fixed-pole structure reaches small errors under switching; fitted residues reduce the bank by 20 to 50\,\%, but keep the stability certificate only with sign constraints (Sect.~\ref{sec:res-baselines}).
-\item \emph{Applications.} In online tracking of a time-varying order, the A-type bank gives regressors that do not depend on the order, so an extended Kalman filter costs $O(K)$ and an exact grid filter $O(GK)$ per sample; the B-type bank gives a finite state for an augmented filter. Assuming the wrong definition biases the estimate by 0.14 to 0.24 at high SNR. Against unscented filters on the direct GL sum, the bank gives the full-memory accuracy at $O(K)$ instead of $O(n)$ operations per sample, and a truncated GL memory biases the estimate (Sect.~\ref{sec:track}). On measured drive cycles of a lithium-ion cell, running a fitted VO model with the operator of the other type increased its held-out error in 51 of 56 cases, by a median factor of 4.4 for B-type models (Sect.~\ref{sec:battery}). The bank also streams multifractional Brownian motion of both types (Sect.~\ref{sec:mbm}), and a fixed-point core, bit-exact on an FPGA board, changes order and type at every sample through a ROM address (Sect.~\ref{sec:hw}).
+\item \emph{Applications.} In online tracking of a time-varying order, the A-type bank gives regressors that do not depend on the order, so an extended Kalman filter costs $O(K)$ and an exact grid filter $O(GK)$ per sample; the B-type bank gives a finite state for an augmented filter. Assuming the wrong definition biases the estimate by 0.14 to 0.24 at high SNR. Against unscented filters on the direct GL sum, the bank gives the full-memory accuracy at $O(K)$ instead of $O(n)$ operations per sample, and a truncated GL memory biases the estimate. A Bayesian Cram\'er--Rao bound shows that the B-type EKF on the bank comes within 6\,\% of the causal limit (Sect.~\ref{sec:track}). On measured drive cycles of a lithium-ion cell, running a fitted VO model with the operator of the other type increased its held-out error in 51 of 56 cases, by a median factor of 4.4 for B-type models (Sect.~\ref{sec:battery}). The bank also streams multifractional Brownian motion of both types (Sect.~\ref{sec:mbm}), and a fixed-point core, bit-exact on an FPGA board, changes order and type at every sample through a ROM address (Sect.~\ref{sec:hw}).
 \end{enumerate}
 
 Section~\ref{sec:related} reviews related work. Section~\ref{sec:prelim} recalls the definitions and their duality. Section~\ref{sec:bank} builds the continuous- and discrete-time fixed-pole banks, Section~\ref{sec:structure} proves the structural results and the operator-norm bounds, and Section~\ref{sec:design} gives the error model, the design rule and the stability result. Section~\ref{sec:cm} extends the construction to completely monotone kernel families. Section~\ref{sec:results} reports the numerical experiments, and Section~\ref{sec:apps} three applications: order tracking, identification on measured battery data and multifractional Brownian motion. Section~\ref{sec:hw} summarizes the fixed-point core, and Section~\ref{sec:discussion} discusses limitations. Secondary results and implementation details are in the Supplementary Material. All code, seeds and results are available (see the Declarations).
@@ -859,6 +859,40 @@ The choice of definition is therefore a modelling decision for inference as well
 \item For the B-type, the windowed UKF matched the bank's EKF (0.012 at 60\,dB), but it keeps and updates the whole input history, $O(n)$ operations and memory per sample, whereas the bank's state has $K+2$ entries.
 \end{itemize} With a physical sampling time the gain $\Ts^{-\alpha}$ adds direct information about the current order and makes the problem easier.
 
+\paragraph{Bayesian Cram\'er--Rao bound.} With Gaussian noise of known variance, the Fisher information of the order path given the path is $G^{\top}G/\sigma^2$, where $G$ is the Jacobian of the noise-free output of~\eqref{eq:trackmodel}. It is diagonal for the A-type, $G_{nn}=h_n=\sum_{r\ge1}w_r'(\alpha_n)x_{n-r}$, and strictly lower triangular for the B-type, $G_{nm}=w'_{n-m}(\alpha_m)x_m$ for $m<n$, with $w_r'=\partial w_r/\partial a$ from the recursion~\eqref{eq:glw}. Its expectation over the prior of the path, plus the information of the random walk, is the Bayesian (Van Trees) information. Its inverse bounds the mean-square error of every estimator, and restricted to the data up to $n$ it gives the filtering bound of causal estimators~\cite{tichavsky1998}. For the A-type, $J_n=(q+J_{n-1}^{-1})^{-1}+\mathbb E[h_n^2]/\sigma^2$. For the B-type in sample units $\alpha_n$ does not enter $y_n$, so its information arrives only later, through the memory. We conditioned the bound on the known input, averaged the information over prior paths by Monte Carlo, and computed the filtering and smoothing bounds by a Kalman recursion on the growing path.
+
+The bound holds on average over the prior, so the orders of this test were drawn from the random walk itself ($q=10^{-5}$, $\alpha_0\sim\mathcal N(0.3,0.01)$, 50 runs, otherwise as above), and the estimators were tuned to it without jump gating (Table~\ref{tab:crb}, Fig.~\ref{fig:crb}).
+\begin{itemize}
+\item The B-type EKF attains the filtering bound: 1.06, 1.01 and 1.00 times the bound at 20, 40 and 60\,dB.
+\item The A-type filters are within 1.15 (20\,dB) and 1.3 (40\,dB). At 60\,dB the grid filter is limited by its spacing (0.005, i.e.\ $1.4\times10^{-3}$ RMS) and the EKF stays 1.8 times above the bound. The EKF on the bank reproduces the EKF on the literal GL weights, so the gap is not due to the bank; a Bayesian bound need not be attainable.
+\item For the A-type the smoothing bound is close to the filtering bound, since each sample measures the present order. For the B-type it is three times lower at 60\,dB: a fixed-lag smoother could gain up to that factor, and no causal estimator can.
+\end{itemize}
+
+\begin{table}[t]
+\caption{Random-walk orders drawn from the prior: RMSE of the order over runs and over $0.2\le t<4$\,s, and the Bayesian CRB conditioned on the known input (50 runs; ratio to the filtering bound in brackets)}\label{tab:crb}
+\footnotesize\setlength{\tabcolsep}{4pt}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+Data & & 20\,dB & 40\,dB & 60\,dB\\
+\midrule
+A & grid filter & 0.0128 [1.14] & 0.0046 [1.30] & 0.0016 [2.14]\\
+ & EKF & 0.0128 [1.15] & 0.0046 [1.30] & 0.0014 [1.82]\\
+ & filtering BCRB & 0.0112 & 0.0035 & 0.00074\\
+ & smoothing BCRB & 0.0079 & 0.0027 & 0.00067\\
+\midrule
+B & augmented EKF & 0.0134 [1.06] & 0.0056 [1.01] & 0.0035 [1.00]\\
+ & filtering BCRB & 0.0127 & 0.0055 & 0.0035\\
+ & smoothing BCRB & 0.0083 & 0.0032 & 0.0011\\
+\botrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.5\textwidth]{figs/fig_crb.pdf}
+\caption{Random-walk orders at 60\,dB: RMSE of the order over 50 runs (running mean over 28 samples) and the Bayesian CRB conditioned on the input, for causal estimators (filtering) and with all data (smoothing)}\label{fig:crb}
+\end{figure}
+
 \subsection{Measured data: a lithium-ion cell}\label{sec:battery}
 
 Fractional elements are common in battery models~\cite{zou2018review}, and variable-order versions let the order depend on the state of charge~\cite{lu2018energies,wang2022symmetry,mao2023est}. The question of this paper applies to such models. Once the order moves, a model identified with one definition and executed by a realization of the other is a different model. We tested how much this matters on public measurements of a Panasonic 18650PF cell~\cite{kollmeyer2018data}:
@@ -1056,7 +1090,7 @@ For the long run, the D-type ran at the worst quantized row above ($\alpha=-0.85
 
 \paragraph{Hardware.} The core is not pipelined and takes $4K+7$ cycles per sample at about 40\,MHz on a Zynq-7020. A pipelined version could approach $K$ plus a few cycles per sample and a higher clock.
 
-\paragraph{Estimation.} The tracking experiment assumes a known input and a known noise level. Joint estimation of the state or the input, as in dual and triple estimation with unscented fractional-order Kalman filters~\cite{sierociuk2016cssp}, can use the same $O(K)$ model but was not tested here.
+\paragraph{Estimation.} The tracking experiments assume a known input and a known noise level, and the Bayesian bound is evaluated for the random-walk model, not for orders with jumps. Joint estimation of the state or the input, as in dual and triple estimation with unscented fractional-order Kalman filters~\cite{sierociuk2016cssp}, can use the same $O(K)$ model but was not tested here.
 
 \paragraph{Battery data.} The battery model of Sect.~\ref{sec:battery} is linear in the current, uses one open-circuit voltage curve for all temperatures and has no hysteresis. It is meant to compare definitions under one model, not to compete with battery models. Below $0\,^\circ$C its errors are dominated by effects outside it. The fitted order laws are not unique either: the lag and the fractional term can trade time scales, and other model structures may give other laws. That the same data give different laws under the A- and B-types does not depend on these choices, because both types were fitted under the same structure.
 

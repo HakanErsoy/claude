@@ -21,9 +21,11 @@ vofrac/baselines.py   Karşılaştırma yöntemleri: LP ile uydurulmuş artıkla
 vofrac/cm.py          Tam monoton çekirdek aileleri: karışım, akış, temperleme, GL sabitleri ve a priori tasarım (E9)
 vofrac/tracking.py    Çevrimiçi derece izleme: A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, kesin GL-EKF (E10); GL toplamı üzerinde UFOKF tarzı UKF'ler (E11)
 vofrac/battery.py     Panasonic 18650PF verisi: okuma, OCV, SOC'ye bağlı kazançlar, A/B derece yolları (E12)
+vofrac/crb.py         Derece izleme için Bayesçi Cramér–Rao sınırı: GL türevleri, Jacobian'lar, filtreleme/düzleştirme sınırları (E13)
 rtl/                  Verilog çekirdek, testbench, kart test paketi (E5), bkz. rtl/README.md
-experiments/          E1 (CT), E1b (DT, GL + tanımsal hata), E2 (durum eşlemesi), E3 (tasarım kuralı), E4 (D/E tipleri), E5 (sabit nokta, RTL), E5c (kuantize kararlılık), E6 (mBm), E7 (operatör normu), E8 (karşılaştırma), E9 (CM aileleri), E10 (derece izleme), E11 (UFOKF tarzı karşılaştırma), E12 (pil verisi), E12b (EIS karşılaştırması), E12c (başka gerçeklemeler)
-paper/                Makale taslağı ve ek materyal (LaTeX, sn-jnl), şekil betiği, derlenmiş PDF'ler; bkz. paper/README.md
+experiments/          E1 (CT), E1b (DT, GL + tanımsal hata), E2 (durum eşlemesi), E3 (tasarım kuralı), E4 (D/E tipleri), E5 (sabit nokta, RTL), E5c (kuantize kararlılık), E6 (mBm), E7 (operatör normu), E8 (karşılaştırma), E9 (CM aileleri), E10 (derece izleme), E11 (UFOKF tarzı karşılaştırma), E12 (pil verisi), E12b (EIS karşılaştırması), E12c (başka gerçeklemeler), E13 (Bayesçi CRB)
+paper/                Makale taslağı ve ek materyal (LaTeX, sn-jnl; Signal Processing sürümü), şekil betiği, derlenmiş PDF'ler; bkz. paper/README.md
+paper_tsp/            IEEE TSP sürümü (IEEEtran, 11 sayfa + 11 sayfa ek materyal); şekiller ve kaynaklar paper/ ile ortak; bkz. paper_tsp/README.md
 litreview/            Sistematik literatür taraması: protokol, sorgular, eleme kararları, veri çıkarma, kaynak doğrulama; bkz. litreview/SENTEZ.md
 results/              JSON çıktıları, şekiller, loglar
 tests/                pytest
@@ -52,7 +54,9 @@ python3 experiments/fetch_panasonic.py --all-temps --eis DATA  # ~120 MB, SHA-25
 python3 -I experiments/e12_battery.py DATA       # ~15 dk (4 çekirdek), results/e12_battery.json
 python3 -I experiments/e12b_eis.py DATA          # ~1 dk, results/e12b_eis.json (önce E12)
 python3 -I experiments/e12c_realizations.py DATA # ~1 dk, results/e12c_realizations.json (önce E12)
+python3 -I experiments/e13_crb.py                # ~20 dk (4 çekirdek), results/e13_crb.json
 cd paper && make                                  # makale şekilleri + main.pdf + supplement.pdf
+cd paper_tsp && make                              # TSP sürümü: main.pdf + supplement.pdf
 python3 litreview/search.py && python3 litreview/screen_stage1.py && python3 litreview/snowball.py \
   && python3 litreview/screening.py && python3 litreview/extraction.py   # tarama (ham yanıtlar önbellekli)
 ```
@@ -71,3 +75,4 @@ python3 litreview/search.py && python3 litreview/screen_stage1.py && python3 lit
 - **E10:** Bilinen girişten değişken derece izleme (n = 2000, 50 koşu). A-tipinde banka durumu dereceden bağımsız olduğu için 381 derecelik tam ızgara filtresi örnek başına O(GK). Doğru tipte hata SNR ile azalıyor (60 dB: A 1.3e-3, B 1.2e-2); yanlış tip varsayılırsa 0.14–0.24 yanlılık kalıyor ve veri arttıkça azalmıyor.
 - **E11:** UFOKF tarzı unscented filtrelerle karşılaştırma (bizim uygulamamız). Kısaltılmış GL belleği yanlılık getiriyor (60 dB'de L = 100 için 0.24). Tam bellekli GL-UKF ile banka-UKF aynı sonucu veriyor, ama maliyet O(n) yerine O(K). B-tipinde pencereli UKF, B-EKF kadar iyi ama O(n) bellek ve işlem istiyor.
 - **E12/E12b:** Ölçülmüş pil verisi (Panasonic 18650PF, 5 sıcaklık + 2 ısınma koşusu, birini dışarıda bırak). Uydurulmuş bir VO modeli diğer tipin operatörüyle çalıştırılınca hata 56 durumun 51'inde arttı (B → A: 28/28, medyan 4.4 kat). Aynı veriden A ve B tipi farklı derece yasaları veriyor. Değişken derece yalnızca 25 °C'de en iyi sonucu verdi (14.7 mV, sabit derece 16.3); 0 °C ve altında RC modelleri eşit ya da daha iyi. EIS karşılaştırması bunun doğrusal olmayan yük transferi ve ısınmadan geldiğini gösteriyor. E12c: banka gerçek veride literal GL'yi 3e-6 içinde veriyor; bellek kısaltılınca hata 6–11 kat artıyor; yumuşak derece yollarında kayan kutup (hot swap) bankaya %1 yakın.
+- **E13:** Bayesçi (Van Trees) CRB, bilinen girişe koşullu, rastgele yürüyüş dereceleriyle. B-tipi EKF filtreleme sınırına ulaşıyor (1.00–1.06); A-tipi filtreler 20–40 dB'de 1.15–1.3 kat içinde, 60 dB'de 1.8–2.1 kat (ızgara aralığı). B-tipinde düzleştirme sınırı filtrelemenin üç kat altında: şimdiki derece yalnızca bellekten, gecikmeyle görülüyor.

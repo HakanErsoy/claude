@@ -6,7 +6,8 @@
 
 FIGS := figs/fig_definition.pdf figs/fig_rule.pdf figs/fig_maps.pdf \
         figs/fig_types.pdf figs/fig_wordlength.pdf figs/fig_mbm.pdf \
-        figs/fig_pareto.pdf figs/fig_tracking.pdf
+        figs/fig_pareto.pdf figs/fig_tracking.pdf figs/fig_crb.pdf \
+        figs/fig_battery.pdf
 
 all: main.pdf supplement.pdf
 

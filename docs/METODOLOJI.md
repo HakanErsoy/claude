@@ -522,6 +522,29 @@ Yorum:
 - Bellek kısaltılamıyor (6–11 kat kötü).
 - Kayan kutup burada neredeyse banka kadar iyi: derece yasaları yumuşak, seviye komşu değerler arasında değişiyor (kayıt başına 1–174 kez), kesirli terim tanımdan en çok %10 sapıyor. Kayan kutup büyük derece adımlarında başarısız (E8), küçüklerde değil. Bu veride hatayı tanım ve bellek uzunluğu belirliyor; kutup yapısının etkisi küçük. Bu sonuç makaleye olduğu gibi yazıldı.
 
+### E13: derece izleme için Bayesçi Cramér–Rao sınırı
+
+`vofrac/crb.py`, `experiments/e13_crb.py`. Gauss gürültüsünde, yola koşullu Fisher bilgisi GᵀG/σ²; G gürültüsüz çıkışın Jacobian'ı: A-tipinde köşegen (h_n = Σ w'_r(α_n) x_{n−r}), B-tipinde kesin alt üçgen (G_nm = w'_{n−m}(α_m) x_m). Önsel üzerinden beklenen bilgi + rastgele yürüyüş bilgisi = Bayesçi (Van Trees) bilgi; tersi her tahmincinin MSE'sini sınırlar. Filtreleme sınırı (n'ye kadar veri) ve düzleştirme sınırı (tüm veri) büyüyen yol üzerinde Kalman özyinelemesiyle.
+
+- **İlk deneme geçersizdi:** sınır, E10'un sabit/rampa/sıçrama yolu boyunca değerlendirildi; 40–60 dB'de tahminciler "sınırın" altına indi (oran 0.4–0.9). Sebep: Bayesçi sınır önsel üzerinden ortalamada geçerli, tek ve düzgün bir yol için değil. Bu sürüm atıldı.
+- **Doğru kurgu:** yollar önselin kendisinden (q = 1e-5, α_0 ~ N(0.3, 0.01)), 50 koşu, E10'un girişi ve verisi; tahminciler sıçrama kapısı olmadan bu modele ayarlı. Giriş tahminciye bilindiği için sınır girişe koşullu: her giriş için bilgi 10 önsel yol üzerinden ortalandı, sonra sınırlar girişler üzerinden ortalandı. (Bilgiyi girişler üzerinden de ortalamak Jensen nedeniyle daha gevşek bir sınır veriyor; JSON'da ayrıca var.)
+
+| Veri | Tahminci | 20 dB | 40 dB | 60 dB |
+|---|---|---|---|---|
+| A | ızgara filtresi | 0.0128 [1.14] | 0.0046 [1.30] | 0.0016 [2.14] |
+| A | EKF | 0.0128 [1.15] | 0.0046 [1.30] | 0.0014 [1.82] |
+| A | filtreleme / düzleştirme BCRB | 0.0112 / 0.0079 | 0.0035 / 0.0027 | 0.00074 / 0.00067 |
+| B | artırılmış EKF | 0.0134 [1.06] | 0.0056 [1.01] | 0.0035 [1.00] |
+| B | filtreleme / düzleştirme BCRB | 0.0127 / 0.0083 | 0.0055 / 0.0032 | 0.0035 / 0.0011 |
+
+(RMSE, 0.2 ≤ t < 4; köşeli parantezde filtreleme sınırına oran)
+
+Yorum:
+- B-tipi EKF filtreleme sınırına ulaşıyor (1.00–1.06).
+- A-tipi filtreler 20–40 dB'de 1.15–1.3 kat içinde. 60 dB'de ızgara filtresi aralığıyla sınırlı (0.005 → 1.4e-3 RMS), EKF 1.8 kat üstte. Bankadaki EKF literal GL ağırlıklı EKF ile aynı (E10: 9e-6; rastgele yürüyüş yollarında 6 koşuluk tek seferlik bir kontrolde ≤ 3.7e-6, sonuç dosyasında yok), yani fark bankadan değil.
+- Yapısal fark: A-tipinde düzleştirme sınırı filtrelemeye yakın (her örnek şimdiki dereceyi ölçüyor); B-tipinde 60 dB'de üç kat düşük (şimdiki derece yalnızca sonraki örneklerden görülüyor). Sabit gecikmeli bir düzleştirici B-tipinde üç kata kadar kazanabilir; hiçbir nedensel kestirici kazanamaz.
+- Süre: ~20 dk (4 çekirdek).
+
 ---
 
 ## 8. Sonraki adımlar

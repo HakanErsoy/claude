@@ -21,10 +21,10 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 
 | Dosya | İçerik |
 |---|---|
-| `main.tex` | Makale metni (45 sayfa) |
+| `main.tex` | Makale metni (48 sayfa) |
 | `supplement.tex` | Ek materyal (8 sayfa, S1–S7): CT anahtarlama tablosu, durum eşlemesi ayrıntıları, hot-swap tip analizi, sabit nokta ayrıntıları ve kelime uzunluğu şekli, mBm ayrıntıları ve tablosu, iki türetme (B-tipi basamak yanıtı, büyük-r alias terimi). Ana metne `xr` paketiyle çapraz referans veriyor |
-| `refs.bib` | Kaynaklar (77 girdi; Crossref ile doğrulandı, `litreview/bib_check.csv`). Son eklenen beşi (Panasonic veri seti DataCite ile; Zou ve ark. 2018, Lu ve ark. 2018, Wang ve ark. 2022, Mao ve ark. 2023 Crossref ile) 2026-10-09'da doğrulandı |
-| `make_figures.py` | Dokuz vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
+| `refs.bib` | Kaynaklar (78 girdi; Crossref ile doğrulandı, `litreview/bib_check.csv`). Son eklenen Tichavský ve ark. 1998 (PCRB) ve ondan önceki beşi (Panasonic veri seti DataCite ile; Zou ve ark. 2018, Lu ve ark. 2018, Wang ve ark. 2022, Mao ve ark. 2023 Crossref ile) 2026-10-09'da doğrulandı |
+| `make_figures.py` | On vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
 | `figs/` | Üretilen şekiller (PDF) |
 | `sn-jnl.cls`, `sn-mathphys-num.bst` | Resmî Springer Nature şablonundan (değiştirilmedi) |
 | `main.pdf`, `supplement.pdf` | Derlenmiş taslak ve ek materyal |
@@ -40,15 +40,15 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 | 5 | Hata modeli, tasarım kuralı, Önerme 8 (ters kararlılık), DC tabanı | — |
 | 6 | Tam monoton çekirdek aileleri: Teorem 9, Lemma 10 (GL sabitleri kapalı formda), örnekler | E9 |
 | 7.2–7.8 | Hangi tanım izleniyor; durum eşlemesi (özet); mühürlü holdout; dört tip; operatör normu; CM aileleri; maliyet–doğruluk (Pareto) | E1, E1b, E2, E3, E4, E7, E9, E8 |
-| 8.1 | **Çevrimiçi derece izleme** (yeni): A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, yanlış tip yanlılığı, UFOKF tarzı unscented filtrelerle karşılaştırma (Tablo 7, Şekil 6) | E10, E11 |
-| 8.2 | **Ölçülmüş pil verisi** (yeni): SOC'ye bağlı RC + kesirli integral modeli, birini dışarıda bırak doğrulaması, tip takası, derece yasaları, EIS karşılaştırması, başka gerçeklemeler (Tablo 8–9, Şekil 7) | E12, E12b, E12c |
-| 8.3 | mBm (özet): Önerme 11 (tamsayı bölme), sonuçlar, Şekil 8 | E6 |
-| 9 | Sabit nokta (özet): Algoritma 1, iki zarf, kuantizasyon ve kararlılık, kelime uzunlukları, RTL paritesi, kart ölçümleri ve Tablo 10 | E5, E5c |
+| 8.1 | **Çevrimiçi derece izleme**: A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, yanlış tip yanlılığı, UFOKF tarzı unscented filtrelerle karşılaştırma, Bayesçi CRB (Tablo 7–8, Şekil 6–7) | E10, E11, E13 |
+| 8.2 | **Ölçülmüş pil verisi** (yeni): SOC'ye bağlı RC + kesirli integral modeli, birini dışarıda bırak doğrulaması, tip takası, derece yasaları, EIS karşılaştırması, başka gerçeklemeler (Tablo 9–10, Şekil 8) | E12, E12b, E12c |
+| 8.3 | mBm (özet): Önerme 11 (tamsayı bölme), sonuçlar, Şekil 9 | E6 |
+| 9 | Sabit nokta (özet): Algoritma 1, iki zarf, kuantizasyon ve kararlılık, kelime uzunlukları, RTL paritesi, kart ölçümleri ve Tablo 11 | E5, E5c |
 | 10–11 | Sınırlar (tahmin, ortak kutup kümesinin boyutu, pil modeli dahil), sonuç | — |
 | Ekler | A: gereklilik; B: ters kararlılık; C: operatör normu; D: CM teoremi ve Lemma 10 | — |
 | Ek materyal | S1 CT tablosu; S2 durum eşlemeleri; S3 hot-swap tipi; S4 sabit nokta; S5 mBm; S6 B-tipi basamak yanıtı; S7 alias terimi | E1, E2, E4, E5, E6 |
 
-Not: teorem numaraları LaTeX'te paylaşılan sayaçla otomatik veriliyor; yukarıdaki numaralar derlenmiş PDF'e göre (Algoritma 1, Tablo 7–10, Şekil 6–8 dahil).
+Not: teorem numaraları LaTeX'te paylaşılan sayaçla otomatik veriliyor; yukarıdaki numaralar derlenmiş PDF'e göre (Algoritma 1, Tablo 7–11, Şekil 6–9 dahil).
 
 Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablolar elle yazıldı; sonuçlar değişirse tablolar da güncellenmeli.
 

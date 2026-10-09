@@ -319,6 +319,35 @@ def fig_tracking():
     save(fig, "fig_tracking.pdf")
 
 
+def fig_crb():
+    """E13: RMSE over runs against the Bayesian CRB (random-walk orders, 60 dB)."""
+    c = load("e13_crb.json")
+    tr = c["traces"]
+    t = np.array(tr["t"])
+    fig, axes = plt.subplots(2, 1, figsize=(HALF, 3.9), sharex=True)
+    for ax, T, lab, ests in ((axes[0], "A", "a", (("A-grid", C[0], "-", "grid filter"), ("A-EKF", C[2], "--", "EKF"))),
+                             (axes[1], "B", "b", (("B-EKF", C[1], "-", "augmented EKF"),))):
+        q = tr[f"60dB/{T}"]
+        ker = np.ones(7) / 7                      # running mean over 28 samples (traces keep every 4th)
+
+        def sm(v):
+            return np.sqrt(np.convolve(np.asarray(v) ** 2, ker, mode="same"))
+
+        keep = (t >= 0.05) & (t <= t[-4])                 # drop the edges of the running mean
+        for name, col, ls, label in ests:
+            ax.plot(t[keep], sm(q[name])[keep], ls, color=col, lw=1.1, label=label)
+        ax.plot(t[keep], sm(q["filt_rms"])[keep], "-", color=INK, lw=0.8, label="filtering BCRB")
+        ax.plot(t[keep], sm(q["smooth_rms"])[keep], ":", color=INK, lw=0.8, label="smoothing BCRB")
+        style(ax)
+        ax.set_ylim(4e-4, 1e-2)
+        ax.legend(loc="upper right", fontsize=6.2, ncol=2)
+        panel(ax, lab, f"{T}-type data, 60 dB, RMSE over 50 runs")
+        ax.set_ylabel("RMSE of the order")
+    axes[1].set_xlabel("time [s] (2000 samples)")
+    fig.tight_layout()
+    save(fig, "fig_crb.pdf")
+
+
 # ---------------------------------------------------------------- E12
 BAT_GROUPS = [("25degC", "25"), ("10degC", "10"), ("0degC", "0"), ("n10degC", "$-$10"), ("n20degC", "$-$20"),
               ("10degC_trise", "10 (w)"), ("n20degC_trise", "$-$20 (w)")]
@@ -370,6 +399,6 @@ def fig_battery():
 if __name__ == "__main__":
     os.makedirs(FIG, exist_ok=True)
     for f in (fig_definition, fig_rule, fig_maps, fig_types, fig_wordlength, fig_mbm, fig_pareto, fig_tracking,
-              fig_battery):
+              fig_crb, fig_battery):
         f()
         print("wrote", f.__name__)

@@ -66,7 +66,7 @@ TITLE-ABS-KEY( "multifractional Brownian motion" AND (simulation OR synthesis OR
    - 2. tur: S31–S42; Sierociuk ve ark. 2020, Arıcıoğlu 2025, Jia ve ark. 2022 ve Ślęzak–Metzler 2023'ün kaynakçalarından
    - 3. tur: S43–S44; tam metin kontrolü sırasında bulundu (FULLTEXT.md)
 5. **Tam metin kontrolü** (`fulltext.py`, `fulltext_log.csv`, `FULLTEXT.md`): yalnızca özetten veya ikincil kaynaktan sınıflandırılan kayıtlar için Unpaywall ve arXiv ile açık erişim yeri arandı.
-6. **Kaynak doğrulama** (`verify_bib.py`): `paper/refs.bib` içindeki her girdi Crossref ile karşılaştırıldı (`bib_check.csv`). Son durum (77 girdi, 2026-10-09): 60 OK, 12 CHECK, 4 bulunamadı, 1 atlandı.
+6. **Kaynak doğrulama** (`verify_bib.py`): `paper/refs.bib` içindeki her girdi Crossref ile karşılaştırıldı (`bib_check.csv`). Son durum (78 girdi, 2026-10-09): 61 OK, 12 CHECK, 4 bulunamadı, 1 atlandı.
    - CHECK satırlarının hepsi beklenen farklar:
      - 8 satırda Crossref çevrimiçi-ilk yılı veriyor; `refs.bib`'de cilt yılı kullanıldı.
      - `philippe2008`: Crossref Rusça özgün baskıyla (2007) eşleşiyor; `refs.bib`'de İngilizce çeviri (2008) var.
@@ -75,6 +75,7 @@ TITLE-ABS-KEY( "multifractional Brownian motion" AND (simulation OR synthesis OR
      - `widder1941`: başlık araması başka bir çalışmaya (1945 tarihli bir dergi yazısı) eşleşiyor. Kitabın DOI'si (10.1515/9781400876457, Princeton University Press, PMS-6) doğrudan DOI sorgusuyla doğrulandı. Crossref dijital baskıyı 1942 tarihiyle listeliyor; özgün baskı 1941.
    - Bulunamayanlar (Podlubny 1999 ve Kailath 1980 kitapları, Vinagre ve ark. 2000 FCAA) web aramasıyla doğrulandı.
    - `kollmeyer2018data` (Panasonic 18650PF veri seti) bir DataCite DOI'si; Crossref'te yok. DataCite API'siyle doğrulandı: başlık, yazar (Kollmeyer, Phillip), yayıncı (Mendeley), yıl 2018, lisans CC BY 4.0.
+   - E13 için eklenen `tichavsky1998` (PCRB) Crossref ile OK.
    - E12 için eklenen dört makale (`zou2018review`, `lu2018energies`, `wang2022symmetry`, `mao2023est`) Crossref'le OK. Metinde onlara dayanan tek iddia, derecenin SOC'ye bağlandığı: Lu ve ark. 2018 ile Wang ve ark. 2022'nin özetlerinden doğrulandı. Mao ve ark. 2023'ün Crossref kaydında özet yok; yalnızca başlığı (değişken dereceli eşdeğer model) için atıf yapıldı.
    - Atlanan: TCAS-I yer tutucusu.
 
