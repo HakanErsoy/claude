@@ -321,7 +321,8 @@ def fig_tracking():
 
 # ---------------------------------------------------------------- E12
 BAT_GROUPS = [("25degC", "25"), ("10degC", "10"), ("0degC", "0"), ("n10degC", "$-$10"), ("n20degC", "$-$20"),
-              ("10degC_trise", "10$\\to$25"), ("n20degC_trise", "$-$20$\\to$13")]
+              ("10degC_trise", "10 (w)"), ("n20degC_trise", "$-$20 (w)")]
+BAT_TEMPS = [("25degC", "25", INK, "o", "-"), ("0degC", "0", INK2, "s", "--"), ("n20degC", "$-$20", GREY, "^", ":")]
 BAT_MODELS = [  # model, label, colour, marker, line style
     ("1RC", "1RC", GREY, "v", ":"),
     ("2RC", "2RC", INK2, "^", ":"),
@@ -345,15 +346,15 @@ def fig_battery():
         y = [G[g]["summary"][m]["test_swapped_mean"] for g, _ in BAT_GROUPS]
         ax.plot(x + (0.08 if m.endswith("A") else 0.16), y, mk, color=col, mfc="white", label=label, ls="none")
     ax.set_xticks(x)
-    ax.set_xticklabels([t for _, t in BAT_GROUPS], fontsize=6.5)
-    ax.set_xlabel(r"chamber temperature [$^\circ$C]")
+    ax.set_xticklabels([t for _, t in BAT_GROUPS], fontsize=6.3, rotation=30)
+    ax.set_xlabel(r"chamber temperature [$^\circ$C]; (w): warming run")
     ax.set_ylabel("held-out RMSE [mV]")
     style(ax)
     panel(ax, "a", "simulation of the held-out cycle")
     for ax, m, lab in ((axes[1], "RC+FO VO-A", "b"), (axes[2], "RC+FO VO-B", "c")):
-        for (g, t), col, mk in zip([BAT_GROUPS[i] for i in (0, 2, 4)], [RAMP[1], RAMP[2], RAMP[3]], ["o", "s", "^"]):
+        for g, t, col, mk, ls in BAT_TEMPS:
             P = G[g]["all"][m]
-            ax.plot(P["beta_knots_z"], P["beta_knots"], "-", color=col, marker=mk, label=f"{t} $^\\circ$C")
+            ax.plot(P["beta_knots_z"], P["beta_knots"], ls, color=col, marker=mk, label=f"{t} $^\\circ$C")
         ax.set_xlabel("state of charge $z$")
         ax.set_ylim(0, 1)
         style(ax, logy=False)

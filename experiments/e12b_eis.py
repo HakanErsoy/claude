@@ -11,9 +11,10 @@ impedance is compared with the measured one for 1.4 mHz <= f <= 0.1 Hz:
 with H_tau the discrete lag, H_bank the bank's frequency response at the
 frozen order (the realized operator, not s^{-beta}), and the last term the
 open-circuit-voltage slope removed from the time-domain residual in E12.
-Reported: relative RMS impedance error per sweep and its mean per
-temperature and model; the temperature of a sweep is the set point nearest
-to its median cell temperature.
+Reported: relative RMS impedance error and the median of |Z_model|/|Z_EIS|
+per sweep, and their mean and median per temperature and model (sweeps
+inside the z range of the drive cycles); the temperature of a sweep is the
+set point nearest to its median cell temperature.
 
 Inputs: results/e12_battery.json (run E12 first) and the EIS csv files.
 Outputs: results/e12b_eis.json
@@ -108,21 +109,28 @@ def main():
         zr = g["all"]["1RC"]["gain_knots_z"]
         w = 2 * np.pi * f[m] * TS
         Zocv = docv(np.clip(z, 0.0, 1.0)) / (Q_REF * 3600.0) / (1j * w / TS)
-        err = {}
+        err, ratio = {}, {}
         for model in MODELS:
             Zm = model_impedance(g["all"][model], z, w, bank) + Zocv
             err[model] = float(np.sqrt(np.mean(np.abs(Zm - Z[m]) ** 2 / np.abs(Z[m]) ** 2)))
+            ratio[model] = float(np.median(np.abs(Zm) / np.abs(Z[m])))
         sweeps.append({"file": os.path.basename(path), "T_set": T, "T_cell": Tc, "z": z,
-                       "in_training_range": bool(zr[0] <= z <= zr[-1]), "n_freq": int(m.sum()), "rel_rms": err})
+                       "in_training_range": bool(zr[0] <= z <= zr[-1]), "n_freq": int(m.sum()), "rel_rms": err,
+                       "abs_ratio_median": ratio})
         print(f"{os.path.basename(path):20s} T {T:4d} z {z:.3f} " + " ".join(f"{k} {v:.3f}" for k, v in err.items()),
               flush=True)
     summary = {}
     for T in SET_POINTS:
         s = [x for x in sweeps if x["T_set"] == T and x["in_training_range"]]
         if s:
-            summary[SET_POINTS[T]] = {"sweeps": len(s), **{k: float(np.mean([x["rel_rms"][k] for x in s])) for k in MODELS}}
-            print(f"{SET_POINTS[T]:8s} ({len(s)} sweeps in range): "
-                  + " ".join(f"{k} {summary[SET_POINTS[T]][k]:.3f}" for k in MODELS), flush=True)
+            summary[SET_POINTS[T]] = {
+                "sweeps": len(s),
+                "rel_rms_mean": {k: float(np.mean([x["rel_rms"][k] for x in s])) for k in MODELS},
+                "abs_ratio_median": {k: float(np.median([x["abs_ratio_median"][k] for x in s])) for k in MODELS}}
+            print(f"{SET_POINTS[T]:8s} ({len(s)} sweeps in range) rel. RMS error: "
+                  + " ".join(f"{k} {v:.3f}" for k, v in summary[SET_POINTS[T]]["rel_rms_mean"].items())
+                  + " | median |Z_model|/|Z_EIS|: "
+                  + " ".join(f"{k} {v:.2f}" for k, v in summary[SET_POINTS[T]]["abs_ratio_median"].items()), flush=True)
     with open(os.path.join(OUT, "e12b_eis.json"), "w") as fh:
         json.dump({"band_hz": [F_LO, F_HI], "sweeps": sweeps, "summary": summary}, fh, indent=1)
 

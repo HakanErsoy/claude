@@ -118,4 +118,4 @@ Ayrıca `rtl/board/README.md`'ye şunları yaz: yeniden üretim adımları, prot
 2. `fpga/board-measurements` dalına commit ve push yap.
 3. Kullanıcıya kısa bir özet ver: Fmax, kaynaklar, parite sonucu, uzun koşu sonucu ve varsa sorunlar.
 
-Kullanıcı bu dalı ana oturuma bildirince, makalenin 9. bölümündeki kırmızı "pending" paragrafı ve Tablo 8 ana oturumda bu sonuçlarla güncellenecek.
+Kullanıcı bu dalı ana oturuma bildirince, makalenin 9. bölümündeki kırmızı "pending" paragrafı ve RTL tablosu (`tab:rtl`) ana oturumda bu sonuçlarla güncellenecek.

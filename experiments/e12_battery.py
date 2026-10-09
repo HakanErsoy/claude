@@ -223,11 +223,44 @@ def _summary(runs):
              "test_wins": int(sum(min(t["rmse_mV"], key=t["rmse_mV"].get) == m for _, t in runs))}
          for m in MODELS}
     for m in ("RC+FO VO-A", "RC+FO VO-B"):
-        s[m]["test_swapped_mean"] = float(np.mean([t["rmse_swapped_mV"][m] for _, t in runs]))
+        ratio = [t["rmse_swapped_mV"][m] / t["rmse_mV"][m] for _, t in runs]
+        s[m].update(test_swapped_mean=float(np.mean([t["rmse_swapped_mV"][m] for _, t in runs])),
+                    swapped_ratio_median=float(np.median(ratio)), swapped_ratio_min=float(np.min(ratio)),
+                    swapped_worse=int(sum(r > 1 for r in ratio)))
     return s
 
 
+def summarize(res):
+    """Group and overall summaries from the stored runs (also used by --summarize)."""
+    every = {"folds": [], "single": []}
+    for gname, g in res["groups"].items():
+        for key, label in (("folds", "leave one out"), ("single", "single cycle")):
+            runs = [(o["fits"], t) for o in g[key] for t in o["tests"]]
+            every[key] += runs
+            s = _summary(runs)
+            g["summary" if key == "folds" else "summary_single"] = s
+            print(f"{gname:14s} {label:13s} train / test mean (wins of {len(runs)}): "
+                  + " | ".join(f"{m} {v['train_mean']:.1f}/{v['test_mean']:.1f} ({v['test_wins']})" for m, v in s.items())
+                  + " | swapped A->B {:.1f}, B->A {:.1f}".format(s["RC+FO VO-A"]["test_swapped_mean"],
+                                                               s["RC+FO VO-B"]["test_swapped_mean"]), flush=True)
+    res["summary"] = {key: _summary(runs) for key, runs in every.items()}
+    for key, s in res["summary"].items():
+        print(f"all groups, {key}: " + " | ".join(
+            f"{m} test {v['test_mean']:.1f} wins {v['test_wins']}" for m, v in s.items())
+            + " | swap A: worse {swapped_worse}/{n}, median ratio {swapped_ratio_median:.2f}".format(
+                n=len(every[key]), **s["RC+FO VO-A"])
+            + " | swap B: worse {swapped_worse}/{n}, median ratio {swapped_ratio_median:.2f}, min {swapped_ratio_min:.2f}".format(
+                n=len(every[key]), **s["RC+FO VO-B"]), flush=True)
+
+
 def main():
+    if "--summarize" in sys.argv:                  # recompute the summaries of an existing run
+        path = os.path.join(OUT, "e12_battery.json")
+        res = json.load(open(path))
+        summarize(res)
+        with open(path, "w") as f:
+            json.dump(res, f, indent=1)
+        return
     data = sys.argv[1] if len(sys.argv) > 1 else os.environ.get(
         "VOFRAC_DATA", os.path.expanduser("~/.cache/vofrac/panasonic18650pf"))
     t0 = time.time()
@@ -265,15 +298,7 @@ def main():
                 print(f"{out['group']:14s} {out['kind']:6s} test {t['test']:22s} mV: "
                       + " ".join(f"{m} {v:.1f}" for m, v in t["rmse_mV"].items())
                       + " | swapped " + " ".join(f"{m} {v:.1f}" for m, v in t["rmse_swapped_mV"].items()), flush=True)
-    for gname, g in res["groups"].items():
-        for key, label in (("folds", "leave one out"), ("single", "single cycle")):
-            runs = [(o["fits"], t) for o in g[key] for t in o["tests"]]
-            s = _summary(runs)
-            g["summary" if key == "folds" else "summary_single"] = s
-            print(f"{gname:14s} {label:13s} train / test mean (wins of {len(runs)}): "
-                  + " | ".join(f"{m} {v['train_mean']:.1f}/{v['test_mean']:.1f} ({v['test_wins']})" for m, v in s.items())
-                  + " | swapped A->B {:.1f}, B->A {:.1f}".format(s["RC+FO VO-A"]["test_swapped_mean"],
-                                                               s["RC+FO VO-B"]["test_swapped_mean"]), flush=True)
+    summarize(res)
     res["seconds"] = time.time() - t0
     with open(os.path.join(OUT, "e12_battery.json"), "w") as f:
         json.dump(res, f, indent=1)

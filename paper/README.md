@@ -21,10 +21,10 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 
 | Dosya | İçerik |
 |---|---|
-| `main.tex` | Makale metni (42 sayfa) |
+| `main.tex` | Makale metni (45 sayfa) |
 | `supplement.tex` | Ek materyal (8 sayfa, S1–S7): CT anahtarlama tablosu, durum eşlemesi ayrıntıları, hot-swap tip analizi, sabit nokta ayrıntıları ve kelime uzunluğu şekli, mBm ayrıntıları ve tablosu, iki türetme (B-tipi basamak yanıtı, büyük-r alias terimi). Ana metne `xr` paketiyle çapraz referans veriyor |
-| `refs.bib` | Kaynaklar (72 girdi; Crossref ile doğrulandı, `litreview/bib_check.csv`). Son eklenen üçü (Widder 1941, Sabzikar ve ark. 2015, Mainardi–Garrappa 2015) 2026-10-07'de Crossref'te doğrulandı |
-| `make_figures.py` | Sekiz vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
+| `refs.bib` | Kaynaklar (77 girdi; Crossref ile doğrulandı, `litreview/bib_check.csv`). Son eklenen beşi (Panasonic veri seti DataCite ile; Zou ve ark. 2018, Lu ve ark. 2018, Wang ve ark. 2022, Mao ve ark. 2023 Crossref ile) 2026-10-09'da doğrulandı |
+| `make_figures.py` | Dokuz vektör şekil; yalnızca `results/*.json` okuyor, deney koşturmuyor |
 | `figs/` | Üretilen şekiller (PDF) |
 | `sn-jnl.cls`, `sn-mathphys-num.bst` | Resmî Springer Nature şablonundan (değiştirilmedi) |
 | `main.pdf`, `supplement.pdf` | Derlenmiş taslak ve ek materyal |
@@ -41,13 +41,14 @@ Gerekenler: TeX Live (pdflatex, bibtex, latexmk, tikz, booktabs, algorithmicx) v
 | 6 | Tam monoton çekirdek aileleri: Teorem 9, Lemma 10 (GL sabitleri kapalı formda), örnekler | E9 |
 | 7.2–7.8 | Hangi tanım izleniyor; durum eşlemesi (özet); mühürlü holdout; dört tip; operatör normu; CM aileleri; maliyet–doğruluk (Pareto) | E1, E1b, E2, E3, E4, E7, E9, E8 |
 | 8.1 | **Çevrimiçi derece izleme** (yeni): A-tipi ızgara filtresi ve EKF, B-tipi artırılmış EKF, yanlış tip yanlılığı, UFOKF tarzı unscented filtrelerle karşılaştırma (Tablo 7, Şekil 6) | E10, E11 |
-| 8.2 | mBm (özet): Önerme 11 (tamsayı bölme), sonuçlar, Şekil 7 | E6 |
-| 9 | Sabit nokta (özet): Algoritma 1, iki zarf, kuantizasyon ve kararlılık, kelime uzunlukları, RTL paritesi ve Tablo 8 | E5, E5c |
-| 10–11 | Sınırlar (tahmin, ortak kutup kümesinin boyutu dahil), sonuç | — |
+| 8.2 | **Ölçülmüş pil verisi** (yeni): SOC'ye bağlı RC + kesirli integral modeli, birini dışarıda bırak doğrulaması, tip takası, derece yasaları, EIS karşılaştırması (Tablo 8, Şekil 7) | E12, E12b |
+| 8.3 | mBm (özet): Önerme 11 (tamsayı bölme), sonuçlar, Şekil 8 | E6 |
+| 9 | Sabit nokta (özet): Algoritma 1, iki zarf, kuantizasyon ve kararlılık, kelime uzunlukları, RTL paritesi ve Tablo 9 | E5, E5c |
+| 10–11 | Sınırlar (tahmin, ortak kutup kümesinin boyutu, pil modeli dahil), sonuç | — |
 | Ekler | A: gereklilik; B: ters kararlılık; C: operatör normu; D: CM teoremi ve Lemma 10 | — |
 | Ek materyal | S1 CT tablosu; S2 durum eşlemeleri; S3 hot-swap tipi; S4 sabit nokta; S5 mBm; S6 B-tipi basamak yanıtı; S7 alias terimi | E1, E2, E4, E5, E6 |
 
-Not: teorem numaraları LaTeX'te paylaşılan sayaçla otomatik veriliyor; yukarıdaki numaralar derlenmiş PDF'e göre (Algoritma 1, Tablo 7–8, Şekil 6–7 dahil).
+Not: teorem numaraları LaTeX'te paylaşılan sayaçla otomatik veriliyor; yukarıdaki numaralar derlenmiş PDF'e göre (Algoritma 1, Tablo 7–9, Şekil 6–8 dahil).
 
 Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablolar elle yazıldı; sonuçlar değişirse tablolar da güncellenmeli.
 
@@ -69,6 +70,12 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
   - **Çevrimiçi derece izleme (Bölüm 8.1, E10).** Doğru tipte hata SNR ile azalıyor: 60 dB'de A-ızgara 1.3e-3, B-EKF 1.2e-2. Yanlış tipte hata SNR ile artıyor: 0.14–0.24. A-EKF bankayla kesin GL-EKF'yi 9e-6 içinde tekrarlıyor.
   - **UFOKF tarzı karşılaştırma (Bölüm 8.1, Tablo 7 alt kısım, E11).** Doğrudan GL toplamı üzerinde unscented filtreler (bizim uygulamamız): kısaltılmış bellek yanlı; tam bellek bankayla aynı sonucu O(n) yerine O(K) maliyetle veriyor; B-tipinde pencereli UKF, B-EKF kadar iyi ama O(n).
   - **Toparlama:** sabit nokta ayrıntıları, durum eşlemesi şekli ve tablosu, mBm tablosu, CT tablosu ve iki türetme eki ek materyale taşındı. Katkı listesi altı maddeye indi, başlık güncellendi.
+- **Ölçülmüş pil verisi (2026-10-09, Bölüm 8.2, E12/E12b):**
+  - Panasonic 18650PF (Kollmeyer 2018, CC BY 4.0), 5 sıcaklık × 4 sürüş çevrimi ve 2 ısınma koşusu. SOC'ye bağlı RC + kesirli integral modeli, derece her örnekte değişiyor; A, B, sabit derece, 1RC, 2RC.
+  - Birini dışarıda bırak doğrulaması (üç çevrime ortak uydurma, dördüncüyü simülasyon). Tek çevrime uydurma ve 600 s'lik bloklarla uydurma denendi; başka çevrimlere taşınmadığı için bırakıldı (tek çevrim sonuçları JSON'da ve metinde).
+  - Ana bulgu: uydurulmuş modeli diğer tipin operatörüyle çalıştırmak hatayı 56 durumun 51'inde artırıyor (B → A: 28/28, medyan 4.4 kat). Aynı veriden A ve B farklı derece yasaları veriyor.
+  - Dürüst sınır: değişken derece yalnızca 25 °C'de en iyi. 0 °C ve altında RC modelleri eşit ya da daha iyi; EIS karşılaştırması (E12b) düşük sıcaklık hatalarının doğrusal olmayan yük transferinden ve ısınmadan geldiğini gösteriyor. Bu sınır özet, sonuçlar ve tartışmada açıkça yazıldı.
+  - Özet, katkı listesi, anahtar kelimeler, sonuç ve veri erişilebilirliği güncellendi; özet 248 kelime.
 - **Üç ekleme (2026-10-07):**
   - **Operatör normu sınırları (Teorem 5, Not 2, Ek E; E7).** İleri tiplerde ℓ1/ℓ∞ göreli operatör hatası her derece dizisi için ≤ ε_R. Schur sabitleri ρ_row/ρ_col hiç aşılmadı ve sabit/kötü niyetli dizilerde tam yakalandı. Özyinelemeli integrallerde koşul sayısıyla (≈ 2N^a/Γ(1+a)) büyüme var; garanti için tasarım ε/κ ile yapılmalı. Adım yanıtından a-posteriori sertifika da verildi.
   - **Tam monoton çekirdek aileleri (Bölüm 6, Teorem 9, Ek F; E9).** Yapı, tersleme ve gereklilik sonuçları her CM aileye taşınıyor. Şerit analitikliği ve kuvvet yasası koşullarıyla hata terimleri ve K = O(ln(1/ε) ln(R/ε)) elde edildi; 35 tasarımda uydurulan katsayı 0.106, teoride 1/π² = 0.101. Örnekler: zamanla değişen dağılımlı derece, sabit temperleme. CT için Bernstein notu var.
@@ -78,7 +85,7 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
 ## Yapılacaklar (gönderimden önce)
 
 1. **Yazarlar:** isimler, kurumlar, e-postalar (`main.tex` başı, şu an yer tutucu).
-2. **Kart ölçümleri** (Bölüm 9'daki kırmızı paragraf):
+2. **Kart ölçümleri** (Bölüm 9'daki kırmızı paragraf; ayrı oturum talimatı `rtl/BOARD_SESSION.md`):
    - bitstream paritesi
    - Vivado kaynak raporu ve f_max
    - f_max/136 örnek hızı
@@ -89,7 +96,7 @@ Metindeki her sayı `results/` altındaki bir JSON dosyasından alındı. Tablol
 5. **Literatür taraması:** Crossref + arXiv üzerinde yapıldı (`litreview/`: PROTOKOL.md, SENTEZ.md, FULLTEXT.md; 131 dahil kayıt). §1.1 ve Tablo 1 buna dayanıyor. Tam metin kontrolleri yapıldı; dört ifade düzeltildi ve bir öncül eklendi. **Kalan:** aynı dizgelerle Scopus/WoS tekrarı (Bölüm 10'daki kırmızı TODO) ve FULLTEXT.md'de "okunamadı" diye işaretlenen 11 kaydın kurumsal erişimle okunması.
 6. **Beyanlar:** finansman, çıkar çatışması, kod erişimi (depo URL'si veya Zenodo DOI), yazar katkıları, teşekkür.
 7. **Kapak mektubu:** TCAS-I çalışmasıyla ilişki açıkça yazılmalı. Springer'in eşzamanlı gönderim politikası kontrol edilmeli.
-8. **Dergi yazım kuralları:** özet 249 kelime (sınır 250 kabul edildi). Hedef Signal Processing olursa elsarticle şablonuna geçiş gerekecek. Anahtar kelime sayısı (şu an 7) ve sayfa/şekil sınırları dergi sayfasından doğrulanmalı.
+8. **Dergi yazım kuralları:** özet 248 kelime (sınır 250 kabul edildi). Hedef Signal Processing olursa elsarticle şablonuna geçiş gerekecek. Anahtar kelime sayısı (şu an 8) ve sayfa/şekil sınırları dergi sayfasından doğrulanmalı.
 9. **İsteğe bağlı:**
    - D/E tiplerinin keyfi anahtarlamada kararlılığı için bir sonuç (şu an tartışma bölümünde açık sınır olarak duruyor)
    - ~~çıkış düzeyinde hata kuralı~~ → Teorem 5 ile ℓ1/ℓ∞ en kötü durum anlamında yapıldı; özyinelemeli integraller için ε/κ kuralı Not 2'de

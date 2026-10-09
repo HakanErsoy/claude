@@ -463,6 +463,39 @@ Yorum:
 - Yerel filtreler (EKF/UKF) 40–60 dB'de ızgara filtresinden 4–30 kat kötü. Izgara filtresi ise ancak bankanın dereceden bağımsız regresörleri sayesinde uygulanabilir.
 - B-tipinde pencereli UKF, B-EKF ile aynı doğrulukta. Ama tüm giriş geçmişini tutup güncellemesi gerekiyor (örnek başına O(n) işlem ve bellek); bankanın durumu ise K+2 boyutlu.
 
+### E12: ölçülmüş pil verisi (Panasonic 18650PF)
+
+Veri: Kollmeyer 2018, Mendeley Data, doi:10.17632/wykht8y7tg.1, CC BY 4.0. `experiments/fetch_panasonic.py` indiriyor ve SHA-256 özetlerini kontrol ediyor. Veri depoya konmadı.
+
+- Kayıtlar: beş sıcaklıkta (25, 10, 0, −10, −20 °C) dörder sürüş çevrimi (UDDS, LA92, US06, HWFET; 25 °C'de HWFTa) ve iki ısınma koşusu (10 → 24–27 °C ve −20 → 12–17 °C, dörder karışık çevrim).
+- Model: y = v − OCV(z) = c(z) + R0(z) i + R1(z) ψ_τ(i) + κ(z) Δ^{−β(z)} i, T_s = 1 s (10 Hz kaydın 1 s ortalamaları). OCV, 25 °C'deki C/20 testinden. Kazançlar z'de parçalı doğrusal (0.1 aralıklı düğümler); derece 6 düğümde parçalı doğrusal, yani her örnekte değişiyor.
+  - VO-A: çıkış çizelgesi (şimdiki derece tüm geçmişi tartıyor).
+  - VO-B: giriş çizelgesi (her akım örneği aktığı andaki dereceyi koruyor).
+  - Karşılaştırma: sabit derece (A = B), 1RC, 2RC (aynı kazanç yapısı).
+  - Tek banka (ε = 1e-4, R = 25 000, β ∈ [0.02, 0.95], K = 29) bütün dereceleri ve iki tipi karşılıyor. Derece düğümleri ve τ koordinat aramasıyla bulundu, kazançlar en küçük karelerle.
+- Protokol: her grupta üç çevrime birlikte uydurma, dördüncüyü yalnızca akımdan simülasyon (birini dışarıda bırak). Uydurulmuş VO modelleri ayrıca diğer tipin operatörüyle çalıştırıldı.
+- Neden ortak uydurma: tek çevrime uydurulan modeller başka çevrimlere taşınmıyor (84 koşuda RC+FO 12 mV → 92–101 mV, 1RC 17 → 46 mV). Yavaş terimler z ile, yani akımın integraliyle, neredeyse eşdoğrusal; başka bir çevrim bu dengeyi bozuyor. Blok blok (600 s) uydurma da aynı nedenle başarısız oldu ve bırakıldı.
+
+Dışarıda bırakılan çevrimde RMSE (mV, dört katın ortalaması):
+
+| Grup | 1RC | 2RC | sabit | VO-A | VO-B | A, B olarak | B, A olarak |
+|---|---|---|---|---|---|---|---|
+| 25 °C | 20.2 | 18.6 | 16.3 | 15.8 | **14.7** | 94 | 46 |
+| 10 °C | 27.2 | 27.0 | **25.6** | 37.7 | 26.7 | 44 | 98 |
+| 0 °C | 36.1 | **35.0** | 36.2 | 36.8 | 36.3 | 49 | 92 |
+| −10 °C | **60.6** | 62.7 | 66.7 | 66.7 | 66.9 | 104 | 328 |
+| −20 °C | **111.1** | 116.4 | 122.3 | 122.8 | 128.5 | 239 | 1295 |
+| 10 °C ısınma | 14.7 | **13.5** | 15.1 | 14.9 | 14.6 | 23 | 80 |
+| −20 °C ısınma | 34.4 | **33.1** | 36.8 | 38.1 | 40.4 | 94 | 109 |
+
+Yorum:
+- **Tanım ölçülmüş veride de önemli.** B-tipi modeller A-tipi operatörle çalıştırılınca 28 katın 28'inde kötüleşti (medyan 4.4 kat, en az 1.06). A-tipi modeller B-tipiyle 23/28'de kötüleşti (medyan 2.1). A-tipi derece yasaları neredeyse sabit; sabit derecede iki tip çakışıyor, bu da etkinin küçüklüğüyle tutarlı.
+- **Uydurulan derece yasası tanıma bağlı.** Beş sabit sıcaklıkta B-tipi derece deşarjın başında düşüyor (z = 1'de 0.11–0.21, daha düşük SOC'de 0.23–0.64). A-tipi yasalar z = 1 dışında 0.33–0.43 arasında (25 °C'de 0.22–0.47); z = 1'de 0.33–0.60, her sıcaklıkta B-tipinin üstünde. Yani bir VO pil modeli için verilen derece yasası, tanımıyla birlikte anlamlı.
+- **Değişken derece yalnızca 25 °C'de yardımcı oldu.** 25 °C'de VO-B en düşük hatayı verdi (14.7 mV; sabit derece 16.3, 2RC 18.6) ve 4 katın 3'ünde en iyiydi. 10 °C'de sabit dereceye 1.1 mV yakın. 0 °C ve altında ve iki ısınma koşusunda en iyi model bir RC modeli.
+- **Düşük sıcaklık hataları derecenin sorunu değil (E12b).** Modeller EIS ölçümlerinin SOC'sinde doğrusallaştırılıp 1.4 mHz–0.1 Hz bandında ölçülen empedansla karşılaştırıldı. Her modelin empedans büyüklüğü, ölçülenin 25 ve 10 °C'de ~0.9'u, 0 °C'de 0.7'si, −10 °C'de 0.6'sı, −20 °C'de 0.4'ü (8–12 tarama medyanı). Akım genliğiyle düşen yük transferi direnci ve çevrim sırasında ısınma ile tutarlı; ikisi de akımda doğrusal bir modelde yok.
+- Bu deney değişken derecenin pil modellerini genel olarak iyileştirdiğini göstermiyor. Gösterdiği şey: ölçülmüş veride tanım etkisi büyük bir modelleme seçimi, ve tek banka iki tanımı da aynı maliyetle uyduruyor ve çalıştırıyor.
+- Süre: 63 uydurma (5 model) 4 çekirdekte 15 dk; E12b ~1 dk.
+
 ---
 
 ## 8. Sonraki adımlar
