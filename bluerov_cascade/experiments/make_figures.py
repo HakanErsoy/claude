@@ -111,7 +111,7 @@ def fig_x1(d):
     style(ax, logy=True)
     ax.set_xticks(range(len(methods)), methods, rotation=45, ha="right")
     ax.set_ylabel("training cost $J$ (10 runs, bar = median)")
-    ax.legend(loc="upper left")
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.0), ncol=2)
     save(fig, "fig_x1_runs")
 
     fig, ax = plt.subplots(figsize=(HALF, 2.2))
