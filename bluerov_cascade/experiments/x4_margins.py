@@ -7,6 +7,7 @@ simulator implements and for the exact (j w)^alpha: phase margin, crossover
 frequency and delay margin (extra latency tolerated) per DOF.
 
     python3 -I experiments/x4_margins.py         # seconds, results/x4_margins.json
+    python3 -I experiments/x4_margins.py x2b_budget.json x4b   # the larger-budget runs (X2b)
 """
 
 import json
@@ -23,13 +24,13 @@ from rovc.controllers import STRUCTURES  # noqa: E402
 RES = os.path.join(os.path.dirname(__file__), "..", "results")
 
 
-def main():
+def main(src="x2_controllers.json", out="x4"):
     picks = {}
-    for r in json.load(open(os.path.join(RES, "x2_controllers.json"))).values():
+    for r in json.load(open(os.path.join(RES, src))).values():
         k = (r["structure"], r["method"])
         if k not in picks or r["f"] < picks[k]["f"]:
             picks[k] = r
-    out = {}
+    res = {}
     for (sname, tuner), r in sorted(picks.items()):
         s = STRUCTURES[sname]
         half = len(s.names)
@@ -45,14 +46,14 @@ def main():
                     pm, wc, dm = margins.margins(margins.loop(s, xg, d, scenarios.DT, nd, tau_m=tm, exact=exact))
                     row[pt][params.DOF[d]]["exact" if exact else "oustaloup"] = dict(pm_deg=pm, wc=wc,
                                                                                      delay_margin=dm)
-        out[f"{sname}|{tuner}"] = row
+        res[f"{sname}|{tuner}"] = row
         nom = row[f"tau_m {objective.MARGIN_POINTS[0][0]}, {10 * objective.MARGIN_POINTS[0][1]} ms"]
         print(f"{sname + '|' + tuner:26s} nominal PM/DM: " + " ".join(
             f"{nom[d]['oustaloup']['pm_deg']:5.1f}/{1e3 * nom[d]['oustaloup']['delay_margin']:5.1f}"
             for d in params.DOF) + " | min PM per point: " + " ".join(
             f"{min(row[p][d]['oustaloup']['pm_deg'] for d in params.DOF):5.1f}" for p in row))
-    json.dump(out, open(os.path.join(RES, "x4_margins.json"), "w"), indent=1)
+    json.dump(res, open(os.path.join(RES, f"{out}_margins.json"), "w"), indent=1)
 
 
 if __name__ == "__main__":
-    main()
+    main(*sys.argv[1:3])

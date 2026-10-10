@@ -121,10 +121,21 @@ MULTI = [(1.0, 0, 1.0), (20.0, 0, 0.5), (40.0, 0, 1.5),
          (5.0, 5, PI4), (35.0, 5, -PI4), (50.0, 5, 0.0)]
 
 
-def training():
-    """Cases used inside the optimization (disturbance seeds differ from the tests)."""
-    return [make("train-step", 20.0, STEP, noise=11),
-            make("train-storm", 30.0, [(15.0, 5, PI6), (15.0, 2, 0.3)], storm=101, noise=12)]
+def training(robust=False):
+    """Cases used inside the optimization (disturbance seeds differ from the tests).
+
+    robust=True adds a severe-noise case (the noise model of T2, another seed) and a corner
+    case with a weak actuator and a heavier added mass (12 V battery, tau_m = 0.2 s, 60 ms,
+    added mass x1.5) in waves, so that the optimizer cannot trade robustness for nominal cost.
+    """
+    cases = [make("train-step", 20.0, STEP, noise=11),
+             make("train-storm", 30.0, [(15.0, 5, PI6), (15.0, 2, 0.3)], storm=101, noise=12)]
+    if robust:
+        cases.append(make("train-noise", 15.0, STEP, noise=21, severe=True))
+        corner = make("train-corner", 20.0, [(1.0, 0, 0.5), (8.0, 5, PI6), (14.0, 2, 0.3)], storm=102, noise=13)
+        cases.append(corner.variant("train-corner", veh=params.pack(added=1.5), ca_true=thruster.coef_array(12),
+                                    tau_m=0.2, delay=6))
+    return cases
 
 
 def tests():

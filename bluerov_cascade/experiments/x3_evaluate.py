@@ -8,7 +8,8 @@ variants of T3 and T4, and 100 random plant/actuator draws on T4 (mass, added
 mass, damping, buoyancy, battery voltage, thruster lag 0.05-0.2 s, latency
 10-60 ms).
 
-    python3 -I experiments/x3_evaluate.py        # ~3 min, results/x3_evaluate.json + x3_traces.npz
+    python3 -I experiments/x3_evaluate.py        # ~1 min, results/x3_evaluate.json + x3_traces.npz
+    python3 -I experiments/x3_evaluate.py x2b_budget.json x3b   # the larger-budget runs (X2b)
 """
 
 import json
@@ -68,8 +69,8 @@ def monte_carlo(base, n=MC, seed=7):
     return out
 
 
-def main():
-    x2 = json.load(open(os.path.join(RES, "x2_controllers.json")))
+def main(src="x2_controllers.json", out="x3"):
+    x2 = json.load(open(os.path.join(RES, src)))
     picks = best_runs(x2)
     tests = scenarios.tests()
     rob = scenarios.robustness(tests[2]) + scenarios.robustness(tests[3])
@@ -100,9 +101,9 @@ def main():
         print(f"{key:28s} train {r['f']:8.3f} | " + " ".join(f"{n.split('-')[0]} {t[n]['wITAE']:7.3f}"
                                                             for n in t) +
               f" | MC median {np.median(mcJ):.3f} p90 {np.percentile(mcJ, 90):.3f} fail {mcF.sum()}", flush=True)
-    json.dump(res, open(os.path.join(RES, "x3_evaluate.json"), "w"), indent=1)
-    np.savez_compressed(os.path.join(RES, "x3_traces.npz"), **traces)
+    json.dump(res, open(os.path.join(RES, f"{out}_evaluate.json"), "w"), indent=1)
+    np.savez_compressed(os.path.join(RES, f"{out}_traces.npz"), **traces)
 
 
 if __name__ == "__main__":
-    main()
+    main(*sys.argv[1:3])

@@ -24,14 +24,14 @@ def _curve(c, nfe):
     return np.where(idx >= 0, c[np.clip(idx, 0, None), 1], np.nan).tolist()
 
 
-def run_all(path, jobs):
-    """jobs: list of (key, structure name, method, seed, mirror, nfe)."""
+def run_all(path, jobs, cases=None):
+    """jobs: list of (key, structure name, method, seed, mirror, nfe); cases: training scenarios."""
     out = json.load(open(path)) if os.path.exists(path) else {}
     for key, sname, method, seed, mirror, nfe in jobs:
         if key in out:
             continue
         s = STRUCTURES[sname]
-        ob = objective.Objective(s, mirror=mirror)
+        ob = objective.Objective(s, cases=cases, mirror=mirror)
         t0 = time.time()
         r = optim.minimize(method, ob, s.lb, s.ub, nfe, pop=POP, seed=seed)
         x = ob.params(r["x"])[0]
