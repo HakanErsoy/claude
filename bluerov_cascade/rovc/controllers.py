@@ -10,7 +10,9 @@ and tau = M_nom a with the nominal diagonal inertia.
 
 One parameter set is shared by the translational DOFs (x, y, z) and one by the
 rotational DOFs (phi, theta, psi), so a structure with p parameters has 2p
-decision variables.
+decision variables. Gains are searched on a log10 scale (they span several
+decades), orders and the tilt exponent on a linear scale: `lb`, `ub` are the
+search box, `phys` maps search coordinates to controller parameters.
 """
 
 import numpy as np
@@ -18,16 +20,20 @@ import numpy as np
 from .fractional import NSEC, slot_sections, tustin
 
 NOP = 5            # operator slots per DOF
-GAIN = (0.0, 50.0)
+GAIN = (1e-2, 50.0)  # searched as log10
 LAM = (0.0, 1.5)   # integral orders
 MU = (0.0, 1.0)    # derivative orders
 TILT_N = (1.0, 10.0)
 
 
+def _is_gain(n):
+    return n.startswith("K")
+
+
 def _b(names):
     lo, hi = [], []
     for n in names:
-        r = TILT_N if n == "n" else LAM if n.startswith("lam") else MU if n.startswith("mu") else GAIN
+        r = TILT_N if n == "n" else LAM if n.startswith("lam") else MU if n.startswith("mu") else np.log10(GAIN)
         lo.append(r[0])
         hi.append(r[1])
     return np.array(lo), np.array(hi)
@@ -42,6 +48,19 @@ class Structure:
         self.lb = np.concatenate([lo, lo])
         self.ub = np.concatenate([hi, hi])
         self.dim = 2 * len(names)
+        self.logmask = np.array([_is_gain(n) for n in names] * 2)
+
+    def phys(self, X):
+        """Controller parameters from search coordinates (10**x for the gains)."""
+        X = np.array(X, float)
+        X[..., self.logmask] = 10.0 ** X[..., self.logmask]
+        return X
+
+    def search(self, P):
+        """Inverse of phys."""
+        P = np.array(P, float)
+        P[..., self.logmask] = np.log10(P[..., self.logmask])
+        return P
 
     def labels(self):
         return [f"{n}_{g}" for g in ("t", "r") for n in self.names]

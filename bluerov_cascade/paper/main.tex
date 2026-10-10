@@ -1,0 +1,260 @@
+\documentclass[review,12pt]{elsarticle}
+% Working draft. Methods (Sects. 2-5) follow the code in ../rovc; results (Sect. 6)
+% are filled from ../results by hand and marked \todo where still open.
+
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{siunitx}
+\graphicspath{{../figs/}}
+
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\bnu}{\boldsymbol{\nu}}
+\newcommand{\beeta}{\boldsymbol{\eta}}
+\newcommand{\btau}{\boldsymbol{\tau}}
+
+\journal{\todo{target journal}}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Six-degree-of-freedom cascaded fractional-order control of an over-actuated ROV: margin-constrained tuning and a bias-controlled comparison of metaheuristics}
+
+\author[1]{Hakan Ersoy\corref{cor}}
+\cortext[cor]{Corresponding author.}
+\author[1]{\todo{co-authors}}
+\affiliation[1]{organization={\todo{affiliation}}}
+
+\begin{abstract}
+\todo{Write after the results are fixed. Structure: (i) single-axis FO control of ROVs and the gap
+(coupled six-DOF motion, realistic thrusters, latency); (ii) the FOPID-(1+TFOID) cascade from load-frequency
+control, recast as a position--velocity cascade for all six DOF of a BlueROV2 Heavy with eight T200 thrusters
+fitted to manufacturer data (thrust and electrical power); (iii) multi-scenario tuning with a phase-margin
+constraint on every linearized DOF loop; (iv) the newest tuner (SOO) and five others under an equal
+evaluation budget, a mirrored search box and shifted benchmarks, which expose an origin bias of SOO, GJO and
+GWO; (v) headline numbers from T1--T4, robustness and Monte Carlo.}
+\end{abstract}
+
+\begin{keyword}
+remotely operated vehicle \sep fractional-order control \sep cascade control \sep FOPID \sep tilt-integral-derivative
+\sep metaheuristic tuning \sep phase margin \sep BlueROV2
+\end{keyword}
+
+\end{frontmatter}
+
+%% ---------------------------------------------------------------------------
+\section{Introduction}\label{sec:intro}
+
+\todo{Paragraph 1: ROV/AUV motion control, coupled nonlinear hydrodynamics, wave and current disturbances;
+most FO studies regulate a single axis.}
+
+\todo{Paragraph 2: our earlier study \cite{ersoy2026jestech}: surge-axis PI$^\lambda$D$^\mu$ \cite{podlubny1999},
+fourth-order plant identified from T200 measurements, PSO \cite{kennedy1995pso} and DE \cite{storn1997de}
+over a multi-scenario cost, four tests, FPGA realization. Limits: one axis, no coupling, no allocation,
+no latency or margin requirement.}
+
+\todo{Paragraph 3: cascaded FO controllers in load-frequency control; FOPID-(1+TFOID) of
+\cite{nour2026scirep} with SOO \cite{rodan2025soo}; its own stated limits (no formal stability analysis,
+simulation only).}
+
+\todo{Paragraph 4: tuning by new metaheuristics; equal-iteration comparisons that give some methods twice the
+evaluations; origin/centre bias \cite{kudela2022,camacho2023}; inconsistencies between the SOO paper and its
+code \cite{mealpy_soo}.}
+
+The contributions of this paper are:
+\begin{enumerate}
+\item The FOPID-(1+TFOID) cascade is recast as a position--velocity cascade (the second stage acts on
+  $u_1-\nu$, the mechanical counterpart of $u_1-\Delta f$) and applied to all six DOF of an over-actuated
+  BlueROV2 Heavy, with six benchmark structures realized in the same cascade form.
+\item Tuning minimizes a multi-scenario cost (six-DOF ITAE and electrical energy) subject to a phase margin of
+  at least \SI{45}{\degree} on every linearized DOF loop, including the command latency and the thruster lag.
+  Without this constraint, ITAE tuning returns loops with margins below \SI{10}{\degree} that one or two
+  extra samples of latency destabilize (Sect.~\ref{sec:latency}).
+\item The thruster model (thrust, dead band, asymmetry, saturation and electrical power at 10--20~V) is fitted
+  to the manufacturer's measurements \cite{t200data}, so the effort term is energy in joules and battery
+  voltage is a physically meaningful uncertainty.
+\item Six tuners, including the newest (SOO), are compared at an equal evaluation budget, in the original
+  and in a mirrored search box, and on shifted benchmark functions; this separates search ability from
+  attraction to the coordinate origin.
+\item The four tests of \cite{ersoy2026jestech} are extended to six DOF and complemented by plant,
+  actuator, latency and thruster-loss variations and a Monte Carlo study.
+\end{enumerate}
+
+%% ---------------------------------------------------------------------------
+\section{Vehicle and actuator model}\label{sec:model}
+
+\subsection{Rigid-body and hydrodynamic model}
+With $\beeta=[x,y,z,\phi,\theta,\psi]^\top$ in the north-east-down frame and
+$\bnu=[u,v,w,p,q,r]^\top$ in the body frame (origin at the centre of gravity), the vehicle obeys
+\cite{fossen2011}
+\begin{equation}\label{eq:plant}
+  \boldsymbol{M}\dot{\bnu} + \boldsymbol{C}_{RB}(\bnu)\bnu + \boldsymbol{C}_{A}(\bnu_r)\bnu_r
+  + \boldsymbol{D}(\bnu_r)\bnu_r + \boldsymbol{g}(\beeta) = \boldsymbol{T}\boldsymbol{f} + \btau_d,
+  \qquad \dot{\beeta} = \boldsymbol{J}(\beeta)\bnu,
+\end{equation}
+where $\boldsymbol{M}=\boldsymbol{M}_{RB}+\boldsymbol{M}_A$ is diagonal, $\bnu_r=\bnu-[\boldsymbol{R}^\top
+\boldsymbol{v}_c;\boldsymbol{0}]$ is the velocity relative to an irrotational current $\boldsymbol{v}_c$
+(the term $\boldsymbol{M}_A\dot{\bnu}_c$ is neglected), $\boldsymbol{D}(\bnu_r)=\boldsymbol{D}_l+
+\boldsymbol{D}_q\,\mathrm{diag}(|\bnu_r|)$, and $\boldsymbol{g}$ contains the restoring forces of the weight and
+buoyancy. The parameters of the heavy configuration are those of the open benchmark of
+\cite{vonbenzon2022} (Table~\ref{tab:params}).
+
+\begin{table}[t]
+\centering\small
+\caption{BlueROV2 Heavy parameters \cite{vonbenzon2022}.}\label{tab:params}
+\begin{tabular}{llll}
+\toprule
+mass $m$ & \SI{13.5}{kg} & volume $\nabla$ & \SI{0.0135}{m^3} (neutral) \\
+$I_x, I_y, I_z$ & 0.26, 0.23, 0.37~\si{kg.m^2} & $\boldsymbol{r}_b$ & $[0,0,-0.01]$~m \\
+added mass & \multicolumn{3}{l}{$X_{\dot u}$ 6.357, $Y_{\dot v}$ 7.121, $Z_{\dot w}$ 18.69~kg;
+  $K_{\dot p}$ 0.1858, $M_{\dot q}$ 0.1348, $N_{\dot r}$ 0.2215~\si{kg.m^2}} \\
+linear damping & \multicolumn{3}{l}{$X_u$ 13.7, $Y_v$ 0, $Z_w$ 33~\si{N.s/m}; $K_p$ 0, $M_q$ 0.8, $N_r$ 0~\si{N.m.s/rad}} \\
+quadratic damping & \multicolumn{3}{l}{$X_{u|u|}$ 141, $Y_{v|v|}$ 217, $Z_{w|w|}$ 190~\si{N.s^2/m^2};
+  $K_{p|p|}$ 1.192, $M_{q|q|}$ 0.47, $N_{r|r|}$ 1.5~\si{N.m.s^2/rad^2}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Thrusters and allocation}
+Four horizontal thrusters at \SI{45}{\degree} and four vertical thrusters give the $6\times 8$ allocation
+matrix $\boldsymbol{T}$ of \cite{vonbenzon2022}. A demanded generalized force $\btau$ is distributed by
+$\boldsymbol{f}_d=\boldsymbol{T}^{+}\btau$ and scaled down as a whole when a thruster limit is reached, so
+the direction of $\btau$ is kept. Each command is mapped to a normalized PWM value $u_i\in[-1,1]$ by the
+inverse of the nominal \SI{16}{V} curve, with dead-band compensation. The thrust produced is
+\begin{equation}
+  F(u)=\begin{cases} \sum_{k=1}^{3} a_k (u-d_+)^k, & u>d_+,\\ 0, & -d_-\le u\le d_+,\\
+  -\sum_{k=1}^{3} b_k (-u-d_-)^k, & u<-d_-,\end{cases}
+\end{equation}
+followed by a first-order lag $\tau_m$ \todo{replace the assumed $\tau_m=\SI{0.1}{s}$ by the T200 dynamics
+identified in \cite{ersoy2026jestech}}. The coefficients were fitted by least squares to the manufacturer's
+measurements at 10--20~V \cite{t200data}; at \SI{16}{V} the fit error is \SI{0.24}{N} RMS (\SI{1.3}{N}
+maximum) over the range \SIrange{-39.9}{51.4}{N}. The electrical power of the actual thrust,
+$P(F)=\sum_k q_k|F|^k$, is fitted to the same data (\SI{3.1}{W} RMS of \SI{389}{W}). The command reaches the
+thrusters one control period ($\Delta t=\SI{10}{ms}$) after the measurement it was computed from.
+
+\subsection{Disturbances and navigation errors}
+Waves act as a sum of five sinusoids per DOF with random frequencies in \SIrange{0.4}{1.6}{rad/s}
+(amplitudes 20, 20, 15~N and 1~N\,m), and a current of \SI{0.25}{m/s} ($\pm 20\%$ slow variation)
+acts through $\bnu_r$. The controller sees the output of a navigation filter, modelled as first-order
+Gauss--Markov errors with \SI{2}{Hz} bandwidth (one sigma: position \SI{1}{cm}, depth \SI{5}{mm},
+attitude 0.17--\SI{0.29}{\degree}, velocity \SI{1}{cm/s}, rates \SI{0.29}{\degree/s}).
+
+%% ---------------------------------------------------------------------------
+\section{Controller}\label{sec:controller}
+
+\subsection{Position--velocity form of the FOPID-(1+TFOID)}
+For each DOF $i$, the first stage acts on the position error $e_{1,i}$ (expressed in the body frame for
+the translational DOFs) and returns a velocity reference,
+\begin{equation}\label{eq:stage1}
+  u_{1,i}(s) = \Big(K_p + \frac{K_{i1}}{s^{\lambda_1}} + K_{d1}s^{\mu_1}\Big) e_{1,i}(s).
+\end{equation}
+The second stage acts on $e_{2,i}=u_{1,i}-\nu_i$ and returns an acceleration demand,
+\begin{equation}\label{eq:stage2}
+  a_i(s) = \Big(1 + \frac{K_t}{s^{1/n}} + \frac{K_{i2}}{s^{\lambda_2}} + K_{d2}s^{\mu_2}\Big) e_{2,i}(s),
+  \qquad \tau_i = M_{ii}\, a_i .
+\end{equation}
+In \cite{nour2026scirep} the second stage acts on $u_1-\Delta f$; here the local feedback is the measured
+velocity, which makes the cascade a position--velocity cascade in the usual sense of marine control.
+Scaling by the nominal inertia $M_{ii}$ makes the gains dimensionally consistent across DOFs. One parameter
+set is shared by $(x,y,z)$ and one by $(\phi,\theta,\psi)$: 22 decision variables.
+
+\subsection{Benchmark structures}
+\todo{Table: FOPID (the single-loop PI$^\lambda$D$^\mu$ of \cite{ersoy2026jestech}), PID, P-PID (integer
+cascade as in common ROV autopilots), PI-(1+FOPID), FOPID-FOPI, FOPI-FOPD; all cascades in the same
+position--velocity form; number of decision variables 10, 6, 8, 14, 16, 12.}
+
+\subsection{Realization}
+Each $s^{\alpha}$ is approximated by the Oustaloup filter \cite{oustaloup2000} of order $N=5$ on
+\SIrange{e-3}{e2}{rad/s}; for $\alpha<-1$ an exact integrator is split off. Every first-order section is
+discretized by the Tustin rule at $\Delta t=\SI{10}{ms}$. Integer derivatives use the same high-frequency
+limit, $K_d s/(s/\omega_h+1)$ with $\omega_h=\SI{100}{rad/s}$. The reference passes a critically damped
+second-order model with $\omega=\SI{1}{rad/s}$, identical for all structures.
+
+%% ---------------------------------------------------------------------------
+\section{Tuning problem}\label{sec:tuning}
+
+\subsection{Cost}
+Two training cases are used, whose disturbance and noise realizations differ from those of the tests: a
+simultaneous step in $x$, $y$, $z$ and $\psi$ (\SI{20}{s}), and station keeping in waves and current with
+steps in $\psi$ and $z$ (\SI{30}{s}). The cost is
+\begin{equation}\label{eq:cost}
+  J = \sum_{s}\Big[\sum_{i=1}^{6} w_i\int_0^{T_s} t\,|e_i(t)|\,dt + \rho E_s\Big]
+      + K_{pm}\sum_{i=1}^{6}\frac{\max(0,\ \mathrm{PM}^\ast-\mathrm{PM}_i)}{\mathrm{PM}^\ast},
+\end{equation}
+with $w=[1,1,1,2,2,2]$ (one metre of error weighs as much as \SI{0.5}{rad}), the electrical energy $E_s$ in
+joules, $\rho=\num{2e-4}\,\si{J^{-1}}$, $\mathrm{PM}^\ast=\SI{45}{\degree}$ and $K_{pm}=200$. Diverging runs
+receive $10^4(1+\text{lost fraction})$.
+
+\subsection{Margin constraint}
+About hover, DOF $i$ is $\ddot y + c_{1,i}\dot y + c_{0,i}y = H(s)a$ with $c_1=D_{l,ii}/M_{ii}$, the
+restoring stiffness $c_0=z_bB/M_{ii}$ in roll and pitch, and $H(s)=e^{-1.5\Delta t s}/(\tau_m s+1)$
+(one period of latency and the zero-order hold). Broken at $a$, the loop is
+\begin{equation}
+  L_i(s) = G_2(s)\big(G_1(s)+s\big)P_i(s), \qquad P_i(s) = \frac{H(s)}{s^2+c_{1,i}s+c_{0,i}},
+\end{equation}
+($L_i=G_1P_i$ for single-loop structures), with $G_1,G_2$ the stage transfer functions as realized
+(Oustaloup). $\mathrm{PM}_i$ is the smallest distance of $\arg L_i$ from \SI{-180}{\degree} over all gain
+crossovers below \SI{300}{rad/s}; a loop whose crossover lies above (the Nyquist frequency is
+\SI{314}{rad/s}) gets $\mathrm{PM}_i=\SI{-180}{\degree}$. The linear analysis predicts the latency at which
+the simulated loop loses stability (unit test \texttt{test\_margins\_predict\_simulated\_delay\_limit}).
+
+\subsection{Search space}
+Gains are searched as $\log_{10}K\in[-2,\log_{10}50]$, the orders as $\lambda\in[0,1.5]$, $\mu\in[0,1]$, and
+$n\in[1,10]$. On a linear gain scale most random initial points violate the margin constraint and all
+tuners stalled near $J\approx100$.
+
+%% ---------------------------------------------------------------------------
+\section{Tuners and comparison protocol}\label{sec:tuners}
+\todo{SOO equations as in \cite{rodan2025soo} (both movements every iteration, greedy survivor, $P_0=3$,
+$\Delta P=0.001$), the origin terms $r_3(\cdot)/2$ and $|r_3 x_{best}|$; BC-SOO; PSO with constriction
+\cite{clerc2002}; DE/rand/1/bin \cite{storn1997de}; GWO \cite{mirjalili2014gwo}; GJO \cite{chopra2022gjo};
+uniform random search. Equal budget of 3030 evaluations (population 30); mirrored box $x\mapsto lb+ub-x$;
+shifted benchmarks in $D=22$. Ten runs per setting, Mann--Whitney tests.}
+
+%% ---------------------------------------------------------------------------
+\section{Results}\label{sec:results}
+
+\subsection{Positional bias on shifted benchmarks}
+\begin{figure}[t]
+\centering\includegraphics[width=\textwidth]{fig_x0_bias.pdf}
+\caption{Final error after 3030 evaluations ($D=22$, box $[-100,100]^{22}$, 15 runs; median and
+interquartile range) with the optimum at the origin (filled) and at a random point in $[-60,60]^{22}$
+(open). Values below $10^{-15}$ are drawn at $10^{-16}$.}\label{fig:x0}
+\end{figure}
+\todo{Fig.~\ref{fig:x0}: SOO reaches $10^{-49}$ on the sphere and 0 on Rastrigin and Rosenbrock with the
+optimum at the origin, but $6\times10^3$, $8\times10^3$, $4\times10^3$ when it is shifted; GJO and GWO
+behave alike; PSO and DE are unaffected. BC-SOO is translation invariant but no better than random search.}
+
+\subsection{Tuners on the six-DOF problem}
+\todo{X1: table and Fig. fig\_x1\_runs / fig\_x1\_convergence.}
+
+\subsection{Controller structures}
+\todo{X2/X3: training cost statistics; T1--T4 weighted ITAE, energy, overshoot, settling; Fig. fig\_x3\_tests,
+fig\_t4\_traces.}
+
+\subsection{Robustness}
+\todo{X3: Fig. fig\_robustness, Monte Carlo.}
+
+\subsection{Margins and latency}\label{sec:latency}
+\todo{X4 and X5.}
+
+%% ---------------------------------------------------------------------------
+\section{Discussion and limitations}
+\todo{Simulation only (HIL/FPGA or pool tests next); assumed $\tau_m$; shared parameters per group;
+linearized margins about hover; navigation errors modelled, not estimated.}
+
+\section{Conclusions}
+\todo{}
+
+\section*{Data and code availability}
+Code, results and figure scripts: \todo{repository URL}. The T200 data are fetched from the manufacturer and
+checked by SHA-256 \cite{t200data}.
+
+\bibliographystyle{elsarticle-num}
+\bibliography{refs}
+
+\end{document}

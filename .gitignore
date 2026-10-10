@@ -23,3 +23,12 @@ paper_tsp/*Notes.bib
 paper_tsp/*.synctex.gz
 bluerov_cascade/results/*.tmp
 bluerov_cascade/.pytest_cache/
+bluerov_cascade/paper/*.aux
+bluerov_cascade/paper/*.bbl
+bluerov_cascade/paper/*.blg
+bluerov_cascade/paper/*.fdb_latexmk
+bluerov_cascade/paper/*.fls
+bluerov_cascade/paper/*.log
+bluerov_cascade/paper/*.out
+bluerov_cascade/paper/*.spl
+bluerov_cascade/paper/*Notes.bib

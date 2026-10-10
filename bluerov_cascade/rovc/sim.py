@@ -8,11 +8,15 @@ Plant (Fossen 2011, irrotational current, M_A d(nu_c)/dt neglected):
 integrated by RK4 at the control period dt with the thrust held. Each thruster:
 allocation f_d = T^+ tau (scaled down as a whole if a limit is hit), command
 u = F_nom^{-1}(f_d) with the nominal 16 V curve (dead band compensated), static
-thrust F_true(u) of the actual curve, first-order lag tau_m.
+thrust F_true(u) of the actual curve, first-order lag tau_m. The command reaches
+the thrusters `delay` samples after the measurement it was computed from
+(computation, communication and ESC latency; 1 sample = 10 ms by default).
 
 Metrics per run (true state, NED / Euler-angle errors against the filtered
-reference): ITAE, IAE, ISE per DOF, electrical energy, peak |error| per DOF
-and the fraction of the horizon lost to divergence.
+reference): ITAE, IAE, ISE per DOF, electrical energy (power of the actual,
+lagged thrust from the T200 curves), peak |error| per DOF, the fraction of the
+horizon lost to divergence and the command activity (total variation of the
+eight normalized commands per second).
 """
 
 import math
@@ -24,8 +28,8 @@ from . import params, thruster
 from .controllers import NOP, build
 from .fractional import NSEC
 
-NM = 6 * 4 + 2           # itae, iae, ise, peak (6 each), energy, fail fraction
-I_ITAE, I_IAE, I_ISE, I_PEAK, I_E, I_FAIL = 0, 6, 12, 18, 24, 25
+NM = 6 * 4 + 3           # itae, iae, ise, peak (6 each), energy, fail fraction, command activity
+I_ITAE, I_IAE, I_ISE, I_PEAK, I_E, I_FAIL, I_TV = 0, 6, 12, 18, 24, 25, 26
 
 
 @njit(cache=True, fastmath=False)
@@ -150,6 +154,16 @@ def _power(u, ca):
 
 
 @njit(cache=True)
+def _power_f(F, ca):
+    z = abs(F)
+    if F > 0.0:
+        p = _cubic(z, ca[18], ca[19], ca[20])
+    else:
+        p = _cubic(z, ca[21], ca[22], ca[23])
+    return max(p, 0.0)
+
+
+@njit(cache=True)
 def _inverse(F, ca):
     """Command u with F_nom(u) = F (monotone curve, Newton with clamping)."""
     if F == 0.0:
@@ -178,14 +192,15 @@ def _wrap(a):
 
 @njit(cache=True)
 def simulate(kp1, kp2, sec, gain, integ, stage, cascade,
-             ref, dist, vcn, noise, veh, Mnom, Tal, Tpinv, ca_true, ca_nom, tau_m, fail, dt, rec, trace):
-    """One closed-loop run; returns the metric vector (layout NM). trace[nt, 26] if rec."""
+             ref, dist, vcn, noise, veh, Mnom, Tal, Tpinv, ca_true, ca_nom, tau_m, fail, dt, nd, rec, trace):
+    """One closed-loop run with an nd-sample command delay; returns the metric vector (layout NM)."""
     nt = ref.shape[0]
     out = np.zeros(NM)
     x = np.zeros(12)
     f = np.zeros(8)
     fd = np.zeros(8)
     ucmd = np.zeros(8)
+    ubuf = np.zeros((nd + 1, 8))
     tau_c = np.zeros(6)
     tau = np.zeros(6)
     e1 = np.zeros(6)
@@ -246,12 +261,18 @@ def simulate(kp1, kp2, sec, gain, integ, stage, cascade,
             elif acc < ca_nom[17]:
                 s = min(s, ca_nom[17] / acc)
         pw = 0.0
+        wr = k % (nd + 1)
+        rd = (k - nd) % (nd + 1)
         for i in range(8):
-            ucmd[i] = _inverse(fd[i] * s, ca_nom)
+            ubuf[wr, i] = _inverse(fd[i] * s, ca_nom)
+        for i in range(8):
+            if k > 0:
+                out[I_TV] += abs(ubuf[rd, i] - ucmd[i])
+            ucmd[i] = ubuf[rd, i]
             Fs = _force(ucmd[i], ca_true) * fail[i]
             f[i] = Fs + (f[i] - Fs) * lag
             if fail[i] > 0.0:
-                pw += _power(ucmd[i], ca_true)
+                pw += _power_f(f[i], ca_true)
         out[I_E] += pw * dt
         for d in range(6):
             acc = dist[k, d]
@@ -274,18 +295,20 @@ def simulate(kp1, kp2, sec, gain, integ, stage, cascade,
                 or abs(x[0]) + abs(x[1]) + abs(x[2]) > 100.0:
             out[I_FAIL] = (T - t) / T if T > 0 else 1.0
             return out
+    if T > 0:
+        out[I_TV] /= T
     return out
 
 
 @njit(cache=True, parallel=True)
 def _batch(kp1, kp2, sec, gain, integ, stage, cascade,
-           ref, dist, vcn, noise, veh, Mnom, Tal, Tpinv, ca_true, ca_nom, tau_m, fail, dt):
+           ref, dist, vcn, noise, veh, Mnom, Tal, Tpinv, ca_true, ca_nom, tau_m, fail, dt, nd):
     P = kp1.shape[0]
     out = np.zeros((P, NM))
     dummy = np.zeros((1, 26))
     for i in prange(P):
         out[i] = simulate(kp1[i], kp2[i], sec[i], gain[i], integ[i], stage, cascade,
-                          ref, dist, vcn, noise, veh, Mnom, Tal, Tpinv, ca_true, ca_nom, tau_m, fail, dt,
+                          ref, dist, vcn, noise, veh, Mnom, Tal, Tpinv, ca_true, ca_nom, tau_m, fail, dt, nd,
                           False, dummy)
     return out
 
@@ -311,7 +334,7 @@ def run(struct, X, sc, trace=False):
     """
     arrs = build(struct, X, sc.dt)
     common = (sc.ref, sc.dist, sc.vcn, sc.noise, sc.veh, PLANT.Mnom, sc.Tal, PLANT.Tpinv,
-              sc.ca_true, PLANT.ca_nom, sc.tau_m, sc.fail, sc.dt)
+              sc.ca_true, PLANT.ca_nom, sc.tau_m, sc.fail, sc.dt, int(sc.delay))
     if trace:
         tr = np.zeros((sc.ref.shape[0], 26))
         a = [v[0] if isinstance(v, np.ndarray) and v.ndim and k in (0, 1, 2, 3, 4) else v

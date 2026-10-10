@@ -6,7 +6,7 @@ without positional bias gives the same distribution in both. 'SOO-iter' is SOO
 with as many iterations as the others (6030 evaluations), i.e. the
 equal-iteration protocol of the earlier load-frequency study.
 
-    python3 -I experiments/x1_optimizers.py      # ~60 min on 4 cores, results/x1_optimizers.json
+    python3 -I experiments/x1_optimizers.py      # ~80 min on 4 cores, results/x1_optimizers.json
 """
 
 import os

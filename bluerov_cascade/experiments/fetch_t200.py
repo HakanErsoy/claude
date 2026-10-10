@@ -10,7 +10,9 @@ The fit gives the coefficients in rovc/thruster.py (COEF). With u = (PWM - 1500)
     F(u) = sum_k a_k (u - d+)^k   for u >  d+,
     F(u) = -sum_k b_k (-u - d-)^k for u < -d-,   F = 0 in between,
 
-and the electrical power P(u) the same way (degree 3, no constant term).
+and the electrical power P(u) the same way (degree 3, no constant term). The
+simulator uses the power as a function of the actual thrust,
+P(F) = sum_k q_k |F|^k (k = 1..3, separate coefficients qa for F > 0, qb for F < 0).
 
     python3 -I experiments/fetch_t200.py [DATA_DIR]      # prints COEF and the fit errors
 """
@@ -69,6 +71,11 @@ def _side(x, y, dgrid):
     return best[1], best[2]
 
 
+def _lsq(x, y):
+    X = np.stack([x ** k for k in range(1, DEG + 1)], 1)
+    return np.linalg.lstsq(X, y, rcond=None)[0]
+
+
 def fit(data):
     dgrid = np.arange(0.04, 0.11, 0.0025)
     coef, err = {}, {}
@@ -79,11 +86,17 @@ def fit(data):
         dn, b = _side(-u[neg], -F[neg], dgrid)
         dpp, ap = _side(u[pos], P[pos], dgrid)
         dpn, bp = _side(-u[neg], P[neg], dgrid)
+        qa = _lsq(F[F > 0], P[F > 0])
+        qb = _lsq(-F[F < 0], P[F < 0])
         r = lambda x, n: round(float(x), n)
         coef[v] = dict(dp=r(dp, 4), dn=r(dn, 4), a=[r(x, 4) for x in a], b=[r(x, 4) for x in b],
-                       pdp=r(dpp, 4), pdn=r(dpn, 4), pa=[r(x, 3) for x in ap], pb=[r(x, 3) for x in bp])
+                       pdp=r(dpp, 4), pdn=r(dpn, 4), pa=[r(x, 3) for x in ap], pb=[r(x, 3) for x in bp],
+                       qa=[r(x, 6) for x in qa], qb=[r(x, 6) for x in qb])
         from_model = _eval(coef[v], u)
-        err[v] = dict(force_rms=float(np.sqrt(np.mean((from_model[0] - F) ** 2))),
+        PF = np.where(F > 0, sum(qa[k] * np.abs(F) ** (k + 1) for k in range(3)),
+                      sum(qb[k] * np.abs(F) ** (k + 1) for k in range(3)))
+        err[v] = dict(power_of_thrust_rms=float(np.sqrt(np.mean((PF - P)[F != 0] ** 2))),
+                      force_rms=float(np.sqrt(np.mean((from_model[0] - F) ** 2))),
                       force_max=float(np.max(np.abs(from_model[0] - F))),
                       power_rms=float(np.sqrt(np.mean((from_model[1] - P) ** 2))),
                       F_min=float(F.min()), F_max=float(F.max()), P_max=float(P.max()))

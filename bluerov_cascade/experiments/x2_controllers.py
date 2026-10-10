@@ -1,6 +1,6 @@
-"""X2: all seven controller structures, each tuned by DE and by SOO (10 runs, 3030 evaluations).
+"""X2: all seven controller structures, each tuned by DE, PSO and SOO (10 runs, 3030 evaluations).
 
-    python3 -I experiments/x2_controllers.py     # ~45 min on 4 cores, results/x2_controllers.json
+    python3 -I experiments/x2_controllers.py     # ~80 min on 4 cores, results/x2_controllers.json
 """
 
 import os
@@ -12,7 +12,7 @@ from _tune import NFE, RES, run_all  # noqa: E402
 
 from rovc.controllers import STRUCTURES  # noqa: E402
 
-TUNERS = ("DE", "SOO")
+TUNERS = ("DE", "PSO", "SOO")
 RUNS = 10
 
 if __name__ == "__main__":

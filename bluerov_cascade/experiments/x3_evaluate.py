@@ -16,9 +16,9 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from rovc import objective, params, scenarios, sim, thruster  # noqa: E402
+from rovc import margins, objective, params, scenarios, sim, thruster  # noqa: E402
 from rovc.controllers import STRUCTURES  # noqa: E402
-from rovc.sim import I_E, I_FAIL, I_IAE, I_ISE, I_ITAE, I_PEAK  # noqa: E402
+from rovc.sim import I_E, I_FAIL, I_IAE, I_ISE, I_ITAE, I_PEAK, I_TV  # noqa: E402
 
 RES = os.path.join(os.path.dirname(__file__), "..", "results")
 MC = 100
@@ -37,7 +37,7 @@ def summary(m):
     return dict(ITAE=m[I_ITAE:I_ITAE + 6].tolist(), IAE=m[I_IAE:I_IAE + 6].tolist(),
                 ISE=m[I_ISE:I_ISE + 6].tolist(), peak=m[I_PEAK:I_PEAK + 6].tolist(),
                 wITAE=float(m[I_ITAE:I_ITAE + 6] @ scenarios.W_DOF), energy=float(m[I_E]),
-                fail=float(m[I_FAIL]), J=float(objective.cost(m[None])[0]))
+                activity=float(m[I_TV]), fail=float(m[I_FAIL]), J=float(objective.cost(m[None])[0]))
 
 
 def step_info(sc, tr, dofs=(0, 1, 2, 5), band=0.02):
@@ -76,7 +76,8 @@ def main():
         s = STRUCTURES[sname]
         x = np.array(r["x"])
         key = f"{sname}|{tuner}"
-        e = dict(structure=sname, tuner=tuner, train_J=r["f"], x=dict(zip(s.labels(), r["x"])), tests={})
+        e = dict(structure=sname, tuner=tuner, train_J=r["f"], x=dict(zip(s.labels(), r["x"])), tests={},
+                 pm_deg=margins.phase_margins(s, x, scenarios.DT, scenarios.DELAY, w=margins.W)[0].tolist())
         for sc in tests:
             m, tr = sim.run(s, x, sc, trace=True)
             e["tests"][sc.name] = summary(m)

@@ -31,17 +31,23 @@ Kontrolcü yapısı şu çalışmadan uyarlanıyor (orada iki bölgeli yük-frek
 1. **Kaskad FOPID-(1+TFOID)'in sualtı aracına ilk uygulaması.** LFC'deki "ikinci kademe girdisi
    = u₁ − Δf" yapısı, mekanik karşılığı olan "u₁ − ν" (hız geri beslemesi) ile konum–hız kaskadına
    çevriliyor; aşırı tahrikli BlueROV2 Heavy'nin altı serbestlik derecesinin hepsi kontrol ediliyor.
-2. **Veriye dayalı itici ve enerji modeli.** T200'ün 10–20 V itki ve güç eğrileri parametrik
-   modele oturtuldu (16 V'ta 0.24 N RMS hata); maliyetteki efor terimi Joule cinsinden gerçek
-   elektrik enerjisi, batarya voltajı değişimi de gerçek eğrilerle test ediliyor.
-3. **Konumsal yanlılığa karşı kontrollü optimizasyon karşılaştırması.** Tüm algoritmalar eşit
+2. **Faz payı kısıtlı, çok senaryolu ayarlama.** Her DOF'un doğrusallaştırılmış çevriminde (kesirli
+   terimler simülatörün uyguladığı Oustaloup yaklaşımıyla, 10 ms komut gecikmesi ve itici gecikmesi
+   dahil) PM ≥ 45° kısıtı. Geliştirme sırasında görüldü ki kısıtsız ITAE ayarı PM ≈ 0–10° veren
+   çevrimler üretiyor ve 1–2 örneklik ek gecikme bunları kararsız yapıyor (X5 bunu belgeliyor).
+   Sci. Rep. çalışmasının kendi belirttiği "formal kararlılık analizi yok" eksiğini kapatıyor;
+   doğrusal analizin kararlılık sınırını simülatörle tutarlı öngördüğü testle doğrulandı.
+3. **Veriye dayalı itici ve enerji modeli.** T200'ün 10–20 V itki ve güç eğrileri parametrik
+   modele oturtuldu (16 V'ta itki 0.24 N RMS, güç 3.1 W RMS hata); maliyetteki efor terimi gerçek
+   (gecikmeli) itkinin Joule cinsinden elektrik enerjisi; batarya voltajı değişimi gerçek eğrilerle.
+4. **Konumsal yanlılığa karşı kontrollü optimizasyon karşılaştırması.** Tüm algoritmalar eşit
    fonksiyon değerlendirme sayısıyla (3030) karşılaştırılıyor (Sci. Rep. çalışmasında SOO iterasyon
    başına iki kat değerlendirme yapıyordu). Her algoritma, parametre kutusu aynalanmış
    (x → lb + ub − x) problemde de çalıştırılıyor: yanlılığı olmayan bir yöntemin sonucu değişmemeli.
    Kaydırılmış test fonksiyonlarıyla (X0) SOO/GJO/GWO'nun orijine yanlılığı gösteriliyor.
-4. **Kapsamlı sınamalar:** JESTECH'in dört testi 6 DOF'ta, eğitim senaryolarından farklı bozucu
+5. **Kapsamlı sınamalar:** JESTECH'in dört testi 6 DOF'ta, eğitim senaryolarından farklı bozucu
    gerçeklemeleriyle; ±kütle/ek kütle/sönüm, pozitif kaldırma, 12/20 V batarya, motor zaman sabiti,
-   bir yatay veya dikey iticinin kaybı ve 100 örnekli Monte Carlo.
+   30 ms gecikme, bir yatay veya dikey iticinin kaybı ve 100 örnekli Monte Carlo.
 
 ## 3. SOO hakkında önemli not
 
@@ -76,17 +82,21 @@ Seçenekler (karar senin):
 - **İticiler:** tahsis matrisi von Benzon vd. Denk. (14) ile aynı (testte doğrulandı); f_d = T⁺τ,
   sınır aşılınca vektör bütün olarak ölçekleniyor; nominal 16 V eğrisinin tersi (ölü bant telafili)
   ile PWM; gerçek eğri + birinci derece gecikme (τ_m = 0.1 s, **varsayım** — JESTECH'teki tanımlanmış
-  T200 dinamiğiyle değiştirilmeli).
+  T200 dinamiğiyle değiştirilmeli). Ölçümden itici komutuna 1 örnek (10 ms) gecikme.
 - **Kontrolcü:** kontrol periyodu 10 ms; kesirli operatörler Oustaloup (N = 5, [1e-3, 1e2] rad/s),
   Tustin ile ayrıklaştırıldı; λ > 1 için tam integratör ayrılıyor. Çıkış ivme talebi, τ = M_nom·a.
   Öteleme (x, y, z) ve dönme (φ, θ, ψ) için iki ayrı parametre seti (önerilen yapı: 22 değişken).
 - **Referans:** kritik sönümlü 2. derece referans modeli (ω = 1 rad/s), tüm yapılar için aynı.
-- **Sensör gürültüsü:** konum 1 cm, derinlik 5 mm, yönelim 0.17–0.29°, hız 1 cm/s, açısal hız
-  0.29°/s (T2'de 3 katı + süreç gürültüsü).
-- **Maliyet:** J = Σ_senaryo [Σ_d w_d ITAE_d + ρ·E], w = [1, 1, 1, 2, 2, 2], ρ = 2·10⁻⁴ 1/J;
-  ıraksama cezası 1e4.
-- **Arama sınırları:** kazançlar [0, 50], integral dereceleri [0, 1.5], türev dereceleri [0, 1]
-  (gürültülü ölçümde μ > 1 gerçekçi değil), eğim üssü n ∈ [1, 10].
+- **Navigasyon hatası:** kontrolcü navigasyon filtresinin çıkışını görüyor: birinci derece
+  Gauss–Markov (2 Hz bant), σ: konum 1 cm, derinlik 5 mm, yönelim 0.17–0.29°, hız 1 cm/s, açısal hız
+  0.29°/s. T2 "şiddetli gürültü": 3 kat σ, 100 Hz beyaz + beyaz süreç gürültüsü (5 N, 0.3 N m).
+- **Maliyet:** J = Σ_senaryo [Σ_d w_d ITAE_d + ρ·E] + K_pm Σ_d max(0, 45° − PM_d)/45°,
+  w = [1, 1, 1, 2, 2, 2], ρ = 2·10⁻⁴ 1/J, K_pm = 200; ıraksama cezası 1e4. Geçişi 300 rad/s'nin
+  (Nyquist 314 rad/s) üstünde kalan çevrim PM = −180° sayılıyor.
+- **Arama uzayı:** kazançlar log₁₀ ölçekte [10⁻², 50] (birkaç mertebeye yayılıyorlar; doğrusal
+  [0, 50] kutusunda rastgele başlangıçların çoğu PM kısıtını ihlal ediyor ve tüm algoritmalar
+  J ≈ 100'de takılıyordu), integral dereceleri [0, 1.5], türev dereceleri [0, 1] (gürültülü ölçümde
+  μ > 1 gerçekçi değil), eğim üssü n ∈ [1, 10].
 
 ## 5. Deneyler
 
@@ -94,8 +104,10 @@ Seçenekler (karar senin):
 |---|---|---|
 | X0 | `experiments/x0_center_bias.py` | Kaydırılmış küre/Rastrigin/Rosenbrock/Ackley, D = 22, 15 koşu |
 | X1 | `experiments/x1_optimizers.py` | Önerilen yapı; 7 yöntem × {düz, aynalı} × 10 koşu + SOO eşit-iterasyon |
-| X2 | `experiments/x2_controllers.py` | 7 yapı × {DE, SOO} × 10 koşu |
-| X3 | `experiments/x3_evaluate.py` | En iyi ayarlar: T1–T4, 26 dayanıklılık varyantı, 100 Monte Carlo |
+| X2 | `experiments/x2_controllers.py` | 7 yapı × {DE, PSO, SOO} × 10 koşu |
+| X3 | `experiments/x3_evaluate.py` | En iyi ayarlar: T1–T4, 28 dayanıklılık varyantı, 100 Monte Carlo |
+| X4 | `experiments/x4_margins.py` | DOF başına PM, geçiş frekansı, gecikme payı (Oustaloup ve tam) |
+| X5 | `experiments/x5_unconstrained.py` | Gecikmesiz/kısıtsız ITAE ayarının marjları ve gecikmeye duyarlılığı |
 | — | `experiments/summarize.py` | Tablolar (medyan, IQR, Mann–Whitney p) |
 
 ## 6. Senden gerekenler

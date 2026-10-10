@@ -86,8 +86,9 @@ def test_closed_loop_converges():
 
 def test_structures_build():
     for s in STRUCTURES.values():
-        x = 0.5 * (s.lb + s.ub)
-        arrs = controllers.build(s, np.stack([x, s.lb]), 0.01)
+        X = s.phys(np.stack([0.5 * (s.lb + s.ub), s.lb]))
+        assert np.allclose(s.search(X), np.stack([0.5 * (s.lb + s.ub), s.lb]))
+        arrs = controllers.build(s, X, 0.01)
         assert arrs[0].shape == (2, 6) and arrs[2].shape[2] == controllers.NOP
         assert len(s.labels()) == s.dim == s.lb.size
 
@@ -103,3 +104,23 @@ def test_optimizers_budget_and_invariance():
                                shift + 10 * np.ones(D), 600, pop=10, seed=s)["f"] for s in range(3)]
     for name in ("BC-SOO", "DE"):
         assert np.allclose(run(name, 0.0), run(name, 50.0), rtol=1e-6, atol=1e-9)
+
+
+def test_margins_predict_simulated_delay_limit():
+    """Linearized phase margin and the simulator agree on which command delay destabilizes surge."""
+    from rovc import margins
+    s = STRUCTURES["P-PID"]
+    xt = np.array([3.0, 20.0, 20.0, 2.0])
+    x = np.concatenate([xt, [12.0, 6.0, 50.0, 2.0]])
+    t = np.arange(0, 15 + 0.005, 0.01)
+    z = np.zeros((t.size, 6))
+    dist = np.zeros((t.size, 6))
+    dist[(t >= 1) & (t < 1.02), 0] = 2.0
+    for nd, stable in ((4, True), (7, False)):
+        pm = margins.margins(margins.loop(s, xt, 0, 0.01, nd))[0]
+        assert (pm > 0) == stable
+        sc = scenarios.Scenario("imp", t, z, z.copy(), dist, np.zeros((t.size, 3)), np.zeros((t.size, 12)), delay=nd)
+        _, tr = sim.run(s, x, sc, trace=True)
+        early = np.abs(tr[(t > 1) & (t < 4), 0]).max()
+        late = np.abs(tr[t > 12, 0]).max()
+        assert (late < 0.1 * early) == stable

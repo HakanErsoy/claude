@@ -14,15 +14,19 @@ from scipy.linalg import expm
 from . import params, thruster
 
 DT = 0.01
+DELAY = 1                                           # samples between measurement and thrust command
 W_REF = 1.0                                         # rad/s, critically damped reference model
 WAVE_AMP = np.array([20.0, 20.0, 15.0, 1.0, 1.0, 1.0])     # N, N m (per DOF, sum of 5 sinusoids)
 WAVE_W = (0.4, 1.6)                                 # rad/s (periods 4 to 16 s)
 CURRENT = (0.25, np.deg2rad(30.0))                  # m/s, direction in the horizontal plane
-# Sensor noise at the control rate (one sigma): USBL/DVL-aided position, depth
-# sensor, IMU attitude; DVL velocity, gyro rates. T2 uses SEVERE times these
-# values and adds white process noise.
+# Navigation errors seen by the controller (stationary one sigma): USBL/DVL-aided
+# position, depth sensor, IMU attitude; DVL velocity, gyro rates. Nominally the
+# controller sees the output of a navigation filter, modelled as first-order
+# Gauss-Markov errors with bandwidth NOISE_W. T2 ("severe") uses SEVERE times
+# these values as white noise at the control rate and adds white process noise.
 NOISE_ETA = np.array([0.01, 0.01, 0.005, 0.003, 0.003, 0.005])   # m, rad
 NOISE_NU = np.array([0.01, 0.01, 0.01, 0.005, 0.005, 0.005])     # m/s, rad/s
+NOISE_W = 2 * np.pi * 2.0                                        # rad/s
 SEVERE = 3.0
 PROC_NOISE = np.array([5.0, 5.0, 5.0, 0.3, 0.3, 0.3])            # N, N m
 W_DOF = np.array([1.0, 1.0, 1.0, 2.0, 2.0, 2.0])   # cost weights: 1 m of error ~ 0.5 rad
@@ -43,6 +47,7 @@ class Scenario:
     tau_m: float = thruster.TAU_MOTOR
     fail: np.ndarray = field(default_factory=lambda: np.ones(8))
     dt: float = DT
+    delay: int = DELAY
 
     def variant(self, name, **kw):
         return replace(self, name=name, **kw)
@@ -94,9 +99,16 @@ def make(name, T, steps, storm=None, noise=None, severe=False, dt=DT):
         vcn = current(t)
     if noise is not None:
         rng = np.random.default_rng(noise)
-        nz = rng.standard_normal((t.size, 12)) * np.concatenate([NOISE_ETA, NOISE_NU]) * (SEVERE if severe else 1.0)
+        sig = np.concatenate([NOISE_ETA, NOISE_NU])
+        white = rng.standard_normal((t.size, 12))
         if severe:
+            nz = white * sig * SEVERE
             dist += rng.standard_normal((t.size, 6)) * PROC_NOISE
+        else:
+            a = np.exp(-NOISE_W * dt)
+            nz[0] = white[0] * sig
+            for k in range(1, t.size):
+                nz[k] = a * nz[k - 1] + np.sqrt(1 - a * a) * sig * white[k]
     return Scenario(name, t, raw, prefilter(raw, dt), dist, vcn, nz, dt=dt)
 
 
@@ -135,6 +147,7 @@ def robustness(base):
         out.append(base.variant(f"{base.name}|battery {v} V", ca_true=thruster.coef_array(v)))
     for tm in (0.05, 0.2):
         out.append(base.variant(f"{base.name}|tau_m {tm}", tau_m=tm))
+    out.append(base.variant(f"{base.name}|delay 30 ms", delay=3))
     for i in (0, 4):
         fl = np.ones(8)
         fl[i] = 0.0
