@@ -88,13 +88,15 @@ The contributions of this paper are:
 \section{Vehicle and actuator model}\label{sec:model}
 
 \subsection{Rigid-body and hydrodynamic model}
-With $\beeta=[x,y,z,\phi,\theta,\psi]^\top$ in the north-east-down frame and
-$\bnu=[u,v,w,p,q,r]^\top$ in the body frame (origin at the centre of gravity), the vehicle obeys
-\cite{fossen2011}
+Let $\beeta=[x,y,z,\phi,\theta,\psi]^\top$ be the position and attitude in the north-east-down frame
+and $\bnu=[u,v,w,p,q,r]^\top$ the velocities in the body frame, whose origin is the centre of gravity.
+The vehicle obeys \cite{fossen2011}
 \begin{equation}\label{eq:plant}
+\begin{aligned}
   \boldsymbol{M}\dot{\bnu} + \boldsymbol{C}_{RB}(\bnu)\bnu + \boldsymbol{C}_{A}(\bnu_r)\bnu_r
-  + \boldsymbol{D}(\bnu_r)\bnu_r + \boldsymbol{g}(\beeta) = \boldsymbol{T}\boldsymbol{f} + \btau_d,
-  \qquad \dot{\beeta} = \boldsymbol{J}(\beeta)\bnu,
+  + \boldsymbol{D}(\bnu_r)\bnu_r + \boldsymbol{g}(\beeta) &= \boldsymbol{T}\boldsymbol{f} + \btau_d,\\
+  \dot{\beeta} &= \boldsymbol{J}(\beeta)\bnu,
+\end{aligned}
 \end{equation}
 where $\boldsymbol{M}=\boldsymbol{M}_{RB}+\boldsymbol{M}_A$ is diagonal, $\bnu_r=\bnu-[\boldsymbol{R}^\top
 \boldsymbol{v}_c;\boldsymbol{0}]$ is the velocity relative to an irrotational current $\boldsymbol{v}_c$
@@ -106,6 +108,7 @@ buoyancy. The parameters of the heavy configuration are those of the open benchm
 \begin{table}[t]
 \centering\small
 \caption{BlueROV2 Heavy parameters \cite{vonbenzon2022}.}\label{tab:params}
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{llll}
 \toprule
 mass $m$ & \SI{13.5}{kg} & volume $\nabla$ & \SI{0.0135}{m^3} (neutral) \\
@@ -116,7 +119,7 @@ linear damping & \multicolumn{3}{l}{$X_u$ 13.7, $Y_v$ 0, $Z_w$ 33~\si{N.s/m}; $K
 quadratic damping & \multicolumn{3}{l}{$X_{u|u|}$ 141, $Y_{v|v|}$ 217, $Z_{w|w|}$ 190~\si{N.s^2/m^2};
   $K_{p|p|}$ 1.192, $M_{q|q|}$ 0.47, $N_{r|r|}$ 1.5~\si{N.m.s^2/rad^2}} \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{table}
 
 \subsection{Thrusters and allocation}
@@ -163,9 +166,31 @@ Scaling by the nominal inertia $M_{ii}$ makes the gains dimensionally consistent
 set is shared by $(x,y,z)$ and one by $(\phi,\theta,\psi)$: 22 decision variables.
 
 \subsection{Benchmark structures}
-\todo{Table: FOPID (the single-loop PI$^\lambda$D$^\mu$ of \cite{ersoy2026jestech}), PID, P-PID (integer
-cascade as in common ROV autopilots), PI-(1+FOPID), FOPID-FOPI, FOPI-FOPD; all cascades in the same
-position--velocity form; number of decision variables 10, 6, 8, 14, 16, 12.}
+Table~\ref{tab:structures} lists the six benchmarks. FOPID is the single-loop PI$^\lambda$D$^\mu$ of
+\cite{ersoy2026jestech} extended to six DOF, P-PID the integer cascade of common ROV autopilots, and the
+three fractional cascades are those compared in \cite{nour2026scirep}. All cascades use the
+position--velocity form of Eqs.~\eqref{eq:stage1}--\eqref{eq:stage2}, so the comparison isolates the stage
+transfer functions.
+
+\begin{table}[t]
+\centering\small
+\caption{Controller structures. $G_1$ acts on the position error; $G_2$ on $u_1-\nu$ (cascades only).
+Decision variables: two groups (translation, rotation).}\label{tab:structures}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lllr}
+\toprule
+structure & $G_1(s)$ & $G_2(s)$ & variables \\
+\midrule
+FOPID-(1+TFOID) (proposed) & $K_p + K_{i1}s^{-\lambda_1} + K_{d1}s^{\mu_1}$ & $1 + K_t s^{-1/n} + K_{i2}s^{-\lambda_2} + K_{d2}s^{\mu_2}$ & 22 \\
+FOPID \cite{ersoy2026jestech} & $K_p + K_i s^{-\lambda} + K_d s^{\mu}$ & -- & 10 \\
+PID & $K_p + K_i/s + K_d s/(s/\omega_h+1)$ & -- & 6 \\
+P-PID & $K_{p1}$ & $K_{p2} + K_{i2}/s + K_{d2}s/(s/\omega_h+1)$ & 8 \\
+PI-(1+FOPID) & $K_{p1} + K_{i1}/s$ & $1 + K_{p2} + K_{i2}s^{-\lambda} + K_d s^{\mu}$ & 14 \\
+FOPID-FOPI & $K_{p1} + K_{i1}s^{-\lambda_1} + K_d s^{\mu}$ & $K_{p2} + K_{i2}s^{-\lambda_2}$ & 16 \\
+FOPI-FOPD & $K_{p1} + K_i s^{-\lambda}$ & $K_{p2} + K_d s^{\mu}$ & 12 \\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 \subsection{Realization}
 Each $s^{\alpha}$ is approximated by the Oustaloup filter \cite{oustaloup2000} of order $N=5$ on
@@ -209,11 +234,58 @@ tuners stalled near $J\approx100$.
 
 %% ---------------------------------------------------------------------------
 \section{Tuners and comparison protocol}\label{sec:tuners}
-\todo{SOO equations as in \cite{rodan2025soo} (both movements every iteration, greedy survivor, $P_0=3$,
-$\Delta P=0.001$), the origin terms $r_3(\cdot)/2$ and $|r_3 x_{best}|$; BC-SOO; PSO with constriction
-\cite{clerc2002}; DE/rand/1/bin \cite{storn1997de}; GWO \cite{mirjalili2014gwo}; GJO \cite{chopra2022gjo};
-uniform random search. Equal budget of 3030 evaluations (population 30); mirrored box $x\mapsto lb+ub-x$;
-shifted benchmarks in $D=22$. Ten runs per setting, Mann--Whitney tests.}
+
+\subsection{Stellar oscillation optimizer}
+SOO \cite{rodan2025soo} moves a population of $N$ oscillators in two stages per iteration $t=1,\dots,T$.
+With the angular frequency $\omega(t)=2\pi/(P_0+\Delta P\,t)$, the scaling factor $S(t)=2(1-t/T)$, the best
+position $\boldsymbol{x}_b$ and $r_1,r_2,r_3\sim U(0,1)$ drawn per component, the first stage forms
+\begin{align}
+  \boldsymbol{x}_{o1} &= \boldsymbol{x}_b - r_1 r_3 S(\omega r_1-1)\big(\boldsymbol{x}_i - |r_1\sin(r_2)\,|r_3\boldsymbol{x}_b||\big),\label{eq:soo1}\\
+  \boldsymbol{x}_{o2} &= \boldsymbol{x}_b - r_2 r_3 S(\omega r_1-1)\big(\boldsymbol{x}_i - |r_1\cos(r_2)\,|r_3\boldsymbol{x}_b||\big),\\
+  \boldsymbol{x}_{new} &= r_3\,(\boldsymbol{x}_{o1}+\boldsymbol{x}_{o2})/2,\label{eq:soo3}
+\end{align}
+and the second stage moves each oscillator about the mean $\bar{\boldsymbol{x}}_3$ of the three best,
+\begin{equation}
+  \boldsymbol{x}_{osc} = \bar{\boldsymbol{x}}_3 + \tfrac12\big[\sin(r\pi)(\boldsymbol{x}_{a}-\boldsymbol{x}_{b'})
+  + \cos((1-r)\pi)(\boldsymbol{x}_{a}-\boldsymbol{x}_{c})\big],
+\end{equation}
+with three other oscillators $a,b',c$, keeping each component of the old position with probability 1/2. We
+follow the equations of the paper as read by the reimplementation in \cite{mealpy_soo}: both stages in every
+iteration with greedy survivor selection, $P_0=3$, $\Delta P=0.001$, clipping at the bounds. That source
+documents several differences between the paper and the authors' released code. SOO therefore spends $2N$
+evaluations per iteration.
+
+Eqs.~\eqref{eq:soo1}--\eqref{eq:soo3} refer to the coordinate origin twice: through $|r_3\boldsymbol{x}_b|$ and
+through the factor $r_3\in[0,1]$, which contracts every candidate towards $\boldsymbol{0}$. As a control we use
+\emph{BC-SOO}, the same first stage written in coordinates relative to $\boldsymbol{x}_b$ (the substitution
+$\boldsymbol{x}\mapsto\boldsymbol{x}-\boldsymbol{x}_b$),
+\begin{equation}
+\begin{aligned}
+  \boldsymbol{x}_{ok} &= \boldsymbol{x}_b - r_k r_3 S(\omega r_1-1)(\boldsymbol{x}_i-\boldsymbol{x}_b),\quad k=1,2,\\
+  \boldsymbol{x}_{new} &= \boldsymbol{x}_b + r_3\big((\boldsymbol{x}_{o1}+\boldsymbol{x}_{o2})/2-\boldsymbol{x}_b\big),
+\end{aligned}
+\end{equation}
+which is translation invariant by construction.
+
+\subsection{Other tuners}
+PSO with the constriction coefficients of \cite{clerc2002} ($w=0.7298$, $c_1=c_2=1.49618$, velocity limited to
+20\% of the range), DE/rand/1/bin \cite{storn1997de} ($F=0.5$, $CR=0.9$), GWO \cite{mirjalili2014gwo}, GJO
+\cite{chopra2022gjo} and uniform random search (RS). PSO and DE are the tuners of \cite{ersoy2026jestech};
+GWO and GJO are among the comparison methods of \cite{nour2026scirep}.
+
+\subsection{Protocol}
+\begin{itemize}
+\item \emph{Equal budget.} Every run stops after 3030 evaluations (population 30): 100 iterations for the
+  one-stage methods and 50 for SOO. The equal-iteration protocol of \cite{nour2026scirep}, which gives SOO
+  6030 evaluations, is run as a separate setting (SOO-iter).
+\item \emph{Mirrored box.} Every tuner is also run on the problem expressed in the coordinates
+  $\boldsymbol{x}'=\boldsymbol{lb}+\boldsymbol{ub}-\boldsymbol{x}$. The problem is the same; only the position of
+  the coordinate origin relative to the good region changes. A tuner without positional bias gives the same
+  distribution of results in both boxes.
+\item \emph{Shifted benchmarks.} Sphere, Rastrigin, Rosenbrock and Ackley functions in $D=22$ on
+  $[-100,100]^{22}$, with the optimum at the origin and at a random point of $[-60,60]^{22}$ (15 runs).
+\item Ten independent runs per setting; medians, interquartile ranges and two-sided Mann--Whitney tests.
+\end{itemize}
 
 %% ---------------------------------------------------------------------------
 \section{Results}\label{sec:results}
