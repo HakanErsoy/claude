@@ -31,12 +31,16 @@ Kontrolcü yapısı şu çalışmadan uyarlanıyor (orada iki bölgeli yük-frek
 1. **Kaskad FOPID-(1+TFOID)'in sualtı aracına ilk uygulaması.** LFC'deki "ikinci kademe girdisi
    = u₁ − Δf" yapısı, mekanik karşılığı olan "u₁ − ν" (hız geri beslemesi) ile konum–hız kaskadına
    çevriliyor; aşırı tahrikli BlueROV2 Heavy'nin altı serbestlik derecesinin hepsi kontrol ediliyor.
-2. **Faz payı kısıtlı, çok senaryolu ayarlama.** Her DOF'un doğrusallaştırılmış çevriminde (kesirli
-   terimler simülatörün uyguladığı Oustaloup yaklaşımıyla, 10 ms komut gecikmesi ve itici gecikmesi
-   dahil) PM ≥ 45° kısıtı. Geliştirme sırasında görüldü ki kısıtsız ITAE ayarı PM ≈ 0–10° veren
-   çevrimler üretiyor ve 1–2 örneklik ek gecikme bunları kararsız yapıyor (X5 bunu belgeliyor).
-   Sci. Rep. çalışmasının kendi belirttiği "formal kararlılık analizi yok" eksiğini kapatıyor;
-   doğrusal analizin kararlılık sınırını simülatörle tutarlı öngördüğü testle doğrulandı.
+2. **İtici belirsizliğine karşı faz payı kısıtlı, çok senaryolu ayarlama.** T200'ün dinamiği iyi
+   bilinmiyor (ölçülmüş transfer fonksiyonu yok; Blue Robotics motor dönerken 25–40 ms ESC gecikmesi
+   tahmin ediyor, duruştan ~110 ms ölçülmüş). Bu yüzden her DOF'un doğrusallaştırılmış çevriminde
+   (kesirli terimler simülatörün uyguladığı Oustaloup yaklaşımıyla) üç noktada kısıt var: nominal
+   itici (τ_m = 0.1 s, 30 ms) PM ≥ 45°, yavaş köşe (0.2 s, 60 ms) ve hızlı köşe (0.05 s, 10 ms)
+   PM ≥ 20°. Geliştirme sırasında görüldü ki kısıtsız ITAE ayarı PM ≈ 0–10° veren çevrimler üretiyor
+   ve 1–2 örneklik ek gecikme bunları kararsız yapıyor; tek noktada (10 ms) PM ≥ 45° ile ayarlanmış
+   çözümler de 30 ms'de 11–17°'ye, 0.2 s + 60 ms'de negatife düşüyordu (X5 belgeliyor). Sci. Rep.
+   çalışmasının kendi belirttiği "formal kararlılık analizi yok" eksiğini kapatıyor; doğrusal
+   analizin kararlılık sınırını simülatörle tutarlı öngördüğü testle doğrulandı.
 3. **Veriye dayalı itici ve enerji modeli.** T200'ün 10–20 V itki ve güç eğrileri parametrik
    modele oturtuldu (16 V'ta itki 0.24 N RMS, güç 3.1 W RMS hata); maliyetteki efor terimi gerçek
    (gecikmeli) itkinin Joule cinsinden elektrik enerjisi; batarya voltajı değişimi gerçek eğrilerle.
@@ -81,8 +85,10 @@ Seçenekler (karar senin):
   Akıntı göreli hız üzerinden (C_A ve D), M_A ν̇_c ihmal edildi.
 - **İticiler:** tahsis matrisi von Benzon vd. Denk. (14) ile aynı (testte doğrulandı); f_d = T⁺τ,
   sınır aşılınca vektör bütün olarak ölçekleniyor; nominal 16 V eğrisinin tersi (ölü bant telafili)
-  ile PWM; gerçek eğri + birinci derece gecikme (τ_m = 0.1 s, **varsayım** — JESTECH'teki tanımlanmış
-  T200 dinamiğiyle değiştirilmeli). Ölçümden itici komutuna 1 örnek (10 ms) gecikme.
+  ile PWM; gerçek eğri + birinci derece gecikme. Ölçümden itici komutuna 3 örnek (30 ms) gecikme.
+  τ_m = 0.1 s ve 30 ms nominal değerler; tasarım [0.05, 0.2] s × [10, 60] ms aralığında kısıtlı,
+  dayanıklılık testleri ve Monte Carlo da bu aralığı tarıyor (JESTECH'teki T200 transfer fonksiyonu
+  güvenilir değil, kullanılmıyor).
 - **Kontrolcü:** kontrol periyodu 10 ms; kesirli operatörler Oustaloup (N = 5, [1e-3, 1e2] rad/s),
   Tustin ile ayrıklaştırıldı; λ > 1 için tam integratör ayrılıyor. Çıkış ivme talebi, τ = M_nom·a.
   Öteleme (x, y, z) ve dönme (φ, θ, ψ) için iki ayrı parametre seti (önerilen yapı: 22 değişken).
@@ -90,9 +96,10 @@ Seçenekler (karar senin):
 - **Navigasyon hatası:** kontrolcü navigasyon filtresinin çıkışını görüyor: birinci derece
   Gauss–Markov (2 Hz bant), σ: konum 1 cm, derinlik 5 mm, yönelim 0.17–0.29°, hız 1 cm/s, açısal hız
   0.29°/s. T2 "şiddetli gürültü": 3 kat σ, 100 Hz beyaz + beyaz süreç gürültüsü (5 N, 0.3 N m).
-- **Maliyet:** J = Σ_senaryo [Σ_d w_d ITAE_d + ρ·E] + K_pm Σ_d max(0, 45° − PM_d)/45°,
-  w = [1, 1, 1, 2, 2, 2], ρ = 2·10⁻⁴ 1/J, K_pm = 200; ıraksama cezası 1e4. Geçişi 300 rad/s'nin
-  (Nyquist 314 rad/s) üstünde kalan çevrim PM = −180° sayılıyor.
+- **Maliyet:** J = Σ_senaryo [Σ_d w_d ITAE_d + ρ·E] + K_pm Σ_a Σ_d max(0, PM*_a − PM_{a,d})/PM*_a,
+  a ∈ {nominal (PM* = 45°), yavaş köşe (20°), hızlı köşe (20°)}, w = [1, 1, 1, 2, 2, 2],
+  ρ = 2·10⁻⁴ 1/J, K_pm = 200; ıraksama cezası 1e4. Geçişi 300 rad/s'nin (Nyquist 314 rad/s)
+  üstünde kalan çevrim PM = −180° sayılıyor.
 - **Arama uzayı:** kazançlar log₁₀ ölçekte [10⁻², 50] (birkaç mertebeye yayılıyorlar; doğrusal
   [0, 50] kutusunda rastgele başlangıçların çoğu PM kısıtını ihlal ediyor ve tüm algoritmalar
   J ≈ 100'de takılıyordu), integral dereceleri [0, 1.5], türev dereceleri [0, 1] (gürültülü ölçümde
@@ -104,17 +111,17 @@ Seçenekler (karar senin):
 |---|---|---|
 | X0 | `experiments/x0_center_bias.py` | Kaydırılmış küre/Rastrigin/Rosenbrock/Ackley, D = 22, 15 koşu |
 | X1 | `experiments/x1_optimizers.py` | Önerilen yapı; 7 yöntem × {düz, aynalı} × 10 koşu + SOO eşit-iterasyon |
-| X2 | `experiments/x2_controllers.py` | 7 yapı × {DE, PSO, SOO} × 10 koşu |
-| X3 | `experiments/x3_evaluate.py` | En iyi ayarlar: T1–T4, 28 dayanıklılık varyantı, 100 Monte Carlo |
-| X4 | `experiments/x4_margins.py` | DOF başına PM, geçiş frekansı, gecikme payı (Oustaloup ve tam) |
+| X2 | `experiments/x2_controllers.py` | 7 yapı × {DE, PSO} × 10 koşu (SOO X1'de) |
+| X3 | `experiments/x3_evaluate.py` | En iyi ayarlar: T1–T4, 30 dayanıklılık varyantı, 100 Monte Carlo |
+| X4 | `experiments/x4_margins.py` | Üç itici noktasında DOF başına PM, geçiş frekansı, gecikme payı |
 | X5 | `experiments/x5_unconstrained.py` | Gecikmesiz/kısıtsız ITAE ayarının marjları ve gecikmeye duyarlılığı |
 | — | `experiments/summarize.py` | Tablolar (medyan, IQR, Mann–Whitney p) |
 
 ## 6. Senden gerekenler
 
-1. **JESTECH makalesinin PDF'i** (Elsevier tam metni buradan indirilemiyor): tanımlanmış 4. derece
-   surge modeli ve T200 dinamiği ile τ_m varsayımını değiştirip surge ekseninde JESTECH sonuçlarıyla
-   tutarlılık kontrolü yapacağım; PSO/DEA ayarlarını ve maliyet ağırlıklarını da aynı yapacağım.
+1. **JESTECH makalesinin PDF'i** (Elsevier tam metni buradan indirilemiyor): PSO/DEA ayarları,
+   maliyet ağırlıkları ve dört testin tanımları için. T200 transfer fonksiyonu güvenilir olmadığı için
+   kullanılmayacak; itici dinamiği belirsizlik aralığıyla ele alınıyor.
 2. SOO çerçevesi kararı (Bölüm 3).
 3. Hedef dergi (JESTECH, *Ocean Engineering*, *ISA Transactions*, *Fractal and Fractional*, ...).
 4. Laboratuvarda BlueROV2 Heavy varsa gerçek deney / HIL imkânı (en güçlü katkı olur).

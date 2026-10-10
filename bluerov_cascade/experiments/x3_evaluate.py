@@ -2,10 +2,13 @@
 
 For each structure and tuner the run with the lowest training cost (X2) is
 evaluated (the controller is never retuned). Outputs per-DOF ITAE/IAE/ISE,
-energy, peak error, overshoot and settling time (T1), the cost of the
-robustness variants of T3 and T4, and 100 random plant/actuator draws on T4.
+energy, peak error, overshoot and settling time (T1), the phase margins at the
+three actuator points of the tuning constraint, the cost of the robustness
+variants of T3 and T4, and 100 random plant/actuator draws on T4 (mass, added
+mass, damping, buoyancy, battery voltage, thruster lag 0.05-0.2 s, latency
+10-60 ms).
 
-    python3 -I experiments/x3_evaluate.py        # ~2 min, results/x3_evaluate.json + x3_traces.npz
+    python3 -I experiments/x3_evaluate.py        # ~3 min, results/x3_evaluate.json + x3_traces.npz
 """
 
 import json
@@ -61,7 +64,7 @@ def monte_carlo(base, n=MC, seed=7):
         veh = params.pack(mass=rng.uniform(0.8, 1.2), added=rng.uniform(0.5, 1.5),
                           damping=rng.uniform(0.5, 1.5), buoyancy=rng.uniform(0.98, 1.03))
         out.append(base.variant("mc", veh=veh, ca_true=thruster.coef_array(int(rng.choice([12, 14, 16, 18, 20]))),
-                                tau_m=float(rng.uniform(0.05, 0.2))))
+                                tau_m=float(rng.uniform(0.05, 0.2)), delay=int(rng.integers(1, 7))))
     return out
 
 
@@ -77,7 +80,9 @@ def main():
         x = np.array(r["x"])
         key = f"{sname}|{tuner}"
         e = dict(structure=sname, tuner=tuner, train_J=r["f"], x=dict(zip(s.labels(), r["x"])), tests={},
-                 pm_deg=margins.phase_margins(s, x, scenarios.DT, scenarios.DELAY, w=margins.W)[0].tolist())
+                 pm_deg={f"tau_m {tm}, {10 * nd} ms": margins.phase_margins(s, x, scenarios.DT, nd, tau_m=tm,
+                                                                           w=margins.W)[0].tolist()
+                         for tm, nd, _ in objective.MARGIN_POINTS})
         for sc in tests:
             m, tr = sim.run(s, x, sc, trace=True)
             e["tests"][sc.name] = summary(m)

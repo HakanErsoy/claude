@@ -77,14 +77,18 @@ def margins(L, w=W):
     return float(pm[i]), float(wc[i]), dm
 
 
-def phase_margins(struct, X, dt, delay, tau_m=thruster.TAU_MOTOR, w=W_FAST):
-    """Phase margins [P, 6] for a batch of parameter vectors (stage responses computed once per group)."""
+def phase_margins_multi(struct, X, dt, points, w=W_FAST):
+    """Phase margins [P, len(points), 6] at actuator points [(tau_m, delay), ...].
+
+    The controller response is computed once per candidate and group; only the
+    actuator factor changes between the points.
+    """
     X = np.atleast_2d(X)
     half = len(struct.names)
     c0, c1 = plant_coeffs()
     s = 1j * w
-    H = np.exp(-(delay + 0.5) * dt * s) / (tau_m * s + 1)
-    out = np.zeros((X.shape[0], 6))
+    Hs = [np.exp(-(nd + 0.5) * dt * s) / (tm * s + 1) for tm, nd in points]
+    out = np.zeros((X.shape[0], len(points), 6))
     for i, x in enumerate(X):
         for g in range(2):
             kp1, kp2, slots = struct.group(x[g * half:(g + 1) * half])
@@ -92,5 +96,12 @@ def phase_margins(struct, X, dt, delay, tau_m=thruster.TAU_MOTOR, w=W_FAST):
             if struct.cascade:
                 G = (kp2 + sum(_slot(k, gn, a, s) for st, k, gn, a in slots if st == 1)) * (G + s)
             for d in range(3 * g, 3 * g + 3):
-                out[i, d] = margins(G * H / (s * s + c1[d] * s + c0[d]), w)[0]
+                Gp = G / (s * s + c1[d] * s + c0[d])
+                for j, H in enumerate(Hs):
+                    out[i, j, d] = margins(Gp * H, w)[0]
     return out
+
+
+def phase_margins(struct, X, dt, delay, tau_m=thruster.TAU_MOTOR, w=W_FAST):
+    """Phase margins [P, 6] at one actuator point."""
+    return phase_margins_multi(struct, X, dt, [(tau_m, delay)], w)[:, 0]

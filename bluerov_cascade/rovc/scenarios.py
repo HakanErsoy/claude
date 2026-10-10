@@ -14,7 +14,7 @@ from scipy.linalg import expm
 from . import params, thruster
 
 DT = 0.01
-DELAY = 1                                           # samples between measurement and thrust command
+DELAY = 3                                           # samples (30 ms) between measurement and thrust command
 W_REF = 1.0                                         # rad/s, critically damped reference model
 WAVE_AMP = np.array([20.0, 20.0, 15.0, 1.0, 1.0, 1.0])     # N, N m (per DOF, sum of 5 sinusoids)
 WAVE_W = (0.4, 1.6)                                 # rad/s (periods 4 to 16 s)
@@ -147,7 +147,8 @@ def robustness(base):
         out.append(base.variant(f"{base.name}|battery {v} V", ca_true=thruster.coef_array(v)))
     for tm in (0.05, 0.2):
         out.append(base.variant(f"{base.name}|tau_m {tm}", tau_m=tm))
-    out.append(base.variant(f"{base.name}|delay 30 ms", delay=3))
+    out.append(base.variant(f"{base.name}|delay 60 ms", delay=6))
+    out.append(base.variant(f"{base.name}|tau_m 0.2, delay 60 ms", tau_m=0.2, delay=6))
     for i in (0, 4):
         fl = np.ones(8)
         fl[i] = 0.0

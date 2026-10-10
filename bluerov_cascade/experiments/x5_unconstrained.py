@@ -23,7 +23,7 @@ from rovc.sim import I_FAIL  # noqa: E402
 
 RES = os.path.join(os.path.dirname(__file__), "..", "results")
 S = "FOPID-(1+TFOID)"
-DELAYS = (0, 1, 2, 3, 4)
+DELAYS = (0, 1, 2, 3, 4, 6)
 
 
 def delay_sweep(s, x, base):

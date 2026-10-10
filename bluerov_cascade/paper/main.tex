@@ -70,10 +70,11 @@ The contributions of this paper are:
 \item The FOPID-(1+TFOID) cascade is recast as a position--velocity cascade (the second stage acts on
   $u_1-\nu$, the mechanical counterpart of $u_1-\Delta f$) and applied to all six DOF of an over-actuated
   BlueROV2 Heavy, with six benchmark structures realized in the same cascade form.
-\item Tuning minimizes a multi-scenario cost (six-DOF ITAE and electrical energy) subject to a phase margin of
-  at least \SI{45}{\degree} on every linearized DOF loop, including the command latency and the thruster lag.
-  Without this constraint, ITAE tuning returns loops with margins below \SI{10}{\degree} that one or two
-  extra samples of latency destabilize (Sect.~\ref{sec:latency}).
+\item Tuning minimizes a multi-scenario cost (six-DOF ITAE and electrical energy) subject to phase margins on
+  every linearized DOF loop, including the command latency and the thruster lag. Because the T200 dynamics are
+  not known well, the margins are imposed over a range of thruster lag and latency. Without the constraint,
+  ITAE tuning returns loops with margins below \SI{10}{\degree} that one or two extra samples of latency
+  destabilize (Sect.~\ref{sec:latency}).
 \item The thruster model (thrust, dead band, asymmetry, saturation and electrical power at 10--20~V) is fitted
   to the manufacturer's measurements \cite{t200data}, so the effort term is energy in joules and battery
   voltage is a physically meaningful uncertainty.
@@ -132,12 +133,14 @@ inverse of the nominal \SI{16}{V} curve, with dead-band compensation. The thrust
   F(u)=\begin{cases} \sum_{k=1}^{3} a_k (u-d_+)^k, & u>d_+,\\ 0, & -d_-\le u\le d_+,\\
   -\sum_{k=1}^{3} b_k (-u-d_-)^k, & u<-d_-,\end{cases}
 \end{equation}
-followed by a first-order lag $\tau_m$ \todo{replace the assumed $\tau_m=\SI{0.1}{s}$ by the T200 dynamics
-identified in \cite{ersoy2026jestech}}. The coefficients were fitted by least squares to the manufacturer's
+followed by a first-order lag $\tau_m$. No reliable dynamic model of the T200 is available: the
+manufacturer estimates 25--40~ms of ESC latency for a running motor, and about 110~ms has been reported from
+standstill. We therefore take $\tau_m=\SI{0.1}{s}$ and a latency of \SI{30}{ms} as nominal values and
+design for $\tau_m\in[0.05,0.2]$~s and latencies of 10--60~ms (Sect.~\ref{sec:tuning}). The coefficients were fitted by least squares to the manufacturer's
 measurements at 10--20~V \cite{t200data}; at \SI{16}{V} the fit error is \SI{0.24}{N} RMS (\SI{1.3}{N}
 maximum) over the range \SIrange{-39.9}{51.4}{N}. The electrical power of the actual thrust,
 $P(F)=\sum_k q_k|F|^k$, is fitted to the same data (\SI{3.1}{W} RMS of \SI{389}{W}). The command reaches the
-thrusters one control period ($\Delta t=\SI{10}{ms}$) after the measurement it was computed from.
+thrusters three control periods ($3\Delta t=\SI{30}{ms}$) after the measurement it was computed from.
 
 \subsection{Disturbances and navigation errors}
 Waves act as a sum of five sinusoids per DOF with random frequencies in \SIrange{0.4}{1.6}{rad/s}
@@ -208,16 +211,19 @@ simultaneous step in $x$, $y$, $z$ and $\psi$ (\SI{20}{s}), and station keeping 
 steps in $\psi$ and $z$ (\SI{30}{s}). The cost is
 \begin{equation}\label{eq:cost}
   J = \sum_{s}\Big[\sum_{i=1}^{6} w_i\int_0^{T_s} t\,|e_i(t)|\,dt + \rho E_s\Big]
-      + K_{pm}\sum_{i=1}^{6}\frac{\max(0,\ \mathrm{PM}^\ast-\mathrm{PM}_i)}{\mathrm{PM}^\ast},
+      + K_{pm}\sum_{a}\sum_{i=1}^{6}\frac{\max(0,\ \mathrm{PM}_a^\ast-\mathrm{PM}_{a,i})}{\mathrm{PM}_a^\ast},
 \end{equation}
 with $w=[1,1,1,2,2,2]$ (one metre of error weighs as much as \SI{0.5}{rad}), the electrical energy $E_s$ in
-joules, $\rho=\num{2e-4}\,\si{J^{-1}}$, $\mathrm{PM}^\ast=\SI{45}{\degree}$ and $K_{pm}=200$. Diverging runs
-receive $10^4(1+\text{lost fraction})$.
+joules, $\rho=\num{2e-4}\,\si{J^{-1}}$ and $K_{pm}=200$. The margins are required at three actuator points $a$:
+the nominal thruster ($\tau_m=\SI{0.1}{s}$, \SI{30}{ms}; $\mathrm{PM}^\ast=\SI{45}{\degree}$) and the slow
+(\SI{0.2}{s}, \SI{60}{ms}) and fast (\SI{0.05}{s}, \SI{10}{ms}) corners ($\mathrm{PM}^\ast=\SI{20}{\degree}$).
+Diverging runs receive $10^4(1+\text{lost fraction})$.
 
 \subsection{Margin constraint}
-About hover, DOF $i$ is $\ddot y + c_{1,i}\dot y + c_{0,i}y = H(s)a$ with $c_1=D_{l,ii}/M_{ii}$, the
-restoring stiffness $c_0=z_bB/M_{ii}$ in roll and pitch, and $H(s)=e^{-1.5\Delta t s}/(\tau_m s+1)$
-(one period of latency and the zero-order hold). Broken at $a$, the loop is
+About hover, DOF $i$ is $\ddot y + c_{1,i}\dot y + c_{0,i}y = H(s)a$ with $c_1=D_{l,ii}/M_{ii}$ and the
+restoring stiffness $c_0=z_bB/M_{ii}$ in roll and pitch. The actuator path
+$H(s)=e^{-(n_d+1/2)\Delta t s}/(\tau_m s+1)$ contains $n_d$ periods of latency, the zero-order hold and the
+thruster lag. Broken at $a$, the loop is
 \begin{equation}
   L_i(s) = G_2(s)\big(G_1(s)+s\big)P_i(s), \qquad P_i(s) = \frac{H(s)}{s^2+c_{1,i}s+c_{0,i}},
 \end{equation}

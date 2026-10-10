@@ -10,7 +10,7 @@ allocation f_d = T^+ tau (scaled down as a whole if a limit is hit), command
 u = F_nom^{-1}(f_d) with the nominal 16 V curve (dead band compensated), static
 thrust F_true(u) of the actual curve, first-order lag tau_m. The command reaches
 the thrusters `delay` samples after the measurement it was computed from
-(computation, communication and ESC latency; 1 sample = 10 ms by default).
+(computation, communication and ESC latency; 3 samples = 30 ms by default).
 
 Metrics per run (true state, NED / Euler-angle errors against the filtered
 reference): ITAE, IAE, ISE per DOF, electrical energy (power of the actual,
