@@ -117,14 +117,23 @@ Seçenekler (karar senin):
 | X5 | `experiments/x5_unconstrained.py` | Gecikmesiz/kısıtsız ITAE ayarının marjları ve gecikmeye duyarlılığı |
 | — | `experiments/summarize.py` | Tablolar (medyan, IQR, Mann–Whitney p) |
 
-## 6. Senden gerekenler
+## 6. Durum ve açık konular
 
-1. **JESTECH makalesinin PDF'i** (Elsevier tam metni buradan indirilemiyor): PSO/DEA ayarları,
-   maliyet ağırlıkları ve dört testin tanımları için. T200 transfer fonksiyonu güvenilir olmadığı için
-   kullanılmayacak; itici dinamiği belirsizlik aralığıyla ele alınıyor.
-2. SOO çerçevesi kararı (Bölüm 3).
-3. Hedef dergi (JESTECH, *Ocean Engineering*, *ISA Transactions*, *Fractal and Fractional*, ...).
-4. Laboratuvarda BlueROV2 Heavy varsa gerçek deney / HIL imkânı (en güçlü katkı olur).
+**Sonuçlar** README'de özetlendi. Ana mesaj (taslak): gerçekçi gecikme ve itici belirsizliği altında
+kesirli kaskadın kazancı nominal performans değil, **dayanıklılık** (gürültü, parametre dağılımı, hiç
+ıraksama yok); ayarlayıcılar arasında eşit bütçe ve aynalı kutu testinde PSO en iyi, SOO ve GJO konumsal
+yanlı.
+
+Açık konular:
+
+1. **T200 yeniden tanımlama** (`matlab/t200_reident.m`, MATLAB Student'ta): sonuçlar gelince nominal
+   τ_m ve gecikme güncellenecek, belirsizlik aralığı doğrulama hatasına göre daraltılacak, X1–X5 yeniden
+   koşulacak.
+2. **SOO çerçevesi:** önerilen yol (a) — SOO en yeni algoritma olarak dahil, optimizasyon katkısı
+   yanlılık-kontrollü protokol. Sonuçlar bu yolu destekliyor.
+3. **Ayarlama bütçesi:** önerilen yapı (22 parametre) 3030 değerlendirmede P-PID'in (8 parametre) en iyi
+   nominal maliyetine ulaşamadı. Daha büyük bütçe (ör. 10 000) ile tekrar denenebilir.
+4. **Hedef dergi** ve **gerçek araç / HIL** imkânı (JESTECH'teki FPGA akışıyla HIL en doğal devam).
 
 ## 7. Örtüşme koruması
 

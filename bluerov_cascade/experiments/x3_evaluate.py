@@ -90,8 +90,9 @@ def main():
             if sc.name == "T1-step":
                 e["step"] = step_info(sc, tr)
         e["robustness"] = {sc.name: summary(sim.run(s, x, sc)[0]) for sc in rob}
-        mcJ = np.array([summary(sim.run(s, x, sc)[0])["wITAE"] for sc in mc])
-        mcF = np.array([sim.run(s, x, sc)[0][I_FAIL] > 0 for sc in mc])
+        mcm = [sim.run(s, x, sc)[0] for sc in mc]
+        mcJ = np.array([summary(m)["wITAE"] for m in mcm])
+        mcF = np.array([m[I_FAIL] > 0 for m in mcm])
         e["monte_carlo"] = dict(wITAE=mcJ.tolist(), failures=int(mcF.sum()))
         res[key] = e
         t = e["tests"]

@@ -15,6 +15,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.ticker  # noqa: E402,F401
 import numpy as np  # noqa: E402
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
@@ -143,6 +144,7 @@ def fig_x3_tests(res):
         ax.scatter(v, range(len(order)), c=col, s=14, zorder=3)
         style(ax)
         ax.set_xscale("log")
+        ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
         panel(ax, "abcd"[i], t)
         ax.set_xlabel("weighted ITAE")
     axs[0].set_yticks(range(len(order)), order)
@@ -174,7 +176,7 @@ def fig_robust(best):
     variants = list(best[structs[0]]["robustness"])
     M = np.array([[best[s]["robustness"][v]["J"] / best[s]["tests"][v.split("|")[0]]["J"] for s in structs]
                   for v in variants])
-    fig, ax = plt.subplots(figsize=(HALF + 0.9, 4.6))
+    fig, ax = plt.subplots(figsize=(HALF + 1.4, 5.4))
     im = ax.imshow(np.log10(np.clip(M, 0.5, 1e3)), cmap="Blues", aspect="auto", vmin=np.log10(0.5), vmax=1.0)
     ax.set_xticks(range(len(structs)), structs, rotation=60, ha="right")
     ax.set_yticks(range(len(variants)), variants)

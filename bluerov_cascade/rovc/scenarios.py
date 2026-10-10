@@ -48,6 +48,7 @@ class Scenario:
     fail: np.ndarray = field(default_factory=lambda: np.ones(8))
     dt: float = DT
     delay: int = DELAY
+    Tpinv: np.ndarray = None   # allocation used by the controller (None: nominal pseudo-inverse)
 
     def variant(self, name, **kw):
         return replace(self, name=name, **kw)
@@ -153,4 +154,8 @@ def robustness(base):
         fl = np.ones(8)
         fl[i] = 0.0
         out.append(base.variant(f"{base.name}|thruster {i + 1} lost", fail=fl))
+        T = params.allocation().copy()
+        T[:, i] = 0.0                                   # the failure is known: reallocate on 7 thrusters
+        out.append(base.variant(f"{base.name}|thruster {i + 1} lost, reallocated", fail=fl,
+                                Tpinv=np.linalg.pinv(T)))
     return out

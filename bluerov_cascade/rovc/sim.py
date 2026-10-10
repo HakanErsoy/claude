@@ -333,7 +333,8 @@ def run(struct, X, sc, trace=False):
     eta (6), nu (6), thrust (8), commanded tau (6).
     """
     arrs = build(struct, X, sc.dt)
-    common = (sc.ref, sc.dist, sc.vcn, sc.noise, sc.veh, PLANT.Mnom, sc.Tal, PLANT.Tpinv,
+    Tpinv = PLANT.Tpinv if sc.Tpinv is None else sc.Tpinv
+    common = (sc.ref, sc.dist, sc.vcn, sc.noise, sc.veh, PLANT.Mnom, sc.Tal, Tpinv,
               sc.ca_true, PLANT.ca_nom, sc.tau_m, sc.fail, sc.dt, int(sc.delay))
     if trace:
         tr = np.zeros((sc.ref.shape[0], 26))

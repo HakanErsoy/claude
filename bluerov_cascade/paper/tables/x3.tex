@@ -1,0 +1,14 @@
+\begin{tabular}{lrrrrrrrr}
+\toprule
+ & \multicolumn{4}{c}{weighted ITAE} & $E$ T4 & \multicolumn{3}{c}{Monte Carlo, T4 (100)} \\ \cmidrule(lr){2-5}\cmidrule(lr){7-9}
+structure (tuner) & T1 & T2 & T3 & T4 & [kJ] & median & p90 & diverged \\
+\midrule
+FOPID-(1+TFOID) (PSO) & 1.7 & 66.4 & 52.4 & 128.8 & 11.4 & 146 & 275 & 0 \\
+FOPI-FOPD (PSO) & 1.4 & 29.8 & 52.3 & 129.4 & 11.7 & 148 & 340 & 1 \\
+PI-(1+FOPID) (PSO) & 2.6 & 572.1 & 48.9 & 131.9 & 11.7 & 146 & 547 & 12 \\
+P-PID (PSO) & 3.1 & 432.3 & 47.3 & 152.8 & 11.4 & 166 & 493 & 8 \\
+FOPID-FOPI (PSO) & 31.9 & 45.7 & 400.6 & 1097.1 & 9.5 & 1304 & 2545 & 1 \\
+FOPID (PSO) & 20.5 & 415.3 & 475.9 & 1274.4 & 9.8 & 1597 & 3462 & 3 \\
+PID (DE) & 31.7 & 688.9 & 519.1 & 1385.0 & 9.7 & 1927 & 7518 & 3 \\
+\bottomrule
+\end{tabular}
