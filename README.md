@@ -1,5 +1,7 @@
 # vofrac: Tanım-tutarlı değişken dereceli kesirli operatörler
 
+> Bu depoda ikinci bir çalışma da var: [`bluerov_cascade/`](bluerov_cascade/README.md) — BlueROV2 Heavy için 6-DOF kaskad FOPID-(1+TFOID) (JESTECH makalesinin devamı).
+
 CSSP (Circuits, Systems, and Signal Processing) makalesi için araştırma deposu.
 Metodoloji, hipotezler, TCAS-I ile örtüşme koruması ve iş planı: [`docs/METODOLOJI.md`](docs/METODOLOJI.md).
 

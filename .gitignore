@@ -21,3 +21,5 @@ paper_tsp/*.log
 paper_tsp/*.out
 paper_tsp/*Notes.bib
 paper_tsp/*.synctex.gz
+bluerov_cascade/results/*.tmp
+bluerov_cascade/.pytest_cache/
