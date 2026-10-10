@@ -132,8 +132,14 @@ Açık konular:
 2. **SOO çerçevesi:** önerilen yol (a) — SOO en yeni algoritma olarak dahil, optimizasyon katkısı
    yanlılık-kontrollü protokol. Sonuçlar bu yolu destekliyor.
 3. **Ayarlama bütçesi:** önerilen yapı (22 parametre) 3030 değerlendirmede P-PID'in (8 parametre) en iyi
-   nominal maliyetine ulaşamadı. Daha büyük bütçe (ör. 10 000) ile tekrar denenebilir.
-4. **Hedef dergi** ve **gerçek araç / HIL** imkânı (JESTECH'teki FPGA akışıyla HIL en doğal devam).
+   nominal maliyetine ulaşamadı. X2b (`experiments/x2b_budget.py`): 7 yapı × PSO × 10 koşu,
+   10 030 değerlendirme — çalışıyor.
+4. **Hedef dergi: Ocean Engineering** (Elsevier, Q1, 2025 IF ≈ 5.5; elsarticle şablonu, kelime sınırı
+   yok, 3–5 "Highlights" maddesi ≤ 85 karakter, özet ≤ ~250 kelime; kapsam: gerçek bir okyanus
+   mühendisliği uygulaması). Yedekler: Applied Ocean Research (IF ≈ 4.4), ISA Transactions (kontrol
+   ağırlıklı; daha fazla teori ister), Fractal and Fractional (MDPI, hızlı, APC). Gönderimden önce
+   derginin yazar kılavuzundan son kontrol yapılmalı.
+5. **Gerçek araç / HIL** imkânı (JESTECH'teki FPGA akışıyla HIL en doğal devam).
 
 ## 7. Örtüşme koruması
 

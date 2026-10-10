@@ -17,7 +17,7 @@
 \newcommand{\btau}{\boldsymbol{\tau}}
 \input{tables/numbers}
 
-\journal{\todo{target journal}}
+\journal{Ocean Engineering}
 
 \begin{document}
 
@@ -31,24 +31,31 @@
 \affiliation[1]{organization={\todo{affiliation}}}
 
 \begin{abstract}
-Fractional-order controllers for remotely operated vehicles are mostly designed and tuned for one axis, with
-idealized thrusters and without latency. We recast the cascaded FOPID-(1+TFOID) controller, proposed for
-load-frequency control, as a position--velocity cascade for all six degrees of freedom of an over-actuated
-BlueROV2 Heavy with eight T200 thrusters, whose thrust, dead band, saturation and electrical power are fitted
-to the manufacturer's measurements. Because the thruster dynamics are uncertain, tuning minimizes a
-multi-scenario six-DOF ITAE and energy cost subject to phase margins on every linearized loop at a nominal
-and two extreme thrusters (lag 0.05--0.2~s, latency 10--60~ms). Six metaheuristics, including the recent
-stellar oscillation optimizer (SOO), are compared at an equal evaluation budget and in a mirrored search box.
-On shifted benchmarks, SOO, golden jackal and grey wolf optimization are strongly attracted to the coordinate
-origin; on the tuning problem, particle swarm optimization gives the lowest median cost (40.0, unchanged in
-the mirrored box), and SOO is significantly worse (85.0, $p=0.002$). With latency and margin requirements the
-proposed cascade does not beat a tuned integer P-PID cascade on the nominal training cost (best 35.8 against
-33.4), but it is the most robust structure: lowest weighted ITAE in the multi-set-point storm test (128.8
-against 152.8), 6.5 times lower error than P-PID under severe sensor noise, and no divergence in 100 Monte
-Carlo draws of plant and actuator parameters (P-PID: 8, PI-(1+FOPID): 12). Tuning without latency and margin
-constraints yields loops with margins down to \pmUncMin$^\circ$ whose cost in the storm test grows 1.8--5.6
-times at 30~ms of latency.
+Fractional-order controllers for remotely operated vehicles are mostly designed for one axis, with idealized
+thrusters and no latency. We recast the cascaded FOPID-(1+TFOID) controller, proposed for load-frequency
+control, as a position--velocity cascade for all six degrees of freedom of an over-actuated BlueROV2 Heavy with
+eight T200 thrusters, whose thrust, dead band, saturation and electrical power are fitted to the manufacturer's
+measurements. Because the thruster dynamics are uncertain, tuning minimizes a multi-scenario six-DOF ITAE and
+energy cost subject to phase margins on every linearized loop at a nominal and two extreme thrusters (lag
+0.05--0.2~s, latency 10--60~ms). Six metaheuristics, including the recent stellar oscillation optimizer (SOO),
+are compared at an equal evaluation budget and in a mirrored search box. On shifted benchmarks, SOO, golden
+jackal and grey wolf optimization are attracted to the coordinate origin; on the tuning problem, particle
+swarm optimization gives the lowest median cost (40.0, unchanged in the mirrored box) and SOO a significantly
+higher one (85.0, $p=0.002$). The proposed cascade does not beat a tuned integer P-PID cascade on the nominal
+training cost (best 35.8 against 33.4), but it is the most robust structure: lowest error in the
+multi-set-point storm test (128.8 against 152.8), 6.5 times lower error than P-PID under severe sensor noise,
+and no divergence in 100 Monte Carlo draws of plant and actuator parameters (P-PID: 8). Tuning without latency
+and margin constraints gives margins down to \pmUncMin$^\circ$ and a storm-test cost 1.8--5.6 times higher at
+30~ms of latency.
 \end{abstract}
+
+\begin{highlights}
+\item Cascaded FOPID-(1+TFOID) control of all six DOF of an over-actuated BlueROV2 Heavy
+\item Phase margins are imposed over a range of thruster lag and latency during tuning
+\item T200 thrust and electrical power are fitted to the manufacturer's measurements
+\item Equal budgets and a mirrored search box expose the origin bias of SOO and GJO
+\item The fractional cascade is the most robust: no divergence in 100 Monte Carlo runs
+\end{highlights}
 
 \begin{keyword}
 remotely operated vehicle \sep fractional-order control \sep cascade control \sep FOPID \sep tilt-integral-derivative
