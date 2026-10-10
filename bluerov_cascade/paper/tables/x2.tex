@@ -1,14 +1,11 @@
-\begin{tabular}{lrrrr}
+\begin{tabular}{lrrrrrrrr}
 \toprule
- & \multicolumn{2}{c}{DE} & \multicolumn{2}{c}{PSO} \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-structure & best & median & best & median \\
+ & \multicolumn{2}{c}{nominal, 3030} & \multicolumn{2}{c}{nominal, 10\,030} & \multicolumn{4}{c}{robust, 10\,030} \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-9}
+structure & median $J$ & no div. & median $J$ & no div. & best $J$ & median $J$ & no div. & $p$ \\
 \midrule
-P-PID & 33.9 & 36.2 & 33.4 & 70.1 \\
-FOPID-(1+TFOID) & 54.7 & 67.0 & 35.8 & 40.0 \\
-PI-(1+FOPID) & 37.6 & 51.6 & 33.7 & 52.9 \\
-FOPI-FOPD & 45.8 & 57.9 & 38.4 & 56.2 \\
-FOPID-FOPI & 327.7 & 373.3 & 309.1 & 315.6 \\
-FOPID & 377.6 & 402.0 & 372.2 & 388.9 \\
-PID & 479.8 & 639.6 & 479.9 & 639.6 \\
+FOPID-(1+TFOID) & 40.0 & 5/10 & 36.9 & 4/10 & 70.6 & 80.4 & 10/10 & -- \\
+PI-(1+FOPID) & 52.9 & 4/10 & 38.4 & 1/10 & 70.0 & 88.0 & 10/10 & 0.473 \\
+P-PID & 70.1 & 5/10 & 65.0 & 5/10 & 89.0 & 125.3 & 10/10 & 0.026 \\
+FOPI-FOPD & 56.2 & 8/10 & 50.6 & 6/10 & 79.9 & 127.3 & 10/10 & 0.045 \\
 \bottomrule
 \end{tabular}

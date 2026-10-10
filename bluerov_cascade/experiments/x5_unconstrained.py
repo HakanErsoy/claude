@@ -51,7 +51,9 @@ def main():
                             sweep=delay_sweep(s, x, base))
             print(key, f"J={r['f']:.3f}", "PM(delay 0)", np.round(res[key]["pm_delay0"], 1),
                   "T4 J by delay", [round(d["J"], 2) for d in res[key]["sweep"]], flush=True)
-    x2 = os.path.join(RES, "x2_controllers.json")
+    x2 = os.path.join(RES, "x2r_robust.json")
+    if not os.path.exists(x2):
+        x2 = os.path.join(RES, "x2_controllers.json")
     if os.path.exists(x2):
         runs = [r for r in json.load(open(x2)).values() if r["structure"] == S]
         best = min(runs, key=lambda r: r["f"])

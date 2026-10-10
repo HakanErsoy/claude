@@ -152,8 +152,8 @@ def fig_x3_tests(res):
     return best
 
 
-def fig_traces(best):
-    tr = np.load(os.path.join(RES, "x3_traces.npz"))
+def fig_traces(best, name="x3_traces.npz"):
+    tr = np.load(os.path.join(RES, name))
     sc = scenarios.tests()[3]
     show = [s for s in ("FOPID-(1+TFOID)", "P-PID", "FOPID") if s in best]
     fig, axs = plt.subplots(2, 2, figsize=(FULL, 3.4), sharex=True)
@@ -190,6 +190,29 @@ def fig_robust(best):
     save(fig, "fig_robustness")
 
 
+def fig_tradeoff(d):
+    """Training cost against Monte Carlo divergences for every run: nominal tuning (two budgets), robust tuning."""
+    structs = ["FOPID-(1+TFOID)", "P-PID", "PI-(1+FOPID)", "FOPI-FOPD"]
+    fig, axs = plt.subplots(1, 2, figsize=(FULL, 2.4), sharey=True,
+                            gridspec_kw=dict(width_ratios=[2, 1]))
+    for j, s in enumerate(structs):
+        nom = [e for e in d.values() if e["structure"] == s and e["budget"] != "robust" and e["train_J"] < 1e3]
+        rob = [e for e in d.values() if e["structure"] == s and e["budget"] == "robust"]
+        axs[0].plot([e["train_J"] for e in nom], [e["mc_fail"] for e in nom], MK[j], color=C[j], ms=3.5, lw=0,
+                    mfc="white", label=s)
+        axs[1].plot([e["train_J"] for e in rob], [e["mc_fail"] for e in rob], MK[j], color=C[j], ms=3.5, lw=0)
+    panel(axs[0], "a", "nominal training cases")
+    panel(axs[1], "b", "robust training cases")
+    for ax in axs:
+        style(ax)
+        ax.set_xscale("log")
+        ax.xaxis.set_minor_formatter(matplotlib.ticker.NullFormatter())
+        ax.set_xlabel("training cost $J$")
+    axs[0].set_ylabel("Monte Carlo divergences (of 100)")
+    axs[0].legend(loc="upper right", ncol=2)
+    save(fig, "fig_tradeoff")
+
+
 def main():
     d0 = load("x0_center_bias.json")
     if d0:
@@ -197,11 +220,15 @@ def main():
     d1 = load("x1_optimizers.json")
     if d1:
         fig_x1(d1)
-    d3 = load("x3_evaluate.json")
+    src = "x3r" if load("x3r_evaluate.json") else "x3"
+    d3 = load(f"{src}_evaluate.json")
     if d3:
         best = fig_x3_tests(d3)
-        fig_traces(best)
+        fig_traces(best, f"{src}_traces.npz")
         fig_robust(best)
+    d6 = load("x6_tradeoff.json")
+    if d6:
+        fig_tradeoff(d6)
 
 
 if __name__ == "__main__":

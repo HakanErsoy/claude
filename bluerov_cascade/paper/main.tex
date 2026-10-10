@@ -35,26 +35,26 @@ Fractional-order controllers for remotely operated vehicles are mostly designed 
 thrusters and no latency. We recast the cascaded FOPID-(1+TFOID) controller, proposed for load-frequency
 control, as a position--velocity cascade for all six degrees of freedom of an over-actuated BlueROV2 Heavy with
 eight T200 thrusters, whose thrust, dead band, saturation and electrical power are fitted to the manufacturer's
-measurements. Because the thruster dynamics are uncertain, tuning minimizes a multi-scenario six-DOF ITAE and
-energy cost subject to phase margins on every linearized loop at a nominal and two extreme thrusters (lag
-0.05--0.2~s, latency 10--60~ms). Six metaheuristics, including the recent stellar oscillation optimizer (SOO),
-are compared at an equal evaluation budget and in a mirrored search box. On shifted benchmarks, SOO, golden
-jackal and grey wolf optimization are attracted to the coordinate origin; on the tuning problem, particle
-swarm optimization gives the lowest median cost (40.0, unchanged in the mirrored box) and SOO a significantly
-higher one (85.0, $p=0.002$). The proposed cascade does not beat a tuned integer P-PID cascade on the nominal
-training cost (best 35.8 against 33.4), but it is the most robust structure: lowest error in the
-multi-set-point storm test (128.8 against 152.8), 6.5 times lower error than P-PID under severe sensor noise,
-and no divergence in 100 Monte Carlo draws of plant and actuator parameters (P-PID: 8). Tuning without latency
-and margin constraints gives margins down to \pmUncMin$^\circ$ and a storm-test cost 1.8--5.6 times higher at
-30~ms of latency.
+measurements. Tuning minimizes a multi-scenario six-DOF ITAE and energy cost subject to phase margins on every
+linearized loop over a range of thruster lag (0.05--0.2~s) and latency (10--60~ms). Six metaheuristics,
+including the recent stellar oscillation optimizer (SOO), are compared at an equal evaluation budget and in a
+mirrored search box: particle swarm optimization gives the lowest median cost, unchanged in the mirrored box,
+while SOO and golden jackal optimization are attracted to the coordinate origin. Over 120 tuning runs on nominal
+cases, a lower training cost goes with more divergences in a 100-draw Monte Carlo study of plant and actuator
+parameters, for every cascade. With a robust training set that adds a severe-noise case and a weak-actuator
+case, none of the 40 cascade tunings diverges, and the proposed cascade is the best structure: its median
+training cost is 36\% below that of a tuned integer P-PID cascade ($p=0.026$), with 35\% less error in a
+multi-set-point storm test and three times less under severe sensor noise. Tuning without latency and margin
+constraints gives margins down to \pmUncMin$^\circ$ and a storm-test cost 1.8--5.6 times higher at 30~ms of
+latency.
 \end{abstract}
 
 \begin{highlights}
 \item Cascaded FOPID-(1+TFOID) control of all six DOF of an over-actuated BlueROV2 Heavy
 \item Phase margins are imposed over a range of thruster lag and latency during tuning
-\item T200 thrust and electrical power are fitted to the manufacturer's measurements
+\item Tuning on nominal cases trades robustness for nominal cost in every cascade
+\item With robust tuning, the fractional cascade beats the P-PID cascade by 35\% in storms
 \item Equal budgets and a mirrored search box expose the origin bias of SOO and GJO
-\item The fractional cascade is the most robust: no divergence in 100 Monte Carlo runs
 \end{highlights}
 
 \begin{keyword}
@@ -88,19 +88,19 @@ The contributions of this paper are:
 \item The FOPID-(1+TFOID) cascade is recast as a position--velocity cascade (the second stage acts on
   $u_1-\nu$, the mechanical counterpart of $u_1-\Delta f$) and applied to all six DOF of an over-actuated
   BlueROV2 Heavy, with six benchmark structures realized in the same cascade form.
-\item Tuning minimizes a multi-scenario cost (six-DOF ITAE and electrical energy) subject to phase margins on
-  every linearized DOF loop, including the command latency and the thruster lag. Because the T200 dynamics are
-  not known well, the margins are imposed over a range of thruster lag and latency. Without the constraint,
-  ITAE tuning returns loops with margins below \SI{10}{\degree} that one or two extra samples of latency
-  destabilize (Sect.~\ref{sec:latency}).
+\item Tuning is subject to phase margins on every linearized DOF loop, imposed over a range of thruster lag and
+  latency because the T200 dynamics are not known well. Without them, ITAE tuning returns loops with margins
+  below \SI{10}{\degree} that one or two extra samples of latency destabilize (Sect.~\ref{sec:latency}).
+\item We show that tuning on nominal cases trades robustness for nominal cost: over 120 runs, a lower nominal
+  training cost goes with more divergences in a Monte Carlo study, for every cascade. Adding a severe-noise case
+  and a weak-actuator case to the training set removes the divergences of all structures; under this robust
+  tuning the proposed cascade is the best structure, significantly better than the integer P-PID cascade.
 \item The thruster model (thrust, dead band, asymmetry, saturation and electrical power at 10--20~V) is fitted
   to the manufacturer's measurements \cite{t200data}, so the effort term is energy in joules and battery
   voltage is a physically meaningful uncertainty.
 \item Six tuners, including the newest (SOO), are compared at an equal evaluation budget, in the original
   and in a mirrored search box, and on shifted benchmark functions; this separates search ability from
   attraction to the coordinate origin.
-\item The four tests of \cite{ersoy2026jestech} are extended to six DOF and complemented by plant,
-  actuator, latency and thruster-loss variations and a Monte Carlo study.
 \end{enumerate}
 
 %% ---------------------------------------------------------------------------
@@ -224,9 +224,12 @@ second-order model with $\omega=\SI{1}{rad/s}$, identical for all structures.
 \section{Tuning problem}\label{sec:tuning}
 
 \subsection{Cost}
-Two training cases are used, whose disturbance and noise realizations differ from those of the tests: a
-simultaneous step in $x$, $y$, $z$ and $\psi$ (\SI{20}{s}), and station keeping in waves and current with
-steps in $\psi$ and $z$ (\SI{30}{s}). The cost is
+The \emph{nominal} training set has two cases, whose disturbance and noise realizations differ from those of
+the tests: a simultaneous step in $x$, $y$, $z$ and $\psi$ (\SI{20}{s}), and station keeping in waves and
+current with steps in $\psi$ and $z$ (\SI{30}{s}). The \emph{robust} training set adds a step under severe
+white sensor and process noise (the noise model of test T2, another realization, \SI{15}{s}) and a corner case
+in waves with a weak actuator and a heavier vehicle (\SI{12}{V} battery, $\tau_m=\SI{0.2}{s}$, \SI{60}{ms},
+added mass $\times1.5$, \SI{20}{s}). The cost is
 \begin{equation}\label{eq:cost}
   J = \sum_{s}\Big[\sum_{i=1}^{6} w_i\int_0^{T_s} t\,|e_i(t)|\,dt + \rho E_s\Big]
       + K_{pm}\sum_{a}\sum_{i=1}^{6}\frac{\max(0,\ \mathrm{PM}_a^\ast-\mathrm{PM}_{a,i})}{\mathrm{PM}_a^\ast},
@@ -350,76 +353,97 @@ near the optimum (the gains are searched as $\log_{10}K$), so the attraction tha
 benchmarks no longer helps. PSO is used for the comparison of structures below; DE is kept as the second tuner
 because it was the best tuner in \cite{ersoy2026jestech}.
 
-\subsection{Controller structures}
+\subsection{Nominal tuning trades robustness for nominal cost}
 \begin{table}[t]
 \centering\small
-\caption{Training cost of the seven structures over ten runs per tuner.}\label{tab:x2}
-\input{tables/x2}
+\caption{Training cost $J$ (PSO, ten runs per setting) and number of runs whose controller does not diverge in
+any of the 100 Monte Carlo draws of T4 (no div.). Nominal: two training cases; robust: four. $J$ is comparable
+within a column group only. $p$: Mann--Whitney test of the robust training cost against the proposed
+cascade.}\label{tab:x2}
+\resizebox{\textwidth}{!}{\input{tables/x2}}
 \end{table}
+\begin{figure}[t]
+\centering\includegraphics[width=\textwidth]{fig_tradeoff.pdf}
+\caption{Training cost against the number of Monte Carlo divergences (of 100) for every run of the four
+cascades. (a) Nominal training set, 3030 and 10\,030 evaluations (DE and PSO); (b) robust training set,
+10\,030 evaluations (PSO). The costs of (a) and (b) are not comparable.}\label{fig:tradeoff}
+\end{figure}
+With the nominal training set and 3030 evaluations, the integer P-PID cascade reaches the lowest best training
+cost (33.4 against 35.8 for the proposed cascade). With 10\,030 evaluations the fractional cascades pass it
+(best 29.7 for PI-(1+FOPID), 31.5 for the proposed; median 36.9 for the proposed against 65.0 for P-PID), so
+the gap at the smaller budget was a search limitation of the 22-parameter structure. The better-trained
+controllers, however, are more fragile (Fig.~\ref{fig:tradeoff}a): over the 30 runs of each cascade, the rank
+correlation between training cost and Monte Carlo divergences is $-0.92$ for P-PID, $-0.63$ for the proposed
+cascade, $-0.45$ for PI-(1+FOPID) and $-0.44$ for FOPI-FOPD, and only 1--8 of 10 runs per setting are free of
+divergence (Table~\ref{tab:x2}). The best nominal tuning of the proposed cascade diverges in 14 of 100 draws.
+The optimizer exploits the nominal cases; robustness has to be part of the cost.
+
+\subsection{Robust tuning: controller structures}
 \begin{table}[t]
 \centering\small
-\caption{Test cases for the best tuned controller of each structure (lowest training cost). Weighted ITAE as in
-Eq.~\eqref{eq:cost}; $E$: electrical energy in T4 (60~s); Monte Carlo: T4 with random mass ($\pm20\%$), added
-mass and damping ($\pm50\%$), buoyancy ($-2$ to $+3\%$), battery 12--20~V, thruster lag 0.05--0.2~s and
-latency 10--60~ms.}\label{tab:x3}
+\caption{Test cases for the best robust tuning of each structure. Weighted ITAE as in Eq.~\eqref{eq:cost};
+$E$: electrical energy in T4 (60~s); Monte Carlo: T4 with random mass ($\pm20\%$), added mass and damping
+($\pm50\%$), buoyancy ($-2$ to $+3\%$), battery 12--20~V, thruster lag 0.05--0.2~s and latency
+10--60~ms.}\label{tab:x3}
 \resizebox{\textwidth}{!}{\input{tables/x3}}
 \end{table}
 \begin{figure}[t]
 \centering\includegraphics[width=\textwidth]{fig_x3_tests.pdf}
-\caption{Weighted ITAE in the four test cases (logarithmic axes).}\label{fig:x3}
+\caption{Weighted ITAE in the four test cases, best robust tuning of each structure (logarithmic
+axes).}\label{fig:x3}
 \end{figure}
 \begin{figure}[t]
 \centering\includegraphics[width=\textwidth]{fig_t4_traces.pdf}
 \caption{Test T4 (multi-level set points in waves and current): $x$, $y$, $z$ and $\psi$ for the proposed
 cascade, the integer P-PID cascade and the single-loop FOPID of \cite{ersoy2026jestech}, each with its best
-tuning.}\label{fig:t4}
+robust tuning.}\label{fig:t4}
 \end{figure}
-The single-loop structures (FOPID, PID) and FOPID-FOPI cannot meet the margin constraints with useful
-bandwidth: their training costs are an order of magnitude higher (Table~\ref{tab:x2}) and the vehicle
-oscillates in waves (Fig.~\ref{fig:t4}). Among the cascades with a derivative action in the inner stage, the
-integer P-PID reaches the lowest nominal training cost, and the proposed FOPID-(1+TFOID) the second lowest
-median. The picture changes in the test cases (Table~\ref{tab:x3}, Fig.~\ref{fig:x3}). The proposed controller
-has the lowest error in T4, 6.5 times less error than P-PID and 8.6 times less than PI-(1+FOPID) under
-severe white noise (T2), and no divergence in the Monte Carlo study, whose 90th percentile is also the lowest.
-FOPI-FOPD is better in T1 and T2 and within 0.5\% in T4, but it diverges once in the Monte Carlo study and its
-90th percentile is 24\% higher. P-PID has the lowest error only in the storm test T3, 10\% below the proposed
-controller. The energy in T4 is the same for all cascades within 3\%.
+With the robust training set, none of the 40 cascade tunings diverges in the Monte Carlo study
+(Fig.~\ref{fig:tradeoff}b). The proposed cascade has the lowest median training cost (80.4), significantly
+below P-PID (125.3, $p=0.026$) and FOPI-FOPD (127.3, $p=0.045$) and on a par with PI-(1+FOPID) (88.0, $p=0.47$).
+In the test cases (Table~\ref{tab:x3}, Fig.~\ref{fig:x3}) its best tuning has the lowest error in the
+multi-set-point storm test T4 (132.8, 35\% below P-PID and 17\% below PI-(1+FOPID)), the lowest median and
+90th percentile in the Monte Carlo study, and three times less error than P-PID under severe noise (T2).
+Over all ten runs the differences to P-PID hold: median T4 cost 171.5 against 345.2 ($p=0.021$) and median T2
+cost 14.2 against 33.7 ($p=0.003$). PI-(1+FOPID) is slightly better in the storm test T3 (50.2 against 52.5)
+and FOPI-FOPD in T1 and T2, but both are worse in T4 and in the Monte Carlo study. The energy in T4 is the same
+for all cascades within 2\%. \todo{Single-loop structures (FOPID of \cite{ersoy2026jestech}, PID) and
+FOPID-FOPI with robust tuning: X2r is running.}
 
 \subsection{Robustness}
 \begin{figure}[t]
 \centering\includegraphics[width=0.8\textwidth]{fig_robustness.pdf}
-\caption{Cost of each variant relative to the nominal test case, per structure (the controllers are not
-retuned). Ratios are relative to each structure's own nominal cost; the single-loop structures start from a
-much higher nominal cost (Table~\ref{tab:x3}).}\label{fig:rob}
+\caption{Cost of each variant relative to the nominal test case, per structure, best robust tuning (the
+controllers are not retuned).}\label{fig:rob}
 \end{figure}
-Mass, added mass, damping and buoyancy changes move the cost of the cascades by at most 11\%
-(Fig.~\ref{fig:rob}). A \SI{12}{V} battery, which lowers the maximum thrust by 28--29\% on the T200 curves, costs
-22--40\%; the slow thruster with doubled latency 24--57\%. Losing a horizontal thruster without telling the
-allocation makes every cascade diverge, and losing a vertical one costs 4.4--12 times; FOPID, FOPID-FOPI and
-PID, which are less aggressive, degrade by 2--10 times (PID diverges in T4). When the failure is known and the allocation is recomputed on
-the remaining seven thrusters, the cost of the proposed controller rises by only 10--13\% (P-PID 10--23\%):
-the over-actuation of the heavy configuration is useful only together with fault-aware allocation.
+With robust tuning, mass, added mass, damping and buoyancy changes move the cost of the cascades by at most
+5\% (Fig.~\ref{fig:rob}); a slow thruster with doubled latency costs 3--11\%. A \SI{12}{V} battery, which
+lowers the maximum thrust by 28--29\% on the T200 curves, costs 19--37\%. Losing a horizontal thruster without
+telling the allocation still makes the cascades diverge or degrade by more than 20 times, and losing a vertical
+one costs 2.5--5.3 times. When
+the failure is known and the allocation is recomputed on the remaining seven thrusters, the cost of the
+proposed cascade rises by only 1--3\% (P-PID 5--11\%): the over-actuation of the heavy configuration is
+useful only together with fault-aware allocation.
 
 \subsection{Margins and latency}\label{sec:latency}
-At the nominal thruster the six loops of the proposed controller have phase margins of \pmNomMin--\pmNomMax$^\circ$
-and tolerate \dmNomMin--\dmNomMax~ms of additional latency; at the slow corner the smallest margin is
-\pmSlowMin$^\circ$, on the constraint. To show what the constraint buys, the proposed controller was tuned as in
-the load-frequency study: no latency in the model and no margin requirement (X5, six runs). The training
-cost drops to 18.6--22.2, but the smallest margin per run is \pmUncMin--\pmUncMax$^\circ$. In T4 these
-controllers reach \JuncZeroMin--\JuncZeroMax{} without latency, \JuncThreeMin--\JuncThreeMax{} at the nominal
-30~ms and \JuncSixMin--\JuncSixMax{} at 60~ms, while the margin-constrained controller goes from \JconZero{}
-to \JconSix{} over the same range. The lower nominal cost of unconstrained tuning is an artefact of the
-missing latency.
+At the nominal thruster the six loops of the proposed controller (best robust tuning) have phase margins of
+\pmNomMin--\pmNomMax$^\circ$ and tolerate \dmNomMin--\dmNomMax~ms of additional latency; at the slow corner the
+smallest margin is \pmSlowMin$^\circ$, on the constraint. To show what the margin constraint buys, the proposed
+controller was tuned as in the load-frequency study: no latency in the model and no margin requirement (X5,
+six runs). The training cost drops to 18.6--22.2, but the smallest margin per run is
+\pmUncMin--\pmUncMax$^\circ$. In T4 these controllers reach \JuncZeroMin--\JuncZeroMax{} without latency,
+\JuncThreeMin--\JuncThreeMax{} at the nominal 30~ms and \JuncSixMin--\JuncSixMax{} at 60~ms, while the robust,
+margin-constrained controller goes from \JconZero{} to \JconSix{} over the same range.
 
-%% ---------------------------------------------------------------------------
 \section{Discussion and limitations}
 \begin{itemize}
-\item \emph{What the fractional cascade buys.} Under realistic latency and margin requirements its benefit is
-  robustness (noise, parameter spread, no divergence) rather than nominal performance; the integer P-PID
-  cascade is equally good or better on the nominal training cases.
-\item \emph{Tuning budget.} The proposed structure has 22 parameters against 8 for P-PID. It contains an
-  approximation of P-PID, so its optimum should not be worse; the higher best cost after 3030 evaluations
-  points to a search limitation.
+\item \emph{Robustness is a property of the tuning, not only of the structure.} With nominal training cases,
+  every cascade can be tuned to a low nominal cost and a fragile controller; the comparison of structures is
+  meaningful only when the cost contains the robustness requirement. Studies that tune on one nominal scenario
+  (including \cite{ersoy2026jestech} and \cite{nour2026scirep}) may overstate the advantage of whichever
+  structure their tuner happened to over-fit least.
+\item \emph{Tuner choice.} The tuners were compared on the nominal cost (X1); PSO was then used for all
+  structures. \todo{Repeat X1 with the robust training set in the final run.}
 \item \emph{Thruster dynamics.} No validated dynamic model of the T200 was available; the design covers a
   range of lag and latency instead. \todo{Replace the nominal values by those of the MATLAB
   re-identification and narrow the range accordingly.}
@@ -429,9 +453,14 @@ missing latency.
 \end{itemize}
 
 \section{Conclusions}
-\todo{Three to four sentences: the cascade in six DOF with fitted T200 curves; margin-constrained tuning over
-an actuator range; tuners compared at equal budget and in a mirrored box (PSO best, SOO and GJO biased); the
-proposed cascade is the most robust structure but not better than P-PID nominally; fault-aware allocation.}
+We recast the FOPID-(1+TFOID) cascade as a position--velocity controller for all six DOF of an over-actuated
+BlueROV2 Heavy with data-fitted T200 thrusters and tuned it under phase-margin constraints over a range of
+thruster lag and latency. Compared at an equal budget and in a mirrored search box, PSO was the best tuner,
+while the recent SOO and GJO showed a strong attraction to the coordinate origin. Tuning on nominal cases
+produced controllers whose nominal cost and Monte Carlo robustness were inversely related; with a robust
+training set no tuning of any cascade diverged, and the proposed cascade became the best structure, with 35\%
+less error than the integer P-PID cascade in the multi-set-point storm test and three times less under severe
+sensor noise. A known thruster failure costs it 1--3\% when the allocation is recomputed.
 
 \section*{Data and code availability}
 Code, results and figure scripts: \todo{repository URL}. The T200 data are fetched from the manufacturer and

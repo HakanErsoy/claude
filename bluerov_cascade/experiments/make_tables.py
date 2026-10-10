@@ -52,8 +52,12 @@ def x1_table():
         r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
 
+X3 = "x3r_evaluate.json" if os.path.exists(os.path.join(RES, "x3r_evaluate.json")) else "x3_evaluate.json"
+X4 = "x4r_margins.json" if os.path.exists(os.path.join(RES, "x4r_margins.json")) else "x4_margins.json"
+
+
 def best_per_structure():
-    x3 = load("x3_evaluate.json")
+    x3 = load(X3)
     best = {}
     for e in x3.values():
         s = e["structure"]
@@ -63,22 +67,36 @@ def best_per_structure():
 
 
 def x2_table():
-    runs = load("x2_controllers.json")
-    g = {}
-    for r in runs.values():
-        g.setdefault((r["structure"], r["method"]), []).append(r["f"])
-    structs = sorted({s for s, _ in g}, key=lambda s: min(np.median(g[(s, t)]) for t in ("DE", "PSO")))
+    """Nominal tuning at two budgets and robust tuning (PSO): training cost and Monte Carlo divergences."""
+    x6 = load("x6_tradeoff.json")
+    rob = load("x2r_robust.json")
+    nom = {b: {} for b in ("3030", "10030")}
+    for e in x6.values():
+        if e["budget"] in nom and e["method"] == "PSO":
+            nom[e["budget"]].setdefault(e["structure"], []).append(e)
+    rr = {}
+    for e in x6.values():
+        if e["budget"] == "robust":
+            rr.setdefault(e["structure"], []).append(e)
+    tr = {}
+    for r in rob.values():
+        tr.setdefault(r["structure"], []).append(r["f"])
     rows = []
-    for s in structs:
+    for s in sorted(tr, key=lambda s: np.median(tr[s])):
         cells = []
-        for t in ("DE", "PSO"):
-            v = np.array(g[(s, t)])
-            cells.append(f"{v.min():.1f} & {np.median(v):.1f}")
-        rows.append(f"{s} & " + " & ".join(cells) + r" \\")
+        for b in ("3030", "10030"):
+            v = nom[b][s]
+            cells.append(f"{np.median([e['train_J'] for e in v]):.1f} & {sum(e['mc_fail'] == 0 for e in v)}/{len(v)}")
+        v = np.array(tr[s])
+        cells.append(f"{v.min():.1f} & {np.median(v):.1f} & {sum(e['mc_fail'] == 0 for e in rr[s])}/{len(rr[s])}")
+        p = "--" if s == PROPOSED else fmt_p(mannwhitneyu(tr[PROPOSED], v).pvalue)
+        rows.append(f"{s} & " + " & ".join(cells) + f" & {p} \\\\")
     write("x2.tex", [
-        r"\begin{tabular}{lrrrr}", r"\toprule",
-        r" & \multicolumn{2}{c}{DE} & \multicolumn{2}{c}{PSO} \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}",
-        r"structure & best & median & best & median \\", r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
+        r"\begin{tabular}{lrrrrrrrr}", r"\toprule",
+        r" & \multicolumn{2}{c}{nominal, 3030} & \multicolumn{2}{c}{nominal, 10\,030} &"
+        r" \multicolumn{4}{c}{robust, 10\,030} \\ \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-9}",
+        r"structure & median $J$ & no div. & median $J$ & no div. & best $J$ & median $J$ & no div. & $p$ \\",
+        r"\midrule", *rows, r"\bottomrule", r"\end{tabular}"])
 
 
 def x3_table():
@@ -104,7 +122,7 @@ def x3_table():
 
 def x45_numbers():
     """Key numbers of X4/X5 as LaTeX macros."""
-    x4 = load("x4_margins.json")
+    x4 = load(X4)
     x5 = load("x5_unconstrained.json")
     best = best_per_structure()
     key = f"{PROPOSED}|{best[PROPOSED]['tuner']}"
