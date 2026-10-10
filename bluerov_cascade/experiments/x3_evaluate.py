@@ -86,7 +86,8 @@ def main():
         for sc in tests:
             m, tr = sim.run(s, x, sc, trace=True)
             e["tests"][sc.name] = summary(m)
-            traces[f"{key}|{sc.name}"] = tr[:, :20].astype(np.float32)
+            if sc.name == "T4-multi-storm":                       # only what fig_t4_traces needs, at 20 Hz
+                traces[f"{key}|{sc.name}"] = tr[::5, :6].astype(np.float32)
             if sc.name == "T1-step":
                 e["step"] = step_info(sc, tr)
         e["robustness"] = {sc.name: summary(sim.run(s, x, sc)[0]) for sc in rob}

@@ -161,7 +161,7 @@ def fig_traces(best):
         ax.plot(sc.t, sc.ref[:, d], color=GREY, lw=0.9, ls="--", label="reference")
         for j, s in enumerate(show):
             key = f"{s}|{best[s]['tuner']}|{sc.name}"
-            ax.plot(sc.t, tr[key][:, d], LS[j], color=C[j], lw=1.0, label=s)
+            ax.plot(sc.t[::5], tr[key][:, d], LS[j], color=C[j], lw=1.0, label=s)
         style(ax)
         ax.set_ylabel(lab)
         panel(ax, "abcd"[i])
