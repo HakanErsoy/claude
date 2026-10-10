@@ -119,10 +119,10 @@ Seçenekler (karar senin):
 
 ## 6. Durum ve açık konular
 
-**Sonuçlar** README'de özetlendi. Ana mesaj (taslak): gerçekçi gecikme ve itici belirsizliği altında
-kesirli kaskadın kazancı nominal performans değil, **dayanıklılık** (gürültü, parametre dağılımı, hiç
-ıraksama yok); ayarlayıcılar arasında eşit bütçe ve aynalı kutu testinde PSO en iyi, SOO ve GJO konumsal
-yanlı.
+**Sonuçlar** README'de özetlendi. Ana mesaj: (1) yalnızca nominal senaryolarla ayarlama her kaskadda
+dayanıklılığı nominal maliyete satıyor (aşırı ayarlama); (2) sağlam eğitim kümesiyle hiçbir ayar ıraksamıyor
+ve bu adil koşulda önerilen FOPID-(1+TFOID) en iyi yapı (P-PID'e göre anlamlı); (3) ayarlayıcılar arasında
+eşit bütçe ve aynalı kutu testinde PSO en iyi, SOO ve GJO konumsal yanlı.
 
 Açık konular:
 
@@ -131,9 +131,8 @@ Açık konular:
    koşulacak.
 2. **SOO çerçevesi:** önerilen yol (a) — SOO en yeni algoritma olarak dahil, optimizasyon katkısı
    yanlılık-kontrollü protokol. Sonuçlar bu yolu destekliyor.
-3. **Ayarlama bütçesi:** önerilen yapı (22 parametre) 3030 değerlendirmede P-PID'in (8 parametre) en iyi
-   nominal maliyetine ulaşamadı. X2b (`experiments/x2b_budget.py`): 7 yapı × PSO × 10 koşu,
-   10 030 değerlendirme — çalışıyor.
+3. **Son koşu (T200 tanımlamasından sonra):** sağlam eğitim kümesi + 10 030 değerlendirme ile X1 (ayarlayıcılar),
+   X2r (7 yapı), X3r–X6 yeniden; ~8–10 saat.
 4. **Hedef dergi: Ocean Engineering** (Elsevier, Q1, 2025 IF ≈ 5.5; elsarticle şablonu, kelime sınırı
    yok, 3–5 "Highlights" maddesi ≤ 85 karakter, özet ≤ ~250 kelime; kapsam: gerçek bir okyanus
    mühendisliği uygulaması). Yedekler: Applied Ocean Research (IF ≈ 4.4), ISA Transactions (kontrol
