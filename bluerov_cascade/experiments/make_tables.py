@@ -70,7 +70,12 @@ def x2_table():
     """Nominal tuning at two budgets and robust tuning (PSO): training cost and Monte Carlo divergences."""
     x6 = load("x6_tradeoff.json")
     rob = load("x2r_robust.json")
-    nom = {b: {} for b in ("3030", "10030")}
+    nomJ = {"3030": {}, "10030": {}}
+    for b, src in (("3030", "x2_controllers.json"), ("10030", "x2b_budget.json")):
+        for r in load(src).values():
+            if r["method"] == "PSO":
+                nomJ[b].setdefault(r["structure"], []).append(r["f"])
+    nom = {b: {} for b in ("3030", "10030")}           # Monte Carlo per run (cascades only, X6)
     for e in x6.values():
         if e["budget"] in nom and e["method"] == "PSO":
             nom[e["budget"]].setdefault(e["structure"], []).append(e)
@@ -85,10 +90,13 @@ def x2_table():
     for s in sorted(tr, key=lambda s: np.median(tr[s])):
         cells = []
         for b in ("3030", "10030"):
-            v = nom[b][s]
-            cells.append(f"{np.median([e['train_J'] for e in v]):.1f} & {sum(e['mc_fail'] == 0 for e in v)}/{len(v)}")
+            v = nom[b].get(s)
+            nd = f"{sum(e['mc_fail'] == 0 for e in v)}/{len(v)}" if v else "--"
+            cells.append(f"{np.median(nomJ[b][s]):.1f} & {nd}")
         v = np.array(tr[s])
-        cells.append(f"{v.min():.1f} & {np.median(v):.1f} & {sum(e['mc_fail'] == 0 for e in rr[s])}/{len(rr[s])}")
+        r = rr.get(s)
+        nd = f"{sum(e['mc_fail'] == 0 for e in r)}/{len(r)}" if r else "--"
+        cells.append(f"{v.min():.1f} & {np.median(v):.1f} & {nd}")
         p = "--" if s == PROPOSED else fmt_p(mannwhitneyu(tr[PROPOSED], v).pvalue)
         rows.append(f"{s} & " + " & ".join(cells) + f" & {p} \\\\")
     write("x2.tex", [

@@ -407,8 +407,10 @@ multi-set-point storm test T4 (132.8, 35\% below P-PID and 17\% below PI-(1+FOPI
 Over all ten runs the differences to P-PID hold: median T4 cost 171.5 against 345.2 ($p=0.021$) and median T2
 cost 14.2 against 33.7 ($p=0.003$). PI-(1+FOPID) is slightly better in the storm test T3 (50.2 against 52.5)
 and FOPI-FOPD in T1 and T2, but both are worse in T4 and in the Monte Carlo study. The energy in T4 is the same
-for all cascades within 2\%. \todo{Single-loop structures (FOPID of \cite{ersoy2026jestech}, PID) and
-FOPID-FOPI with robust tuning: X2r is running.}
+for all cascades within 2\%. The single-loop FOPID of \cite{ersoy2026jestech}, PID and FOPID-FOPI do not
+diverge either, but they cannot reach a useful bandwidth within the margin constraints: their median training
+costs are 8--12 times higher (Table~\ref{tab:x2}), their T4 errors 7.8--19 times higher than that of the
+proposed cascade, and the vehicle oscillates in waves (Fig.~\ref{fig:t4}).
 
 \subsection{Robustness}
 \begin{figure}[t]
