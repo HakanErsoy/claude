@@ -27,8 +27,9 @@
 
 \author[1]{Hakan Ersoy\corref{cor}}
 \cortext[cor]{Corresponding author.}
-\author[1]{\todo{co-authors}}
-\affiliation[1]{organization={\todo{affiliation}}}
+\author[1]{\todo{co-authors, to be confirmed}}
+\affiliation[1]{organization={Department of Electronics and Communications Engineering, Y{\i}ld{\i}z Technical University},
+  city={{\.I}stanbul}, postcode={34220}, country={T{\"u}rkiye}}
 
 \begin{abstract}
 Fractional-order controllers for remotely operated vehicles are mostly designed for one axis, with idealized
@@ -67,21 +68,36 @@ remotely operated vehicle \sep fractional-order control \sep cascade control \se
 %% ---------------------------------------------------------------------------
 \section{Introduction}\label{sec:intro}
 
-\todo{Paragraph 1: ROV/AUV motion control, coupled nonlinear hydrodynamics, wave and current disturbances;
-most FO studies regulate a single axis.}
+Remotely operated vehicles move in six coupled degrees of freedom with nonlinear damping, added-mass and
+restoring effects, and are disturbed by waves and currents \cite{fossen2011}. Their thrusters add a further
+layer: a dead band, asymmetric and voltage-dependent saturation, and motor and propeller dynamics that limit the
+achievable bandwidth \cite{yoerger1990,bachmayer2000}. Small open platforms such as the BlueROV2 have made
+experiments affordable, and open benchmark models of its heavy configuration exist \cite{vonbenzon2022}; with
+eight thrusters for six degrees of freedom, that configuration is also over-actuated.
 
-\todo{Paragraph 2: our earlier study \cite{ersoy2026jestech}: surge-axis PI$^\lambda$D$^\mu$ \cite{podlubny1999},
-fourth-order plant identified from T200 measurements, PSO \cite{kennedy1995pso} and DE \cite{storn1997de}
-over a multi-scenario cost, four tests, FPGA realization. Limits: one axis, no coupling, no allocation,
-no latency or margin requirement.}
+Fractional-order PI$^\lambda$D$^\mu$ controllers \cite{podlubny1999} have been applied to depth, yaw and
+motion control of underwater vehicles \cite{joshi2013,wan2019,liu2022yaw,hasan2023}, typically in simulation,
+axis by axis and with simplified actuators. In our earlier study \cite{ersoy2026jestech} a
+PI$^\lambda$D$^\mu$ surge-speed controller was tuned by PSO \cite{kennedy1995pso} and DE \cite{storn1997de} over a
+multi-scenario cost on a fourth-order linear thruster model identified from public T200 data, and realized on
+an FPGA. That study was limited to one axis, a linear thruster model and nominal tuning, and named multi-DOF
+control and the thruster nonlinearity as the next steps.
 
-\todo{Paragraph 3: cascaded FO controllers in load-frequency control; FOPID-(1+TFOID) of
-\cite{nour2026scirep} with SOO \cite{rodan2025soo}; its own stated limits (no formal stability analysis,
-simulation only).}
+In load-frequency control, cascades of fractional-order stages, such as PI-(1+FOPID) \cite{hussain2025},
+FOPID-FOPI \cite{barakat2022}, FOPI-FOPD \cite{celik2021} and, most recently, FOPID-(1+TFOID) \cite{nour2026scirep},
+have been reported to outperform single-stage controllers. In FOPID-(1+TFOID), the second stage acts on the
+output of the first minus the local frequency deviation: a local feedback inside the cascade, which for a
+vehicle is the position--velocity cascade of marine control practice. In \cite{nour2026scirep} the controller is
+tuned on one nominal scenario without stability margins, and the authors note that their stability evidence is
+numerical.
 
-\todo{Paragraph 4: tuning by new metaheuristics; equal-iteration comparisons that give some methods twice the
-evaluations; origin/centre bias \cite{kudela2022,camacho2023}; inconsistencies between the SOO paper and its
-code \cite{mealpy_soo}.}
+The tuners are often the newest metaheuristics, here the stellar oscillation optimizer (SOO)
+\cite{rodan2025soo}. The value of metaphor-based methods has been questioned \cite{sorensen2015,camacho2023},
+and several are attracted to the centre or origin of the search box, which flatters them on benchmarks whose
+optimum lies there \cite{kudela2022}. Comparisons at equal iteration counts also give methods that evaluate
+twice per iteration, such as SOO, twice the budget, and the SOO paper and its released code disagree in several
+places \cite{mealpy_soo}. Robustness constraints are classical in PID tuning \cite{astrom2004} but rarely part of
+metaheuristic tuning of fractional-order controllers.
 
 The contributions of this paper are:
 \begin{enumerate}
@@ -102,6 +118,9 @@ The contributions of this paper are:
   and in a mirrored search box, and on shifted benchmark functions; this separates search ability from
   attraction to the coordinate origin.
 \end{enumerate}
+Section~\ref{sec:model} describes the vehicle and thruster model, Sect.~\ref{sec:controller} the controllers,
+Sect.~\ref{sec:tuning} the tuning problem and Sect.~\ref{sec:tuners} the tuners and the comparison protocol.
+Section~\ref{sec:results} reports the results, followed by a discussion of the limitations and the conclusions.
 
 %% ---------------------------------------------------------------------------
 \section{Vehicle and actuator model}\label{sec:model}
